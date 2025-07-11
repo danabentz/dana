@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dana Bentz Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #0d1b2a, #1e3a8a);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            padding: 40px 20px 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0 0 10px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        p.subtitle {
+            color: #b5c6e0;
+            margin-top: 0;
+        }
+        h2 {
+            color: #e0e8ff;
+            font-weight: 400;
+        }
+        h3 {
+            margin-top: 0;
+        }
+        .projects, .resume, .contact {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        a {
+            color: #64b5f6;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #90cdf4;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .contact span {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dana Bentz</h1>
+        <p class="subtitle">My personal projects and history</p>
+    </header>
+    <section class="projects">
+        <h2>Projects</h2>
+        <div class="glass">
+            <h3><a href="https://vestie.com">Vestie</a></h3>
+        </div>
+        <div class="glass">
+            <h3><a href="https://clickmonial.com">Clickmonial</a></h3>
+        </div>
+        <div class="glass">
+            <h3><a href="https://clickmonial.com/dinner">Dinner picker</a></h3>
+        </div>
+        <div class="glass">
+            <h3><a href="#">To do list</a></h3>
+            <p>(Link TBD)</p>
+        </div>
+        <div class="glass">
+            <h3><a href="https://weightfoodtracker.netlify.app">NutriSync</a></h3>
+        </div>
+        <div class="glass">
+            <h3><a href="https://chirpchat.onrender.com/">ChirpChat</a></h3>
+        </div>
+    </section>
+    <section class="resume glass">
+        <h2>Resume</h2>
+        <ul>
+            <li>Licensed Real Estate Agent (2016-2020)</li>
+            <li>Bentz Enterprizes LLC (2016-2019) - Small car rental company</li>
+            <li>StreamYard (2020-2024) - Head of Customer Success / Product Manager</li>
+            <li>AirStudio (2024-present) - Head of Operations</li>
+        </ul>
+    </section>
+    <section class="contact glass">
+        <h2>Contact</h2>
+        <span>Phone/WhatsApp: 503-431-9691</span>
+        <span>Email: <a href="mailto:d@danabentz.com">d@danabentz.com</a></span>
+        <span>Based in Dallas, TX</span>
+    </section>
+</body>
+</html>
