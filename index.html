@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dana Bentz Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #0d0d0d;
+            font-family: 'Poppins', Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #0d1b2a, #1e3a8a);
+
             color: #fff;
             display: flex;
             flex-direction: column;
@@ -21,10 +25,17 @@
         h1 {
             margin: 0 0 10px;
             font-size: 2.5rem;
-            font-weight: 600;
+            font-weight: 700;
         }
         p.subtitle {
-            color: #ccc;
+            color: #b5c6e0;
+            margin-top: 0;
+        }
+        h2 {
+            color: #e0e8ff;
+            font-weight: 400;
+        }
+        h3 {
             margin-top: 0;
         }
         .projects, .resume, .contact {
@@ -33,16 +44,20 @@
             margin: 20px auto;
         }
         .glass {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         a {
-            color: #3ea6ff;
+            color: #64b5f6;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #90cdf4;
         }
         ul {
             padding-left: 20px;
@@ -88,7 +103,6 @@
             <li>StreamYard (2020-2024) - Head of Customer Success / Product Manager</li>
             <li>AirStudio (2024-present) - Head of Operations</li>
         </ul>
-        <p>My resume is shared here simply to give you a sense of my background.</p>
     </section>
     <section class="contact glass">
         <h2>Contact</h2>
