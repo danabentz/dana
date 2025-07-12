@@ -41,8 +41,8 @@
             margin-top: 0;
         }
         .projects, .resume, .contact {
-            width: 90%;
-            max-width: 900px;
+            width: 95%;
+            max-width: 1200px;
             margin: 20px auto;
             text-align: center;
         }
@@ -114,10 +114,22 @@
             width: 100%;
         }
         .resume .grid {
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+        .resume .card h3 {
+            font-size: 1.2rem;
+        }
+        .resume .card p {
+            font-size: 1rem;
         }
         .contact .grid {
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+        .contact span {
+            font-size: 1.1rem;
+        }
+        .card {
+            padding: 30px;
         }
         .icon {
             width: 48px;
