@@ -76,7 +76,8 @@
             justify-items: center;
         }
         .card {
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 3 / 4;
+            min-height: 240px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -118,6 +119,12 @@
         }
         .contact span {
             font-size: 1.1rem;
+        }
+        .contact .card h3 {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 10px;
         }
         .card {
             padding: 30px;
@@ -167,17 +174,19 @@
         <h2>Contact</h2>
         <div class="grid">
             <div class="glass card">
-                <span>Phone/WhatsApp:</span>
+                <h3>Phone/WhatsApp</h3>
                 <span>503-431-9691</span>
             </div>
             <div class="glass card">
-                <span>Email:</span>
+                <h3>Email</h3>
                 <span><a target="_blank" rel="noopener noreferrer" href="mailto:d@danabentz.com">d@danabentz.com</a></span>
             </div>
             <div class="glass card">
+                <h3>Location</h3>
                 <span>Based in Dallas, TX</span>
             </div>
             <div class="glass card">
+                <h3>GitHub</h3>
                 <a target="_blank" rel="noopener noreferrer" href="https://github.com/danabentz" aria-label="GitHub">
                     <svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <title>GitHub</title>
@@ -186,6 +195,7 @@
                 </a>
             </div>
             <div class="glass card">
+                <h3>Instagram</h3>
                 <a target="_blank" rel="noopener noreferrer" href="https://instagram.com/realdanabentz" aria-label="Instagram">
                     <svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <title>Instagram</title>
