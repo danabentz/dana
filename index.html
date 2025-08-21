@@ -52,8 +52,8 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(12px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            padding: 20px;
-            margin-bottom: 24px;
+            margin: 10px;
+            padding: 15px;
         }
         a {
             color: #64b5f6;
@@ -77,7 +77,7 @@
         }
         .card {
             aspect-ratio: 3 / 4;
-            min-height: 240px;
+            min-height: 180px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -97,10 +97,10 @@
             transition: opacity 0.3s, transform 0.3s;
             z-index: -1;
         }
-        .card:hover {
+        .clickable:hover {
             transform: translateY(-10px) scale(1.05);
         }
-        .card:hover::before {
+        .clickable:hover::before {
             opacity: 1;
             transform: scale(1.2);
         }
@@ -125,9 +125,6 @@
             font-weight: bold;
             margin-top: 0;
             margin-bottom: 10px;
-        }
-        .card {
-            padding: 30px;
         }
         .icon {
             width: 48px;
