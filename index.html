@@ -1,219 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dana's Portfolio</title>
-    <link rel="icon" type="image/jpeg" href="dana.jpg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Poppins', Arial, Helvetica, sans-serif;
-            background: linear-gradient(135deg, #0d1b2a, #1e3a8a);
-
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        header {
-            padding: 40px 20px 20px;
-            text-align: center;
-        }
-        h1 {
-            margin: 0 0 10px;
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-        p.subtitle {
-            color: #b5c6e0;
-            margin-top: 0;
-        }
-        h2 {
-            color: #e0e8ff;
-            font-weight: 400;
-            text-align: center;
-        }
-        h3 {
-            margin-top: 0;
-        }
-        .projects, .contact {
-            width: 95%;
-            max-width: 1200px;
-            margin: 20px auto;
-            text-align: center;
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            margin: 10px;
-            padding: 15px;
-        }
-        a {
-            color: #64b5f6;
-            text-decoration: none;
-        }
-        a:hover {
-            color: #90cdf4;
-        }
-        ul {
-            padding-left: 20px;
-        }
-        .contact span {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .grid {
-            display: grid;
-            gap: 20px;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            justify-items: center;
-        }
-        .card {
-            aspect-ratio: 3 / 4;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s;
-        }
-        .card::before {
-            content: "";
-            position: absolute;
-            inset: -20px;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0));
-            opacity: 0;
-            filter: blur(20px);
-            transition: opacity 0.3s, transform 0.3s;
-            z-index: -1;
-        }
-        .clickable:hover {
-            transform: translateY(-10px) scale(1.05);
-        }
-        .clickable:hover::before {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-        .clickable {
-            cursor: pointer;
-        }
-        .card h3 {
-            min-height: 2.5em;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            width: 100%;
-        }
-        .contact .grid {
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        }
-        .contact span {
-            font-size: 1.1rem;
-        }
-        .contact .card h3 {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .icon {
-            width: 48px;
-            height: 48px;
-            fill: #fff;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dana's Portfolio</title>
+  <link rel="icon" type="image/jpeg" href="dana.jpg">
+  <style>
+    :root {
+      --background: #f5f5f7;
+      --text: #1d1d1f;
+      --muted: #6e6e73;
+      --accent: #0071e3;
+      --card-bg: #fff;
+      --card-border: #d2d2d7;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background: var(--background);
+      color: var(--text);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    header {
+      padding:60px 20px 40px;
+      text-align:center;
+    }
+    .avatar {
+      width:120px;
+      height:120px;
+      border-radius:50%;
+      object-fit:cover;
+      border:2px solid var(--card-border);
+      margin-bottom:20px;
+    }
+    h1 {
+      font-size:3rem;
+      font-weight:600;
+      margin:0 0 10px;
+    }
+    p.subtitle {
+      margin:0;
+      color:var(--muted);
+      font-size:1.25rem;
+    }
+    section {
+      width:100%;
+      max-width:1200px;
+      padding:40px 20px;
+    }
+    h2 {
+      font-size:2rem;
+      font-weight:500;
+      text-align:center;
+      margin:0 0 40px;
+    }
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:40px;
+    }
+    .card {
+      background:var(--card-bg);
+      border:1px solid var(--card-border);
+      border-radius:20px;
+      padding:30px 20px;
+      text-align:center;
+      transition:transform .3s, box-shadow .3s;
+    }
+    .clickable:hover {
+      transform:translateY(-5px);
+      box-shadow:0 20px 40px rgba(0,0,0,.1);
+      cursor:pointer;
+    }
+    a {
+      color:var(--accent);
+      text-decoration:none;
+    }
+    a:hover { text-decoration:underline; }
+    .contact span {
+      display:block;
+      margin-top:10px;
+    }
+    .icon {
+      width:40px;
+      height:40px;
+      fill:var(--accent);
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Dana Bentz</h1>
-        <p class="subtitle">what I'm working on</p>
-    </header>
-    <section class="projects">
-        <h2>Projects</h2>
-        <div class="grid">
-            <div class="glass card">
-                <h3><a target="_blank" rel="noopener noreferrer" href="https://getvestie.com">Vestie</a></h3>
-                <p>Investing app built for women</p>
-            </div>
-            <div class="glass card">
-                <h3><a target="_blank" rel="noopener noreferrer" href="https://clickmonial.com">Clickmonial</a></h3>
-                <p>[Archived] Easily collect video testimonials</p>
-            </div>
-            <div class="glass card">
-                <h3><a target="_blank" rel="noopener noreferrer" href="https://clickmonial.com/dinner">Dinner picker</a></h3>
-                <p>Randomly decide what to eat for dinner</p>
-            </div>
-            <div class="glass card">
-                <h3><a target="_blank" rel="noopener noreferrer" href="#">To do list</a></h3>
-                <p>Simple task tracking. (Link TBD)</p>
-            </div>
-            <div class="glass card">
-                <h3><a target="_blank" rel="noopener noreferrer" href="https://weightfoodtracker.netlify.app">NutriSync</a></h3>
-                <p>Sleep, nutrition, weight, and activity tracker</p>
-            </div>
-            <div class="glass card">
-                <h3><a target="_blank" rel="noopener noreferrer" href="https://chirpchat.onrender.com/">ChirpChat</a></h3>
-                <p>Hockey schedule and real-time chat site</p>
-            </div>
-        </div>
-    </section>
-    <section class="contact">
-        <h2>Contact</h2>
-        <div class="grid">
-            <div class="glass card">
-                <h3>Phone/WhatsApp</h3>
-                <span>503-431-9691</span>
-            </div>
-            <div class="glass card">
-                <h3>Email</h3>
-                <span><a target="_blank" rel="noopener noreferrer" href="mailto:d@danabentz.com">d@danabentz.com</a></span>
-            </div>
-            <div class="glass card">
-                <h3>Location</h3>
-                <span>Based in Dallas, TX</span>
-            </div>
-            <div class="glass card">
-                <h3>GitHub</h3>
-                <a target="_blank" rel="noopener noreferrer" href="https://github.com/danabentz" aria-label="GitHub">
-                    <svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <title>GitHub</title>
-                        <path d="M12 0C5.373 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.386.6.11.82-.26.82-.577v-2.234c-3.338.724-4.033-1.415-4.033-1.415-.547-1.387-1.334-1.757-1.334-1.757-1.09-.744.083-.73.083-.73 1.205.084 1.84 1.236 1.84 1.236 1.07 1.833 2.807 1.305 3.495.998.11-.776.418-1.305.763-1.605-2.666-.304-5.466-1.332-5.466-5.931 0-1.31.47-2.381 1.236-3.222-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.51 11.51 0 0 1 6.003 0c2.29-1.552 3.297-1.23 3.297-1.23.653 1.651.241 2.873.118 3.176.77.841 1.233 1.912 1.233 3.222 0 4.61-2.807 5.625-5.478 5.922.43.369.824 1.099.824 2.219v3.293c0 .32.218.694.825.576C20.565 21.795 24 17.295 24 12c0-6.627-5.373-12-12-12z"/>
-                    </svg>
-                </a>
-            </div>
-            <div class="glass card">
-                <h3>Instagram</h3>
-                <a target="_blank" rel="noopener noreferrer" href="https://instagram.com/realdanabentz" aria-label="Instagram">
-                    <svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <title>Instagram</title>
-                        <path d="M12 0c3.3 0 3.7 0 5 .1 1.2 0 2 .2 2.5.4.6.3 1.1.6 1.5 1.1.5.5.8 1 1.1 1.5.2.5.4 1.3.4 2.5.1 1.3.1 1.7.1 5s0 3.7-.1 5c0 1.2-.2 2-.4 2.5-.3.6-.6 1.1-1.1 1.5-.5.5-1 .8-1.5 1.1-.5.2-1.3.4-2.5.4-1.3.1-1.7.1-5 .1s-3.7 0-5-.1c-1.2 0-2-.2-2.5-.4-.6-.3-1.1-.6-1.5-1.1-.5-.5-.8-1-1.1-1.5-.2-.5-.4-1.3-.4-2.5C0 15.7 0 15.3 0 12c0-3.3 0-3.7.1-5 0-1.2.2-2 .4-2.5.3-.6.6-1.1 1.1-1.5.5-.5 1-.8 1.5-1.1.5-.2 1.3-.4 2.5-.4C8.3 0 8.7 0 12 0zm0 2.2c-3.2 0-3.6 0-4.9.1-1 0-1.5.2-1.9.3-.5.2-.9.4-1.2.7-.4.3-.7.7-.9 1.2-.2.5-.3.9-.3 1.9 0 1.2 0 1.6-.1 4.9 0 3.2 0 3.6.1 4.9 0 1 .2 1.5.3 1.9.2.5.4.9.7 1.2.3.4.7.7 1.2.9.5.2.9.3 1.9.3 1.2 0 1.6 0 4.9.1 3.2 0 3.6 0 4.9-.1 1 0 1.5-.2 1.9-.3.5-.2.9-.4 1.2-.7.4-.3.7-.7.9-1.2.2-.5.3-.9.3-1.9 0-1.2 0-1.6.1-4.9 0-3.2 0-3.6-.1-4.9 0-1-.2-1.5-.3-1.9-.2-.5-.4-.9-.7-1.2-.3-.4-.7-.7-1.2-.9-.5-.2-.9-.3-1.9-.3-1.2 0-1.6 0-4.9-.1zM12 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.9-10.7a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/>
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </section>
-    <script>
-        document.querySelectorAll('.card').forEach(card => {
-            const link = card.querySelector('a[href]');
-            if (link) {
-                card.classList.add('clickable');
-                card.addEventListener('click', e => {
-                    if (e.target.tagName.toLowerCase() !== 'a') {
-                        window.open(link.href, link.target || '_self');
-                    }
-                });
-            }
+  <header>
+    <img src="dana.jpg" alt="Dana Bentz" class="avatar">
+    <h1>Dana Bentz</h1>
+    <p class="subtitle">what I'm working on</p>
+  </header>
+
+  <section class="projects">
+    <h2>Projects</h2>
+    <div class="grid">
+      <div class="card">
+        <h3><a target="_blank" rel="noopener noreferrer" href="https://getvestie.com">Vestie</a></h3>
+        <p>Investing app built for women</p>
+      </div>
+      <div class="card">
+        <h3><a target="_blank" rel="noopener noreferrer" href="https://clickmonial.com">Clickmonial</a></h3>
+        <p>[Archived] Easily collect video testimonials</p>
+      </div>
+      <div class="card">
+        <h3><a target="_blank" rel="noopener noreferrer" href="https://clickmonial.com/dinner">Dinner picker</a></h3>
+        <p>Randomly decide what to eat for dinner</p>
+      </div>
+      <div class="card">
+        <h3><a target="_blank" rel="noopener noreferrer" href="#">To do list</a></h3>
+        <p>Simple task tracking. (Link TBD)</p>
+      </div>
+      <div class="card">
+        <h3><a target="_blank" rel="noopener noreferrer" href="https://weightfoodtracker.netlify.app">NutriSync</a></h3>
+        <p>Sleep, nutrition, weight, and activity tracker</p>
+      </div>
+      <div class="card">
+        <h3><a target="_blank" rel="noopener noreferrer" href="https://chirpchat.onrender.com/">ChirpChat</a></h3>
+        <p>Hockey schedule and real-time chat site</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact">
+    <h2>Contact</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Phone/WhatsApp</h3>
+        <span>503-431-9691</span>
+      </div>
+      <div class="card">
+        <h3>Email</h3>
+        <span><a target="_blank" rel="noopener noreferrer" href="mailto:d@danabentz.com">d@danabentz.com</a></span>
+      </div>
+      <div class="card">
+        <h3>Location</h3>
+        <span>Based in Dallas, TX</span>
+      </div>
+      <div class="card">
+        <h3>GitHub</h3>
+        <a target="_blank" rel="noopener noreferrer" href="https://github.com/danabentz" aria-label="GitHub">
+          <svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 0C5.373 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.386.6.11.82-.26.82-.577v-2.234c-3.338.724-4.033-1.415-4.033-1.415-.547-1.387-1.334-1.757-1.334-1.757-1.09-.744.083-.73.083-.73 1.205.084 1.84 1.236 1.84 1.236 1.07 1.833 2.807 1.305 3.495.998.11-.776.418-1.305.763-1.605-2.666-.304-5.466-1.332-5.466-5.931 0-1.31.47-2.381 1.236-3.222-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.51 11.51 0 0 1 6.003 0c2.29-1.552 3.297-1.23 3.297-1.23.653 1.651.241 2.873.118 3.17.767.841 1.233 1.912 1.233 3.222 0 4.61-2.807 5.625-5.478 5.922.43.369.824 1.099.824 2.219v3.293c0 .32.218.694.825.576C20.565 21.795 24 17.295 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        </a>
+      </div>
+      <div class="card">
+        <h3>Instagram</h3>
+        <a target="_blank" rel="noopener noreferrer" href="https://instagram.com/realdanabentz" aria-label="Instagram">
+          <svg class="icon" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Instagram</title><path d="M12 0c3.3 0 3.7 0 5 .1 1.2 0 2 .2 2.5.4.6.3 1.1.6 1.5 1.1.5.5.8 1 1.1 1.5.2.5.4 1.3.4 2.5.1 1.3.1 1.7.1 5s0 3.7-.1 5c0 1.2-.2 2-.4 2.5-.3.6-.6 1.1-1.1 1.5-.5.5-1 .8-1.5 1.1-.5.2-1.3.4-2.5.4-1.3.1-1.7.1-5 .1s-3.7 0-5-.1c-1.2 0-2-.2-2.5-.4-.6-.3-1.1-.6-1.5-1.1-.5-.5-.8-1-1.1-1.5-.2-.5-.4-1.3-.4-2.5C0 15.7 0 15.3 0 12c0-3.3 0-3.7.1-5 0-1.2.2-2 .4-2.5.3-.6.6-1.1 1.1-1.5.5-.5 1-.8 1.5-1.1.5-.2 1.3-.4 2.5-.4C8.3 0 8.7 0 12 0zm0 2.2c-3.2 0-3.6 0-4.9.1-1 0-1.5.2-1.9.3-.5.2-.9.4-1.2.7-.4.3-.7.7-.9 1.2-.2.5-.3.9-.3 1.9 0 1.2 0 1.6-.1 4.9 0 3.2 0 3.6.1 4.9 0 1 .2 1.5.3 1.9.2.5.4.9.7 1.2.3.4.7.7 1.2.9.5.2.9.3 1.9.3 1.2 0 1.6 0 4.9.1 3.2 0 3.6 0 4.9-.1 1 0 1.5-.2 1.9-.3.5-.2.9-.4 1.2-.7.4-.3.7-.7.9-1.2.2-.5.3-.9.3-1.9 0-1.2 0-1.6.1-4.9 0-3.2 0-3.6-.1-4.9 0-1-.2-1.5-.3-1.9-.2-.5-.4-.9-.7-1.2-.3-.4-.7-.7-1.2-.9-.5-.2-.9-.3-1.9-.3-1.2 0-1.6 0-4.9-.1zm0 3.6a6.2 6.2 0 1 1 0 12.4 6.2 6.2 0 0 1 0-12.4zm0 10.2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm4.9-10.7a1.44 1.44 0 1 0 0-2.88 1.44 1.44 0 0 0 0 2.88z"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      const link = card.querySelector('a[href]');
+      if (link) {
+        card.classList.add('clickable');
+        card.addEventListener('click', e => {
+          if (e.target.tagName.toLowerCase() !== 'a') {
+            window.open(link.href, link.target || '_self');
+          }
         });
-    </script>
+      }
+    });
+  </script>
 </body>
 </html>
