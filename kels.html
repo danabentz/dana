@@ -154,16 +154,6 @@
     crossorigin=""
   ></script>
   <script>
-    const proxySources = [
-      'https://api.allorigins.win/raw?url=https://www.cruisemapper.com/?imo=9731171',
-      'https://thingproxy.freeboard.io/fetch/https://www.cruisemapper.com/?imo=9731171',
-      'https://proxy.cors.sh/https://www.cruisemapper.com/?imo=9731171',
-      'https://r.jina.ai/https://www.cruisemapper.com/?imo=9731171',
-      'https://r.jina.ai/http://www.cruisemapper.com/?imo=9731171',
-      'https://cors.isomorphic-git.org/https://www.cruisemapper.com/?imo=9731171',
-      'https://r.jina.ai/https://cors.isomorphic-git.org/https://www.cruisemapper.com/?imo=9731171'
-    ];
-
     const staticItinerary = {
       '2025-10-19': 'Piraeus (Athens), Greece',
       '2025-10-20': 'Gythion (Sparta & Mystras), Greece',
@@ -330,6 +320,83 @@
       '2026-03-30': 'Yokohama, Japan'
     };
 
+    const locationReference = {
+      'Piraeus (Athens), Greece': { lat: 37.9391, lng: 23.6463, descriptor: 'Docked in Piraeus, gateway to Athens.' },
+      'Gythion (Sparta & Mystras), Greece': { lat: 36.7595, lng: 22.5631 },
+      'Chania (Crete), Greece': { lat: 35.5138, lng: 24.0192 },
+      'Mykonos, Greece': { lat: 37.4467, lng: 25.3289 },
+      'Kusadasi (Ephesus), Turkey': { lat: 37.8618, lng: 27.2571 },
+      'Çesme, Turkey': { lat: 38.3233, lng: 26.3025 },
+      'At Sea': { descriptor: 'Kels is currently sailing the open ocean.', zoom: 4 },
+      'Istanbul, Turkey': { lat: 41.0082, lng: 28.9784 },
+      'Canakkale (Troy), Turkey': { lat: 40.1553, lng: 26.4142 },
+      'Izmir, Turkey': { lat: 38.4192, lng: 27.1287 },
+      'Pátmos, Greece': { lat: 37.3092, lng: 26.5469 },
+      'Rhodes, Greece': { lat: 36.434, lng: 28.2176 },
+      'Spétsai, Greece': { lat: 37.2458, lng: 23.1595 },
+      'Náfplio, Greece': { lat: 37.567, lng: 22.8015 },
+      'Katakolon (Olympia), Greece': { lat: 37.6459, lng: 21.3212 },
+      'Kérkira (Corfu), Greece': { lat: 39.6243, lng: 19.9217 },
+      'Kotor, Montenegro': { lat: 42.4247, lng: 18.7712 },
+      'Brindisi (Lecce), Italy': { lat: 40.6322, lng: 17.9417 },
+      'Lipari': { lat: 38.4723, lng: 14.9544 },
+      'Naples': { lat: 40.8518, lng: 14.2681 },
+      'Civitavecchia (Rome), Italy': { lat: 42.0939, lng: 11.7969 },
+      'Ajaccio': { lat: 41.9192, lng: 8.7386 },
+      'Alghero': { lat: 40.557, lng: 8.3197 },
+      'Mahón, Menorca': { lat: 39.8889, lng: 4.265 },
+      'Ibiza, Spain': { lat: 38.9067, lng: 1.4206 },
+      'Cartagena, Spain': { lat: 37.6257, lng: -0.9966 },
+      'Motril': { lat: 36.7507, lng: -3.517 },
+      'Ceuta': { lat: 35.8894, lng: -5.3213 },
+      'Lisbon, Portugal': { lat: 38.7223, lng: -9.1393 },
+      'Hamilton, Bermuda': { lat: 32.2948, lng: -64.7814 },
+      'Miami, FL': { lat: 25.7617, lng: -80.1918 },
+      'Kralendijk, Bonaire': { lat: 12.1444, lng: -68.2655 },
+      'Willemstad, Curacao': { lat: 12.1091, lng: -68.9317 },
+      'Cartagena, Colombia': { lat: 10.391, lng: -75.4794 },
+      'Transit the Panama Canal': { lat: 9.101, lng: -79.7, descriptor: 'Transiting the Panama Canal.', zoom: 8 },
+      'Fuerte Amador (Panama City), Panama': { lat: 8.9305, lng: -79.535 },
+      'Puntarenas, Costa Rica': { lat: 9.9778, lng: -84.8333 },
+      'Puerto Chiapas, Mexico': { lat: 14.69, lng: -92.421 },
+      'Puerto Vallarta, Mexico': { lat: 20.6534, lng: -105.2253 },
+      'Honolulu, HI': { lat: 21.3069, lng: -157.8583 },
+      'Nawiliwili, Kauai, HI': { lat: 21.9586, lng: -159.3502 },
+      'Cross the international date line': { lat: 15, lng: -179.5, descriptor: 'Crossing the International Date Line.', zoom: 4 },
+      'Tokyo, Japan': { lat: 35.6762, lng: 139.6503 },
+      'Osaka, Japan': { lat: 34.6937, lng: 135.5023 },
+      'Kochi, Japan': { lat: 33.5597, lng: 133.5311 },
+      'Keelung, Taiwan': { lat: 25.1283, lng: 121.7417 },
+      'Hong Kong': { lat: 22.3193, lng: 114.1694 },
+      'Halong Bay (Hanoi), Vietnam': { lat: 20.9101, lng: 107.1839 },
+      'Da Nang (Hue), Vietnam': { lat: 16.0544, lng: 108.2022 },
+      'Ho Chi Minh City (Saigon), Vietnam': { lat: 10.8231, lng: 106.6297 },
+      'Sihanoukville, Cambodia': { lat: 10.625, lng: 103.523 },
+      'Ko Kood, Thailand': { lat: 11.658, lng: 102.543 },
+      'Laem Chabang (Bangkok), Thailand': { lat: 13.0948, lng: 100.8838 },
+      'Singapore': { lat: 1.3521, lng: 103.8198 },
+      'Tokushima, Japan': { lat: 34.0703, lng: 134.554 },
+      'Kobe, Japan': { lat: 34.6901, lng: 135.1955 },
+      'Kagoshima, Japan': { lat: 31.5966, lng: 130.5571 },
+      'Nagasaki, Japan': { lat: 32.7503, lng: 129.8777 },
+      'Busan (Pusan), South Korea': { lat: 35.1796, lng: 129.0756 },
+      'Shimonoeski, Japan': { lat: 33.9578, lng: 130.9418 },
+      'Hiroshima, Japan': { lat: 34.3853, lng: 132.4553 },
+      'Beppu, Japan': { lat: 33.2846, lng: 131.4912 },
+      'Shimizu, Japan': { lat: 35.015, lng: 138.4895 },
+      'Yokohama, Japan': { lat: 35.4437, lng: 139.638 }
+    };
+
+    const itineraryEntries = Object.entries(staticItinerary)
+      .map(([date, label]) => ({ date, label }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    const itineraryByDate = new Map(itineraryEntries.map(entry => [entry.date, entry]));
+
+    itineraryEntries.forEach((entry, index) => {
+      entry.index = index;
+    });
+
     const map = L.map('map', {
       zoomControl: false,
       attributionControl: false
@@ -352,268 +419,223 @@
     const locationLabelEl = document.getElementById('location-label');
     const tomorrowStatusEl = document.getElementById('tomorrow-status');
 
-    async function fetchViaProxies(sources) {
-      for (const url of sources) {
-        try {
-          const response = await fetch(url, {
-            headers: {
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-              'Cache-Control': 'no-cache',
-              'x-cors-api-key': 'temp_cors_api_key'
-            },
-            mode: 'cors'
-          });
-          if (response.ok) {
-            const contentType = response.headers.get('content-type') || '';
-            if (contentType.includes('application/json')) {
-              const json = await response.json();
-              const html = json.contents || json.html || '';
-              if (html.trim().length > 0) return html;
-            } else {
-              const text = await response.text();
-              if (text && text.trim().length > 0) {
-                return text;
-              }
-            }
-          }
-        } catch (error) {
-          console.warn('Proxy fetch failed for', url, error);
-        }
-      }
-      throw new Error('Unable to reach data sources.');
+    function getLocalISO(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
 
-    function extractCoordinates(html) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
+    function hasCoords(info) {
+      return info && Number.isFinite(info.lat) && Number.isFinite(info.lng);
+    }
 
-      const buildCoords = (lat, lon) => {
-        if (Number.isFinite(lat) && Number.isFinite(lon)) {
-          return { lat, lon, lng: lon };
-        }
-        return null;
-      };
-
-      const extractLabelledCoords = text => {
-        if (!text) return null;
-        const latMatch = text.match(/Lat(?:itude)?[^-\d]*(-?\d+(?:\.\d+)?)/i);
-        const lonMatch = text.match(/Lon(?:gitude)?[^-\d]*(-?\d+(?:\.\d+)?)/i);
-        if (latMatch && lonMatch) {
-          return buildCoords(parseFloat(latMatch[1]), parseFloat(lonMatch[1]));
-        }
-        return null;
-      };
-
-      const coordinateSelectors = [
-        '[data-lat][data-lon]',
-        '[data-latitude][data-longitude]',
-        'meta[property="place:location:latitude"]',
-        'meta[property="place:location:longitude"]',
-        'meta[name="og:latitude"]',
-        'meta[name="og:longitude"]',
-        '.ship-position__coordinates',
-        '.ship-position [data-lat]'
-      ];
-
-      for (const selector of coordinateSelectors) {
-        const el = doc.querySelector(selector);
-        if (!el) continue;
-
-        if (el.tagName === 'META') {
-          const latMeta = doc.querySelector('meta[property="place:location:latitude"], meta[name="og:latitude"]');
-          const lonMeta = doc.querySelector('meta[property="place:location:longitude"], meta[name="og:longitude"]');
-          if (latMeta && lonMeta) {
-            const lat = parseFloat(latMeta.getAttribute('content'));
-            const lon = parseFloat(lonMeta.getAttribute('content'));
-            if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
-              return { lat, lon, lng: lon };
-            }
-          }
-        }
-
-        if (el.dataset && (el.dataset.lat || el.dataset.latitude)) {
-          const lat = parseFloat(el.dataset.lat || el.dataset.latitude);
-          const lon = parseFloat(el.dataset.lon || el.dataset.longitude || el.dataset.lng);
-          const coords = buildCoords(lat, lon);
-          if (coords) return coords;
-        }
-
-        const text = el.textContent || '';
-        const labelled = extractLabelledCoords(text);
-        if (labelled) return labelled;
-
-        const pairMatch = text.match(/(-?\d+(?:\.\d+)?)[^\d-]+(-?\d+(?:\.\d+)?)/);
-        if (pairMatch) {
-          const first = parseFloat(pairMatch[1]);
-          const second = parseFloat(pairMatch[2]);
-          if (!Number.isFinite(first) || !Number.isFinite(second)) continue;
-
-          const firstIndex = text.indexOf(pairMatch[1]);
-          const beforeFirst = text.slice(0, firstIndex).toLowerCase();
-          const afterFirst = text.slice(firstIndex + pairMatch[1].length).toLowerCase();
-
-          if (beforeFirst.includes('lon') && afterFirst.includes('lat')) {
-            return buildCoords(second, first);
-          }
-
-          return buildCoords(first, second);
-        }
+    function interpolateLng(start, end, t) {
+      let diff = end - start;
+      if (Math.abs(diff) > 180) {
+        diff = diff > 0 ? diff - 360 : diff + 360;
       }
+      let value = start + diff * t;
+      if (value > 180) value -= 360;
+      if (value < -180) value += 360;
+      return value;
+    }
 
-      const patterns = [
-        /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?lon"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
-        /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?lng"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
-        /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?long"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
-        /"latitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"longitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
-        /"latitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)[^\d-]+"longitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
-        /'lat'\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*'?lon'?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
-        /Lat(?:itude)?[^-\d]*(\-?\d+(?:\.\d+)?)[^\d-]+Lon(?:gitude)?[^-\d]*(\-?\d+(?:\.\d+)?)/i
-      ];
-      for (const regex of patterns) {
-        const match = regex.exec(html);
-        if (match) {
-          const coords = buildCoords(parseFloat(match[1]), parseFloat(match[2]));
-          if (coords) return coords;
+    function findNeighborWithCoords(startIndex, direction) {
+      let index = startIndex + direction;
+      while (index >= 0 && index < itineraryEntries.length) {
+        const candidate = itineraryEntries[index];
+        const info = locationReference[candidate.label];
+        if (hasCoords(info)) {
+          return {
+            entry: candidate,
+            info,
+            coords: { lat: info.lat, lng: info.lng }
+          };
         }
+        index += direction;
       }
-
-      const htmlLabelled = extractLabelledCoords(html);
-      if (htmlLabelled) return htmlLabelled;
-
       return null;
     }
 
-    function extractLocationLabel(html) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const textContent = doc.body ? doc.body.textContent : '';
+    function buildEntryData(entry) {
+      if (!entry) return null;
+      const info = locationReference[entry.label] || {};
+      let coords = hasCoords(info) ? { lat: info.lat, lng: info.lng } : null;
+      let descriptor = info.descriptor;
+      let displayLabel = info.displayLabel || entry.label;
+      let previousPort = null;
+      let nextPort = null;
 
-      if (textContent && /At Sea/i.test(textContent)) {
-        return { label: 'At sea', descriptor: 'Kels is currently sailing the open ocean.' };
-      }
+      if (entry.label === 'At Sea') {
+        displayLabel = 'At sea';
+        const previous = findNeighborWithCoords(entry.index, -1);
+        const next = findNeighborWithCoords(entry.index, 1);
+        previousPort = previous ? previous.entry.label : null;
+        nextPort = next ? next.entry.label : null;
 
-      const portSelectors = [
-        '[data-port]',
-        '.ship-port strong',
-        '.ship-position strong',
-        '.ship-position__port',
-        '.ship-position__status'
-      ];
-
-      for (const selector of portSelectors) {
-        const el = doc.querySelector(selector);
-        if (el && el.textContent.trim()) {
-          const text = el.textContent.trim();
-          if (/At Sea/i.test(text)) {
-            return { label: 'At sea', descriptor: 'Kels is currently sailing the open ocean.' };
+        if (!descriptor) {
+          if (previous && next) {
+            descriptor = `Sailing between ${previous.entry.label} and ${next.entry.label}.`;
+          } else if (previous) {
+            descriptor = `Sailing onward from ${previous.entry.label}.`;
+          } else if (next) {
+            descriptor = `Approaching ${next.entry.label}.`;
+          } else {
+            descriptor = 'Kels is currently sailing the open ocean.';
           }
-          return { label: text, descriptor: `Docked near ${text}.` };
         }
-      }
 
-      const inPortMatch = html.match(/In Port:?\s*<[^>]*>([^<]+)<\/[^>]+>/i) || html.match(/In Port:?\s*([^<\n]+)/i);
-      if (inPortMatch && inPortMatch[1]) {
-        const port = inPortMatch[1].trim();
-        return { label: port, descriptor: `Docked near ${port}.` };
-      }
-
-      const destinationMatch = html.match(/Destination:?\s*([^<\n]+)/i);
-      if (destinationMatch && destinationMatch[1]) {
-        const destination = destinationMatch[1].trim();
-        return { label: destination, descriptor: `Cruising toward ${destination}.` };
-      }
-
-      if (textContent) {
-        const cleaned = textContent.split('\n').map(line => line.trim()).filter(Boolean);
-        const line = cleaned.find(l => /Port/i.test(l) || /Destination/i.test(l));
-        if (line) {
-          return { label: line, descriptor: `Tracking update: ${line}` };
+        if (!coords) {
+          if (previous && next) {
+            const totalSpan = next.entry.index - previous.entry.index;
+            const relative = entry.index - previous.entry.index;
+            const t = totalSpan > 0 ? relative / totalSpan : 0;
+            coords = {
+              lat: previous.coords.lat + (next.coords.lat - previous.coords.lat) * t,
+              lng: interpolateLng(previous.coords.lng, next.coords.lng, t)
+            };
+          } else if (previous) {
+            coords = { ...previous.coords };
+          } else if (next) {
+            coords = { ...next.coords };
+          }
         }
+      } else if (!descriptor) {
+        descriptor = `Docked near ${displayLabel}.`;
       }
 
-      return { label: 'Status unknown', descriptor: 'We could not read the latest port information.' };
+      const zoom = typeof info.zoom === 'number' ? info.zoom : entry.label === 'At Sea' ? 4 : 6;
+
+      return {
+        date: entry.date,
+        rawLabel: entry.label,
+        label: displayLabel,
+        descriptor,
+        coords,
+        zoom,
+        previousPort,
+        nextPort
+      };
     }
 
-    function formatTomorrowFromStatic() {
+    function getEntryForDate(date) {
+      const iso = getLocalISO(date);
+      let entry = itineraryByDate.get(iso);
+      if (!entry) {
+        let index = itineraryEntries.findIndex(item => item.date > iso);
+        if (index === -1) {
+          entry = itineraryEntries[itineraryEntries.length - 1];
+        } else if (index === 0) {
+          entry = itineraryEntries[0];
+        } else {
+          entry = itineraryEntries[index - 1];
+        }
+      }
+      return buildEntryData(entry);
+    }
+
+    function buildStatusText(entry) {
+      if (!entry) {
+        return 'We could not determine the current itinerary position.';
+      }
+      if (entry.coords) {
+        const latStr = entry.coords.lat.toFixed(4);
+        const lngStr = entry.coords.lng.toFixed(4);
+        return `${entry.descriptor} (Lat: ${latStr}, Lon: ${lngStr})`;
+      }
+      return entry.descriptor || 'Tracking the latest voyage update.';
+    }
+
+    function persistLastKnown(entry) {
+      if (!entry || !entry.coords) return;
+      try {
+        localStorage.setItem(
+          'kels-last-coords',
+          JSON.stringify({
+            lat: entry.coords.lat,
+            lng: entry.coords.lng,
+            label: entry.label,
+            descriptor: entry.descriptor,
+            storedAt: Date.now()
+          })
+        );
+      } catch (error) {
+        console.warn('Unable to persist last known position', error);
+      }
+    }
+
+    function readCachedLocation() {
+      try {
+        const cached = localStorage.getItem('kels-last-coords');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Number.isFinite(parsed.lat) && Number.isFinite(parsed.lng)) {
+            return parsed;
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to read cached coordinates', error);
+      }
+      return null;
+    }
+
+    function setMapToEntry(entry, { animate = false } = {}) {
+      if (!entry || !entry.coords) return;
+      const view = [entry.coords.lat, entry.coords.lng];
+      const targetZoom = typeof entry.zoom === 'number' ? entry.zoom : 6;
+      marker.setLatLng(view);
+      if (animate) {
+        map.flyTo(view, targetZoom, { duration: 1.2 });
+      } else {
+        map.setView(view, targetZoom);
+      }
+    }
+
+    function formatTomorrowStatus() {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
-
-      const isoDate = tomorrow.toISOString().slice(0, 10);
-      const destination = staticItinerary[isoDate];
-
-      if (!destination) {
+      const entry = getEntryForDate(tomorrow);
+      if (!entry) {
         return 'Tomorrow: Itinerary unavailable';
       }
-
-      if (/at sea/i.test(destination)) {
+      if (entry.rawLabel === 'At Sea') {
+        if (entry.previousPort && entry.nextPort) {
+          return `Tomorrow: At sea between ${entry.previousPort} and ${entry.nextPort}`;
+        }
         return 'Tomorrow: At sea';
       }
-
-      return `Tomorrow: ${destination}`;
+      return `Tomorrow: ${entry.label}`;
     }
 
-    async function init() {
-      try {
-        const positionHtml = await fetchViaProxies(proxySources);
+    function init() {
+      const todayEntry = getEntryForDate(new Date());
+      const cached = readCachedLocation();
 
-        const coords = extractCoordinates(positionHtml);
-        const locationDetails = extractLocationLabel(positionHtml);
-        const tomorrowText = formatTomorrowFromStatic();
+      let statusText = 'We could not determine the current itinerary position.';
+      let labelText = 'Status unknown';
 
-        let statusText = locationDetails.descriptor || 'Tracking the latest voyage update.';
-        if (coords) {
-          const lng = Number.isFinite(coords.lng) ? coords.lng : coords.lon;
-          if (Number.isFinite(coords.lat) && Number.isFinite(lng)) {
-            marker.setLatLng([coords.lat, lng]);
-            map.flyTo([coords.lat, lng], 5, { duration: 1.2 });
-            const latStr = coords.lat.toFixed(4);
-            const lngStr = lng.toFixed(4);
-            statusText = `${locationDetails.descriptor} (Lat: ${latStr}, Lon: ${lngStr})`;
-            try {
-              localStorage.setItem(
-                'kels-last-coords',
-                JSON.stringify({ lat: coords.lat, lng, label: locationDetails.label, descriptor: locationDetails.descriptor, storedAt: Date.now() })
-              );
-            } catch (storageError) {
-              console.warn('Unable to persist last known position', storageError);
-            }
-          }
+      if (todayEntry) {
+        labelText = todayEntry.label;
+        if (todayEntry.coords) {
+          setMapToEntry(todayEntry, { animate: true });
+          statusText = buildStatusText(todayEntry);
+          persistLastKnown(todayEntry);
+        } else if (cached) {
+          setMapToEntry({ coords: { lat: cached.lat, lng: cached.lng }, zoom: todayEntry.zoom });
+          statusText = `${todayEntry.descriptor || 'Showing cached location.'} (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
         } else {
-          locationDetails.label = locationDetails.label || 'Coordinates unavailable';
+          statusText = todayEntry.descriptor || statusText;
         }
-
-        locationStatusEl.textContent = statusText;
-        locationLabelEl.textContent = locationDetails.label || 'Status unknown';
-        tomorrowStatusEl.textContent = tomorrowText;
-      } catch (error) {
-        console.error(error);
-        const fallback = (() => {
-          try {
-            const cached = localStorage.getItem('kels-last-coords');
-            if (cached) {
-              return JSON.parse(cached);
-            }
-          } catch (storageError) {
-            console.warn('Failed to read cached coordinates', storageError);
-          }
-          return null;
-        })();
-
-        if (fallback && Number.isFinite(fallback.lat) && Number.isFinite(fallback.lng)) {
-          marker.setLatLng([fallback.lat, fallback.lng]);
-          map.setView([fallback.lat, fallback.lng], 5);
-          const latStr = fallback.lat.toFixed(4);
-          const lngStr = fallback.lng.toFixed(4);
-          locationStatusEl.textContent = `${fallback.descriptor || 'Showing cached location.'} (Lat: ${latStr}, Lon: ${lngStr})`;
-          locationLabelEl.textContent = fallback.label || 'Cached coordinates';
-        } else {
-          locationStatusEl.textContent = 'We could not reach the cruise tracker right now.';
-          locationLabelEl.textContent = 'Status unavailable';
-        }
-
-        tomorrowStatusEl.textContent = formatTomorrowFromStatic();
+      } else if (cached) {
+        setMapToEntry({ coords: { lat: cached.lat, lng: cached.lng }, zoom: 5 });
+        labelText = cached.label || 'Cached coordinates';
+        statusText = `${cached.descriptor || 'Showing cached location.'} (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
       }
+
+      locationStatusEl.textContent = statusText;
+      locationLabelEl.textContent = labelText;
+      tomorrowStatusEl.textContent = formatTomorrowStatus();
     }
 
     init();
