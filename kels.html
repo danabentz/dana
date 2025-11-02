@@ -95,6 +95,15 @@
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
     }
 
+    .leaflet-marker-icon.kels-pin {
+      width: 72px !important;
+      height: 72px !important;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      padding: 4px;
+      box-shadow: 0 16px 32px rgba(0, 17, 51, 0.25);
+    }
+
     footer {
       display: flex;
       justify-content: center;
@@ -407,13 +416,17 @@
       maxZoom: 19
     }).addTo(map);
 
-    const markerIcon = L.divIcon({
-      className: 'kels-pin',
-      html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 14px 30px rgba(0,113,227,0.32);font-size:26px;line-height:1;">🚢</div>`
+    const markerIcon = L.icon({
+      iconUrl:
+        'https://images.openai.com/blob/123c15d6-4ad1-47bb-925c-e7870d26bb13/kelsey.png?trim=0,0,0,0&width=256',
+      iconSize: [72, 72],
+      iconAnchor: [36, 50],
+      tooltipAnchor: [0, -50],
+      className: 'kels-pin'
     });
 
     let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
-    marker.bindTooltip("Kels' ship", { direction: 'top', offset: [0, -18] });
+    marker.bindTooltip("Kels' ship", { direction: 'top', offset: [0, -52] });
 
     const locationStatusEl = document.getElementById('location-status');
     const locationLabelEl = document.getElementById('location-label');
