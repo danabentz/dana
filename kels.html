@@ -375,6 +375,23 @@
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
 
+      const buildCoords = (lat, lon) => {
+        if (Number.isFinite(lat) && Number.isFinite(lon)) {
+          return { lat, lon, lng: lon };
+        }
+        return null;
+      };
+
+      const extractLabelledCoords = text => {
+        if (!text) return null;
+        const latMatch = text.match(/Lat(?:itude)?[^-\d]*(-?\d+(?:\.\d+)?)/i);
+        const lonMatch = text.match(/Lon(?:gitude)?[^-\d]*(-?\d+(?:\.\d+)?)/i);
+        if (latMatch && lonMatch) {
+          return buildCoords(parseFloat(latMatch[1]), parseFloat(lonMatch[1]));
+        }
+        return null;
+      };
+
       const coordinateSelectors = [
         '[data-lat][data-lon]',
         '[data-latitude][data-longitude]',
@@ -404,20 +421,30 @@
 
         if (el.dataset && (el.dataset.lat || el.dataset.latitude)) {
           const lat = parseFloat(el.dataset.lat || el.dataset.latitude);
-          const lon = parseFloat(el.dataset.lon || el.dataset.longitude);
-          if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
-            return { lat, lon, lng: lon };
-          }
+          const lon = parseFloat(el.dataset.lon || el.dataset.longitude || el.dataset.lng);
+          const coords = buildCoords(lat, lon);
+          if (coords) return coords;
         }
 
         const text = el.textContent || '';
+        const labelled = extractLabelledCoords(text);
+        if (labelled) return labelled;
+
         const pairMatch = text.match(/(-?\d+(?:\.\d+)?)[^\d-]+(-?\d+(?:\.\d+)?)/);
         if (pairMatch) {
-          const lat = parseFloat(pairMatch[1]);
-          const lon = parseFloat(pairMatch[2]);
-          if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
-            return { lat, lon, lng: lon };
+          const first = parseFloat(pairMatch[1]);
+          const second = parseFloat(pairMatch[2]);
+          if (!Number.isFinite(first) || !Number.isFinite(second)) continue;
+
+          const firstIndex = text.indexOf(pairMatch[1]);
+          const beforeFirst = text.slice(0, firstIndex).toLowerCase();
+          const afterFirst = text.slice(firstIndex + pairMatch[1].length).toLowerCase();
+
+          if (beforeFirst.includes('lon') && afterFirst.includes('lat')) {
+            return buildCoords(second, first);
           }
+
+          return buildCoords(first, second);
         }
       }
 
@@ -431,13 +458,13 @@
       for (const regex of patterns) {
         const match = regex.exec(html);
         if (match) {
-          const lat = parseFloat(match[1]);
-          const lon = parseFloat(match[2]);
-          if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
-            return { lat, lon, lng: lon };
-          }
+          const coords = buildCoords(parseFloat(match[1]), parseFloat(match[2]));
+          if (coords) return coords;
         }
       }
+
+      const htmlLabelled = extractLabelledCoords(html);
+      if (htmlLabelled) return htmlLabelled;
 
       return null;
     }
@@ -521,8 +548,11 @@
         const tomorrowText = formatTomorrowFromStatic();
 
         if (coords) {
-          marker.setLatLng([coords.lat, coords.lon || coords.lng]);
-          map.setView([coords.lat, coords.lon || coords.lng], 5);
+          const lng = Number.isFinite(coords.lng) ? coords.lng : coords.lon;
+          if (Number.isFinite(coords.lat) && Number.isFinite(lng)) {
+            marker.setLatLng([coords.lat, lng]);
+            map.setView([coords.lat, lng], 5);
+          }
         } else {
           locationDetails.label = locationDetails.label || 'Coordinates unavailable';
         }
