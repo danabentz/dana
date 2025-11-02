@@ -1,552 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Where in the world is Kels?</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
-  <style>
-    :root {
-      color-scheme: light dark;
-      --surface: rgba(255, 255, 255, 0.72);
-      --text: #0b1526;
-      --accent: #0071e3;
-      --accent-soft: rgba(0, 113, 227, 0.16);
-      --backdrop: radial-gradient(circle at 20% 20%, rgba(0, 113, 227, 0.3), transparent 60%),
-        radial-gradient(circle at 80% 10%, rgba(255, 59, 48, 0.2), transparent 60%),
-        linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
-      --status-sea: #d35400;
-      --status-sea-bg: rgba(255, 149, 0, 0.18);
-      --status-docked: #1c7c3c;
-      --status-docked-bg: rgba(48, 209, 88, 0.2);
-      --status-unknown: #4a4a4f;
-      --status-unknown-bg: rgba(110, 110, 115, 0.16);
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Where in the world is Kels?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --surface: rgba(255, 255, 255, 0.72);
+        --text: #0b1526;
+        --accent: #0071e3;
+        --accent-soft: rgba(0, 113, 227, 0.16);
+        --backdrop: radial-gradient(
+            circle at 20% 20%,
+            rgba(0, 113, 227, 0.3),
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 80% 10%,
+            rgba(255, 59, 48, 0.2),
+            transparent 60%
+          ),
+          linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
+        --status-sea: #d35400;
+        --status-sea-bg: rgba(255, 149, 0, 0.18);
+        --status-docked: #1c7c3c;
+        --status-docked-bg: rgba(48, 209, 88, 0.2);
+        --status-unknown: #4a4a4f;
+        --status-unknown-bg: rgba(110, 110, 115, 0.16);
+      }
 
-    * {
-      box-sizing: border-box;
-    }
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Manrope", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-      background: var(--backdrop);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem 1.5rem;
-      color: var(--text);
-    }
-
-    .shell {
-      width: min(900px, 100%);
-      background: var(--surface);
-      border-radius: 28px;
-      box-shadow: 0 30px 80px rgba(16, 40, 88, 0.2);
-      backdrop-filter: blur(22px) saturate(150%);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      padding: 2.75rem;
-      display: grid;
-      gap: 2.5rem;
-    }
-
-    header {
-      text-align: center;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2.3rem, 4vw, 3.4rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .status {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      align-items: center;
-      text-align: center;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.045em;
-      text-transform: uppercase;
-      padding: 0.45rem 1.15rem;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-
-    .status-badge[data-state='sea'] {
-      background: var(--status-sea-bg);
-      color: var(--status-sea);
-    }
-
-    .status-badge[data-state='docked'] {
-      background: var(--status-docked-bg);
-      color: var(--status-docked);
-    }
-
-    .status-badge[data-state='unknown'] {
-      background: var(--status-unknown-bg);
-      color: var(--status-unknown);
-    }
-
-    .status p {
-      margin: 0;
-      font-size: 1.15rem;
-      line-height: 1.5;
-    }
-
-    .status strong {
-      font-size: 1.35rem;
-      font-weight: 600;
-      padding: 0.25rem 0.75rem;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-    }
-
-    #map {
-      width: 100%;
-      height: clamp(360px, 55vh, 520px);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-    }
-
-    footer {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.6rem;
-      font-size: 1.1rem;
-      flex-wrap: wrap;
-    }
-
-    .sparkle {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(255, 214, 10, 0.9), rgba(255, 149, 0, 0.7));
-      box-shadow: 0 0 20px rgba(255, 214, 10, 0.7);
-    }
-
-    @media (max-width: 600px) {
       body {
-        padding: 2rem 1rem;
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Manrope", "SF Pro Display", "Helvetica Neue", Arial,
+          sans-serif;
+        background: var(--backdrop);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1.5rem;
+        color: var(--text);
       }
 
       .shell {
-        padding: 2rem;
-        gap: 1.75rem;
+        width: min(900px, 100%);
+        background: var(--surface);
+        border-radius: 28px;
+        box-shadow: 0 30px 80px rgba(16, 40, 88, 0.2);
+        backdrop-filter: blur(22px) saturate(150%);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 2.75rem;
+        display: grid;
+        gap: 2.5rem;
+      }
+
+      header {
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.3rem, 4vw, 3.4rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .status {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center;
+        text-align: center;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+        padding: 0.45rem 1.15rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        transition: background 0.3s ease, color 0.3s ease;
+      }
+
+      .status-badge[data-state="sea"] {
+        background: var(--status-sea-bg);
+        color: var(--status-sea);
+      }
+
+      .status-badge[data-state="docked"] {
+        background: var(--status-docked-bg);
+        color: var(--status-docked);
+      }
+
+      .status-badge[data-state="unknown"] {
+        background: var(--status-unknown-bg);
+        color: var(--status-unknown);
       }
 
       .status p {
-        font-size: 1.05rem;
+        margin: 0;
+        font-size: 1.15rem;
+        line-height: 1.5;
       }
-    }
-  </style>
-</head>
-<body>
-  <main class="shell">
-    <header>
-      <h1>Where in the world is Kels?</h1>
-    </header>
 
-    <section class="status" aria-live="polite">
-      <div class="sparkle" aria-hidden="true"></div>
-      <span id="ship-status" class="status-badge" role="status" data-state="unknown">Loading status...</span>
-      <p id="location-status">Loading Kels' current adventure...</p>
-      <strong id="location-label"></strong>
-    </section>
-
-    <div id="map" role="img" aria-label="Map showing Kels' current location"></div>
-
-    <footer>
-      <span>🏊‍♀️</span>
-      <span id="tomorrow-status">Loading tomorrow's plan...</span>
-    </footer>
-  </main>
-
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
-  <script>
-    const staticItinerary = {
-      '2025-10-19': 'Piraeus (Athens), Greece',
-      '2025-10-20': 'Gythion (Sparta & Mystras), Greece',
-      '2025-10-21': 'Chania (Crete), Greece',
-      '2025-10-22': 'Mykonos, Greece',
-      '2025-10-23': 'Kusadasi (Ephesus), Turkey',
-      '2025-10-24': 'Çesme, Turkey',
-      '2025-10-25': 'At Sea',
-      '2025-10-26': 'Istanbul, Turkey',
-      '2025-10-27': 'Canakkale (Troy), Turkey',
-      '2025-10-28': 'Izmir, Turkey',
-      '2025-10-29': 'Pátmos, Greece',
-      '2025-10-30': 'Rhodes, Greece',
-      '2025-10-31': 'At Sea',
-      '2025-11-01': 'Spétsai, Greece',
-      '2025-11-02': 'Piraeus (Athens), Greece',
-      '2025-11-03': 'Náfplio, Greece',
-      '2025-11-04': 'Katakolon (Olympia), Greece',
-      '2025-11-05': 'Kérkira (Corfu), Greece',
-      '2025-11-06': 'Kotor, Montenegro',
-      '2025-11-07': 'Brindisi (Lecce), Italy',
-      '2025-11-08': 'At Sea',
-      '2025-11-09': 'Lipari',
-      '2025-11-10': 'Naples',
-      '2025-11-11': 'Civitavecchia (Rome), Italy',
-      '2025-11-12': 'Ajaccio',
-      '2025-11-13': 'Alghero',
-      '2025-11-14': 'Mahón, Menorca',
-      '2025-11-15': 'Ibiza, Spain',
-      '2025-11-16': 'Cartagena, Spain',
-      '2025-11-17': 'Motril',
-      '2025-11-18': 'Ceuta',
-      '2025-11-19': 'Lisbon, Portugal',
-      '2025-11-20': 'At Sea',
-      '2025-11-21': 'At Sea',
-      '2025-11-22': 'At Sea',
-      '2025-11-23': 'At Sea',
-      '2025-11-24': 'At Sea',
-      '2025-11-25': 'At Sea',
-      '2025-11-26': 'At Sea',
-      '2025-11-27': 'At Sea',
-      '2025-11-28': 'Hamilton, Bermuda',
-      '2025-11-29': 'Hamilton, Bermuda',
-      '2025-11-30': 'At Sea',
-      '2025-12-01': 'At Sea',
-      '2025-12-02': 'Miami, FL',
-      '2025-12-03': 'At Sea',
-      '2025-12-04': 'At Sea',
-      '2025-12-05': 'At Sea',
-      '2025-12-06': 'Kralendijk, Bonaire',
-      '2025-12-07': 'Willemstad, Curacao',
-      '2025-12-08': 'At Sea',
-      '2025-12-09': 'Cartagena, Colombia',
-      '2025-12-10': 'At Sea',
-      '2025-12-11': 'Transit the Panama Canal',
-      '2025-12-12': 'Fuerte Amador (Panama City), Panama',
-      '2025-12-13': 'At Sea',
-      '2025-12-14': 'Puntarenas, Costa Rica',
-      '2025-12-15': 'At Sea',
-      '2025-12-16': 'Puerto Chiapas, Mexico',
-      '2025-12-17': 'At Sea',
-      '2025-12-18': 'At Sea',
-      '2025-12-19': 'Puerto Vallarta, Mexico',
-      '2025-12-20': 'At Sea',
-      '2025-12-21': 'At Sea',
-      '2025-12-22': 'At Sea',
-      '2025-12-23': 'At Sea',
-      '2025-12-24': 'At Sea',
-      '2025-12-25': 'At Sea',
-      '2025-12-26': 'At Sea',
-      '2025-12-27': 'At Sea',
-      '2025-12-28': 'Honolulu, HI',
-      '2025-12-29': 'Honolulu, HI',
-      '2025-12-30': 'Nawiliwili, Kauai, HI',
-      '2025-12-31': 'At Sea',
-      '2026-01-01': 'At Sea',
-      '2026-01-02': 'At Sea',
-      '2026-01-03': 'At Sea',
-      '2026-01-04': 'At Sea',
-      '2026-01-05': 'Cross the international date line',
-      '2026-01-06': 'At Sea',
-      '2026-01-07': 'At Sea',
-      '2026-01-08': 'At Sea',
-      '2026-01-09': 'At Sea',
-      '2026-01-10': 'Tokyo, Japan',
-      '2026-01-11': 'At Sea',
-      '2026-01-12': 'Osaka, Japan',
-      '2026-01-13': 'Kochi, Japan',
-      '2026-01-14': 'At Sea',
-      '2026-01-15': 'At Sea',
-      '2026-01-16': 'Keelung, Taiwan',
-      '2026-01-17': 'At Sea',
-      '2026-01-18': 'Hong Kong',
-      '2026-01-19': 'At Sea',
-      '2026-01-20': 'Halong Bay (Hanoi), Vietnam',
-      '2026-01-21': 'At Sea',
-      '2026-01-22': 'Da Nang (Hue), Vietnam',
-      '2026-01-23': 'At Sea',
-      '2026-01-24': 'Ho Chi Minh City (Saigon), Vietnam',
-      '2026-01-25': 'Ho Chi Minh City (Saigon), Vietnam',
-      '2026-01-26': 'At Sea',
-      '2026-01-27': 'Sihanoukville, Cambodia',
-      '2026-01-28': 'Ko Kood, Thailand',
-      '2026-01-29': 'Laem Chabang (Bangkok), Thailand',
-      '2026-01-30': 'At Sea',
-      '2026-01-31': 'At Sea',
-      '2026-02-01': 'Singapore',
-      '2026-02-02': 'At Sea',
-      '2026-02-03': 'At Sea',
-      '2026-02-04': 'Laem Chabang (Bangkok), Thailand',
-      '2026-02-05': 'Ko Kood, Thailand',
-      '2026-02-06': 'Sihanoukville, Cambodia',
-      '2026-02-07': 'At Sea',
-      '2026-02-08': 'Ho Chi Minh City (Saigon), Vietnam',
-      '2026-02-09': 'Ho Chi Minh City (Saigon), Vietnam',
-      '2026-02-10': 'At Sea',
-      '2026-02-11': 'Da Nang (Hue), Vietnam',
-      '2026-02-12': 'At Sea',
-      '2026-02-13': 'Halong Bay (Hanoi), Vietnam',
-      '2026-02-14': 'At Sea',
-      '2026-02-15': 'Hong Kong',
-      '2026-02-16': 'At Sea',
-      '2026-02-17': 'Halong Bay (Hanoi), Vietnam',
-      '2026-02-18': 'At Sea',
-      '2026-02-19': 'Da Nang (Hue), Vietnam',
-      '2026-02-20': 'At Sea',
-      '2026-02-21': 'Ho Chi Minh City (Saigon), Vietnam',
-      '2026-02-22': 'Ho Chi Minh City (Saigon), Vietnam',
-      '2026-02-23': 'At Sea',
-      '2026-02-24': 'Sihanoukville, Cambodia',
-      '2026-02-25': 'Ko Kood, Thailand',
-      '2026-02-26': 'Laem Chabang (Bangkok), Thailand',
-      '2026-02-27': 'At Sea',
-      '2026-02-28': 'At Sea',
-      '2026-03-01': 'Singapore',
-      '2026-03-02': 'At Sea',
-      '2026-03-03': 'Ho Chi Minh City (Saigon), Vietnam',
-      '2026-03-04': 'Ho Chi Minh City (Saigon), Vietnam',
-      '2026-03-05': 'At Sea',
-      '2026-03-06': 'Da Nang (Hue), Vietnam',
-      '2026-03-07': 'At Sea',
-      '2026-03-08': 'Hong Kong',
-      '2026-03-09': 'Hong Kong',
-      '2026-03-10': 'At Sea',
-      '2026-03-11': 'Keelung, Taiwan',
-      '2026-03-12': 'At Sea',
-      '2026-03-13': 'At Sea',
-      '2026-03-14': 'Tokushima, Japan',
-      '2026-03-15': 'At Sea',
-      '2026-03-16': 'Tokyo, Japan',
-      '2026-03-17': 'At Sea',
-      '2026-03-18': 'Kobe, Japan',
-      '2026-03-19': 'At Sea',
-      '2026-03-20': 'Kagoshima, Japan',
-      '2026-03-21': 'Nagasaki, Japan',
-      '2026-03-22': 'Nagasaki, Japan',
-      '2026-03-23': 'Busan (Pusan), South Korea',
-      '2026-03-24': 'Shimonoeski, Japan',
-      '2026-03-25': 'Hiroshima, Japan',
-      '2026-03-26': 'Beppu, Japan',
-      '2026-03-27': 'Kochi, Japan',
-      '2026-03-28': 'At Sea',
-      '2026-03-29': 'Shimizu, Japan',
-      '2026-03-30': 'Yokohama, Japan'
-    };
-
-    const locationReference = {
-      'Piraeus (Athens), Greece': { lat: 37.9391, lng: 23.6463, descriptor: 'Docked in Piraeus, gateway to Athens.' },
-      'Gythion (Sparta & Mystras), Greece': { lat: 36.7595, lng: 22.5631 },
-      'Chania (Crete), Greece': { lat: 35.5138, lng: 24.0192 },
-      'Mykonos, Greece': { lat: 37.4467, lng: 25.3289 },
-      'Kusadasi (Ephesus), Turkey': { lat: 37.8618, lng: 27.2571 },
-      'Çesme, Turkey': { lat: 38.3233, lng: 26.3025 },
-      'At Sea': { descriptor: 'Kels is currently sailing the open ocean.', zoom: 4 },
-      'Istanbul, Turkey': { lat: 41.0082, lng: 28.9784 },
-      'Canakkale (Troy), Turkey': { lat: 40.1553, lng: 26.4142 },
-      'Izmir, Turkey': { lat: 38.4192, lng: 27.1287 },
-      'Pátmos, Greece': { lat: 37.3092, lng: 26.5469 },
-      'Rhodes, Greece': { lat: 36.434, lng: 28.2176 },
-      'Spétsai, Greece': { lat: 37.2458, lng: 23.1595 },
-      'Náfplio, Greece': { lat: 37.567, lng: 22.8015 },
-      'Katakolon (Olympia), Greece': { lat: 37.6459, lng: 21.3212 },
-      'Kérkira (Corfu), Greece': { lat: 39.6243, lng: 19.9217 },
-      'Kotor, Montenegro': { lat: 42.4247, lng: 18.7712 },
-      'Brindisi (Lecce), Italy': { lat: 40.6322, lng: 17.9417 },
-      'Lipari': { lat: 38.4723, lng: 14.9544 },
-      'Naples': { lat: 40.8518, lng: 14.2681 },
-      'Civitavecchia (Rome), Italy': { lat: 42.0939, lng: 11.7969 },
-      'Ajaccio': { lat: 41.9192, lng: 8.7386 },
-      'Alghero': { lat: 40.557, lng: 8.3197 },
-      'Mahón, Menorca': { lat: 39.8889, lng: 4.265 },
-      'Ibiza, Spain': { lat: 38.9067, lng: 1.4206 },
-      'Cartagena, Spain': { lat: 37.6257, lng: -0.9966 },
-      'Motril': { lat: 36.7507, lng: -3.517 },
-      'Ceuta': { lat: 35.8894, lng: -5.3213 },
-      'Lisbon, Portugal': { lat: 38.7223, lng: -9.1393 },
-      'Hamilton, Bermuda': { lat: 32.2948, lng: -64.7814 },
-      'Miami, FL': { lat: 25.7617, lng: -80.1918 },
-      'Kralendijk, Bonaire': { lat: 12.1444, lng: -68.2655 },
-      'Willemstad, Curacao': { lat: 12.1091, lng: -68.9317 },
-      'Cartagena, Colombia': { lat: 10.391, lng: -75.4794 },
-      'Transit the Panama Canal': { lat: 9.101, lng: -79.7, descriptor: 'Transiting the Panama Canal.', zoom: 8 },
-      'Fuerte Amador (Panama City), Panama': { lat: 8.9305, lng: -79.535 },
-      'Puntarenas, Costa Rica': { lat: 9.9778, lng: -84.8333 },
-      'Puerto Chiapas, Mexico': { lat: 14.69, lng: -92.421 },
-      'Puerto Vallarta, Mexico': { lat: 20.6534, lng: -105.2253 },
-      'Honolulu, HI': { lat: 21.3069, lng: -157.8583 },
-      'Nawiliwili, Kauai, HI': { lat: 21.9586, lng: -159.3502 },
-      'Cross the international date line': { lat: 15, lng: -179.5, descriptor: 'Crossing the International Date Line.', zoom: 4 },
-      'Tokyo, Japan': { lat: 35.6762, lng: 139.6503 },
-      'Osaka, Japan': { lat: 34.6937, lng: 135.5023 },
-      'Kochi, Japan': { lat: 33.5597, lng: 133.5311 },
-      'Keelung, Taiwan': { lat: 25.1283, lng: 121.7417 },
-      'Hong Kong': { lat: 22.3193, lng: 114.1694 },
-      'Halong Bay (Hanoi), Vietnam': { lat: 20.9101, lng: 107.1839 },
-      'Da Nang (Hue), Vietnam': { lat: 16.0544, lng: 108.2022 },
-      'Ho Chi Minh City (Saigon), Vietnam': { lat: 10.8231, lng: 106.6297 },
-      'Sihanoukville, Cambodia': { lat: 10.625, lng: 103.523 },
-      'Ko Kood, Thailand': { lat: 11.658, lng: 102.543 },
-      'Laem Chabang (Bangkok), Thailand': { lat: 13.0948, lng: 100.8838 },
-      'Singapore': { lat: 1.3521, lng: 103.8198 },
-      'Tokushima, Japan': { lat: 34.0703, lng: 134.554 },
-      'Kobe, Japan': { lat: 34.6901, lng: 135.1955 },
-      'Kagoshima, Japan': { lat: 31.5966, lng: 130.5571 },
-      'Nagasaki, Japan': { lat: 32.7503, lng: 129.8777 },
-      'Busan (Pusan), South Korea': { lat: 35.1796, lng: 129.0756 },
-      'Shimonoeski, Japan': { lat: 33.9578, lng: 130.9418 },
-      'Hiroshima, Japan': { lat: 34.3853, lng: 132.4553 },
-      'Beppu, Japan': { lat: 33.2846, lng: 131.4912 },
-      'Shimizu, Japan': { lat: 35.015, lng: 138.4895 },
-      'Yokohama, Japan': { lat: 35.4437, lng: 139.638 }
-    };
-
-    const itineraryEntries = Object.entries(staticItinerary)
-      .map(([date, label]) => ({ date, label }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-
-    const itineraryByDate = new Map(itineraryEntries.map(entry => [entry.date, entry]));
-
-    itineraryEntries.forEach((entry, index) => {
-      entry.index = index;
-    });
-
-    const map = L.map('map', {
-      zoomControl: false,
-      attributionControl: false
-    }).setView([0, 0], 2);
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(map);
-
-    const markerIcon = L.divIcon({
-      className: 'kels-pin',
-      html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 14px 30px rgba(0,113,227,0.32);font-size:26px;line-height:1;">🚢</div>`
-    });
-
-    let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
-    marker.bindTooltip("Kels' ship", { direction: 'top', offset: [0, -18] });
-
-    const locationStatusEl = document.getElementById('location-status');
-    const locationLabelEl = document.getElementById('location-label');
-    const tomorrowStatusEl = document.getElementById('tomorrow-status');
-    const shipStatusEl = document.getElementById('ship-status');
-
-    function resolveStatusState(text) {
-      if (!text) return 'unknown';
-      const normalized = text.toLowerCase();
-      if (normalized.includes('sea') || normalized.includes('route')) {
-        return 'sea';
+      .status strong {
+        font-size: 1.35rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
       }
-      if (normalized.includes('dock') || normalized.includes('port')) {
-        return 'docked';
+
+      #map {
+        width: 100%;
+        height: clamp(360px, 55vh, 520px);
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
       }
-      return 'unknown';
-    }
 
-    function setShipStatus(text, state = resolveStatusState(text)) {
-      shipStatusEl.textContent = text;
-      shipStatusEl.dataset.state = state;
-    }
-
-    function getLocalISO(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-
-    function hasCoords(info) {
-      return info && Number.isFinite(info.lat) && Number.isFinite(info.lng);
-    }
-
-    function interpolateLng(start, end, t) {
-      let diff = end - start;
-      if (Math.abs(diff) > 180) {
-        diff = diff > 0 ? diff - 360 : diff + 360;
+      footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.1rem;
+        flex-wrap: wrap;
       }
-      let value = start + diff * t;
-      if (value > 180) value -= 360;
-      if (value < -180) value += 360;
-      return value;
-    }
 
-    function findNeighborWithCoords(startIndex, direction) {
-      let index = startIndex + direction;
-      while (index >= 0 && index < itineraryEntries.length) {
-        const candidate = itineraryEntries[index];
-        const info = locationReference[candidate.label];
-        if (hasCoords(info)) {
-          return {
-            entry: candidate,
-            info,
-            coords: { lat: info.lat, lng: info.lng }
-          };
+      .sparkle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 214, 10, 0.9),
+          rgba(255, 149, 0, 0.7)
+        );
+        box-shadow: 0 0 20px rgba(255, 214, 10, 0.7);
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 2rem 1rem;
         }
-        index += direction;
+
+        .shell {
+          padding: 2rem;
+          gap: 1.75rem;
+        }
+
+        .status p {
+          font-size: 1.05rem;
+        }
       }
-      return null;
-    }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <h1>Where in the world is Kels?</h1>
+      </header>
 
-    function deriveStatusFromLabel(label) {
-      if (!label) return 'Status unknown';
-      const normalized = label.toLowerCase();
-      if (normalized.includes('sea') || normalized.includes('transit') || normalized.includes('cross')) {
-        return 'Somewhere at sea';
+      <section class="status" aria-live="polite">
+        <div class="sparkle" aria-hidden="true"></div>
+        <span
+          id="ship-status"
+          class="status-badge"
+          role="status"
+          data-state="unknown"
+          >Loading status...</span
+        >
+        <p id="location-status">Loading Kels' current adventure...</p>
+        <strong id="location-label"></strong>
+      </section>
+
+      <div
+        id="map"
+        role="img"
+        aria-label="Map showing Kels' current location"
+      ></div>
+
+      <footer>
+        <span>🏊‍♀️</span>
+        <span id="tomorrow-status">Loading tomorrow's plan...</span>
+      </footer>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script>
+      const staticItinerary = {
+        "2025-10-19": "Piraeus (Athens), Greece",
+        "2025-10-20": "Gythion (Sparta & Mystras), Greece",
+        "2025-10-21": "Chania (Crete), Greece",
+        "2025-10-22": "Mykonos, Greece",
+        "2025-10-23": "Kusadasi (Ephesus), Turkey",
+        "2025-10-24": "Çesme, Turkey",
+        "2025-10-25": "At Sea",
+        "2025-10-26": "Istanbul, Turkey",
+        "2025-10-27": "Canakkale (Troy), Turkey",
+        "2025-10-28": "Izmir, Turkey",
+        "2025-10-29": "Pátmos, Greece",
+        "2025-10-30": "Rhodes, Greece",
+        "2025-10-31": "At Sea",
+        "2025-11-01": "Spétsai, Greece",
+        "2025-11-02": "Piraeus (Athens), Greece",
+        "2025-11-03": "Náfplio, Greece",
+        "2025-11-04": "Katakolon (Olympia), Greece",
+        "2025-11-05": "Kérkira (Corfu), Greece",
+        "2025-11-06": "Kotor, Montenegro",
+        "2025-11-07": "Brindisi (Lecce), Italy",
+        "2025-11-08": "At Sea",
+        "2025-11-09": "Lipari",
+        "2025-11-10": "Naples",
+        "2025-11-11": "Civitavecchia (Rome), Italy",
+        "2025-11-12": "Ajaccio",
+        "2025-11-13": "Alghero",
+        "2025-11-14": "Mahón, Menorca",
+        "2025-11-15": "Ibiza, Spain",
+        "2025-11-16": "Cartagena, Spain",
+        "2025-11-17": "Motril",
+        "2025-11-18": "Ceuta",
+        "2025-11-19": "Lisbon, Portugal",
+        "2025-11-20": "At Sea",
+        "2025-11-21": "At Sea",
+        "2025-11-22": "At Sea",
+        "2025-11-23": "At Sea",
+        "2025-11-24": "At Sea",
+        "2025-11-25": "At Sea",
+        "2025-11-26": "At Sea",
+        "2025-11-27": "At Sea",
+        "2025-11-28": "Hamilton, Bermuda",
+        "2025-11-29": "Hamilton, Bermuda",
+        "2025-11-30": "At Sea",
+        "2025-12-01": "At Sea",
+        "2025-12-02": "Miami, FL",
+        "2025-12-03": "At Sea",
+        "2025-12-04": "At Sea",
+        "2025-12-05": "At Sea",
+        "2025-12-06": "Kralendijk, Bonaire",
+        "2025-12-07": "Willemstad, Curacao",
+        "2025-12-08": "At Sea",
+        "2025-12-09": "Cartagena, Colombia",
+        "2025-12-10": "At Sea",
+        "2025-12-11": "Transit the Panama Canal",
+        "2025-12-12": "Fuerte Amador (Panama City), Panama",
+        "2025-12-13": "At Sea",
+        "2025-12-14": "Puntarenas, Costa Rica",
+        "2025-12-15": "At Sea",
+        "2025-12-16": "Puerto Chiapas, Mexico",
+        "2025-12-17": "At Sea",
+        "2025-12-18": "At Sea",
+        "2025-12-19": "Puerto Vallarta, Mexico",
+        "2025-12-20": "At Sea",
+        "2025-12-21": "At Sea",
+        "2025-12-22": "At Sea",
+        "2025-12-23": "At Sea",
+        "2025-12-24": "At Sea",
+        "2025-12-25": "At Sea",
+        "2025-12-26": "At Sea",
+        "2025-12-27": "At Sea",
+        "2025-12-28": "Honolulu, HI",
+        "2025-12-29": "Honolulu, HI",
+        "2025-12-30": "Nawiliwili, Kauai, HI",
+        "2025-12-31": "At Sea",
+        "2026-01-01": "At Sea",
+        "2026-01-02": "At Sea",
+        "2026-01-03": "At Sea",
+        "2026-01-04": "At Sea",
+        "2026-01-05": "Cross the international date line",
+        "2026-01-06": "At Sea",
+        "2026-01-07": "At Sea",
+        "2026-01-08": "At Sea",
+        "2026-01-09": "At Sea",
+        "2026-01-10": "Tokyo, Japan",
+        "2026-01-11": "At Sea",
+        "2026-01-12": "Osaka, Japan",
+        "2026-01-13": "Kochi, Japan",
+        "2026-01-14": "At Sea",
+        "2026-01-15": "At Sea",
+        "2026-01-16": "Keelung, Taiwan",
+        "2026-01-17": "At Sea",
+        "2026-01-18": "Hong Kong",
+        "2026-01-19": "At Sea",
+        "2026-01-20": "Halong Bay (Hanoi), Vietnam",
+        "2026-01-21": "At Sea",
+        "2026-01-22": "Da Nang (Hue), Vietnam",
+        "2026-01-23": "At Sea",
+        "2026-01-24": "Ho Chi Minh City (Saigon), Vietnam",
+        "2026-01-25": "Ho Chi Minh City (Saigon), Vietnam",
+        "2026-01-26": "At Sea",
+        "2026-01-27": "Sihanoukville, Cambodia",
+        "2026-01-28": "Ko Kood, Thailand",
+        "2026-01-29": "Laem Chabang (Bangkok), Thailand",
+        "2026-01-30": "At Sea",
+        "2026-01-31": "At Sea",
+        "2026-02-01": "Singapore",
+        "2026-02-02": "At Sea",
+        "2026-02-03": "At Sea",
+        "2026-02-04": "Laem Chabang (Bangkok), Thailand",
+        "2026-02-05": "Ko Kood, Thailand",
+        "2026-02-06": "Sihanoukville, Cambodia",
+        "2026-02-07": "At Sea",
+        "2026-02-08": "Ho Chi Minh City (Saigon), Vietnam",
+        "2026-02-09": "Ho Chi Minh City (Saigon), Vietnam",
+        "2026-02-10": "At Sea",
+        "2026-02-11": "Da Nang (Hue), Vietnam",
+        "2026-02-12": "At Sea",
+        "2026-02-13": "Halong Bay (Hanoi), Vietnam",
+        "2026-02-14": "At Sea",
+        "2026-02-15": "Hong Kong",
+        "2026-02-16": "At Sea",
+        "2026-02-17": "Halong Bay (Hanoi), Vietnam",
+        "2026-02-18": "At Sea",
+        "2026-02-19": "Da Nang (Hue), Vietnam",
+        "2026-02-20": "At Sea",
+        "2026-02-21": "Ho Chi Minh City (Saigon), Vietnam",
+        "2026-02-22": "Ho Chi Minh City (Saigon), Vietnam",
+        "2026-02-23": "At Sea",
+        "2026-02-24": "Sihanoukville, Cambodia",
+        "2026-02-25": "Ko Kood, Thailand",
+        "2026-02-26": "Laem Chabang (Bangkok), Thailand",
+        "2026-02-27": "At Sea",
+        "2026-02-28": "At Sea",
+        "2026-03-01": "Singapore",
+        "2026-03-02": "At Sea",
+        "2026-03-03": "Ho Chi Minh City (Saigon), Vietnam",
+        "2026-03-04": "Ho Chi Minh City (Saigon), Vietnam",
+        "2026-03-05": "At Sea",
+        "2026-03-06": "Da Nang (Hue), Vietnam",
+        "2026-03-07": "At Sea",
+        "2026-03-08": "Hong Kong",
+        "2026-03-09": "Hong Kong",
+        "2026-03-10": "At Sea",
+        "2026-03-11": "Keelung, Taiwan",
+        "2026-03-12": "At Sea",
+        "2026-03-13": "At Sea",
+        "2026-03-14": "Tokushima, Japan",
+        "2026-03-15": "At Sea",
+        "2026-03-16": "Tokyo, Japan",
+        "2026-03-17": "At Sea",
+        "2026-03-18": "Kobe, Japan",
+        "2026-03-19": "At Sea",
+        "2026-03-20": "Kagoshima, Japan",
+        "2026-03-21": "Nagasaki, Japan",
+        "2026-03-22": "Nagasaki, Japan",
+        "2026-03-23": "Busan (Pusan), South Korea",
+        "2026-03-24": "Shimonoeski, Japan",
+        "2026-03-25": "Hiroshima, Japan",
+        "2026-03-26": "Beppu, Japan",
+        "2026-03-27": "Kochi, Japan",
+        "2026-03-28": "At Sea",
+        "2026-03-29": "Shimizu, Japan",
+        "2026-03-30": "Yokohama, Japan",
+      };
+
+      const locationReference = {
+        "Piraeus (Athens), Greece": {
+          lat: 37.9391,
+          lng: 23.6463,
+          descriptor: "Docked in Piraeus, gateway to Athens.",
+        },
+        "Gythion (Sparta & Mystras), Greece": { lat: 36.7595, lng: 22.5631 },
+        "Chania (Crete), Greece": { lat: 35.5138, lng: 24.0192 },
+        "Mykonos, Greece": { lat: 37.4467, lng: 25.3289 },
+        "Kusadasi (Ephesus), Turkey": { lat: 37.8618, lng: 27.2571 },
+        "Çesme, Turkey": { lat: 38.3233, lng: 26.3025 },
+        "At Sea": {
+          descriptor: "Kels is currently sailing the open ocean.",
+          zoom: 4,
+        },
+        "Istanbul, Turkey": { lat: 41.0082, lng: 28.9784 },
+        "Canakkale (Troy), Turkey": { lat: 40.1553, lng: 26.4142 },
+        "Izmir, Turkey": { lat: 38.4192, lng: 27.1287 },
+        "Pátmos, Greece": { lat: 37.3092, lng: 26.5469 },
+        "Rhodes, Greece": { lat: 36.434, lng: 28.2176 },
+        "Spétsai, Greece": { lat: 37.2458, lng: 23.1595 },
+        "Náfplio, Greece": { lat: 37.567, lng: 22.8015 },
+        "Katakolon (Olympia), Greece": { lat: 37.6459, lng: 21.3212 },
+        "Kérkira (Corfu), Greece": { lat: 39.6243, lng: 19.9217 },
+        "Kotor, Montenegro": { lat: 42.4247, lng: 18.7712 },
+        "Brindisi (Lecce), Italy": { lat: 40.6322, lng: 17.9417 },
+        Lipari: { lat: 38.4723, lng: 14.9544 },
+        Naples: { lat: 40.8518, lng: 14.2681 },
+        "Civitavecchia (Rome), Italy": { lat: 42.0939, lng: 11.7969 },
+        Ajaccio: { lat: 41.9192, lng: 8.7386 },
+        Alghero: { lat: 40.557, lng: 8.3197 },
+        "Mahón, Menorca": { lat: 39.8889, lng: 4.265 },
+        "Ibiza, Spain": { lat: 38.9067, lng: 1.4206 },
+        "Cartagena, Spain": { lat: 37.6257, lng: -0.9966 },
+        Motril: { lat: 36.7507, lng: -3.517 },
+        Ceuta: { lat: 35.8894, lng: -5.3213 },
+        "Lisbon, Portugal": { lat: 38.7223, lng: -9.1393 },
+        "Hamilton, Bermuda": { lat: 32.2948, lng: -64.7814 },
+        "Miami, FL": { lat: 25.7617, lng: -80.1918 },
+        "Kralendijk, Bonaire": { lat: 12.1444, lng: -68.2655 },
+        "Willemstad, Curacao": { lat: 12.1091, lng: -68.9317 },
+        "Cartagena, Colombia": { lat: 10.391, lng: -75.4794 },
+        "Transit the Panama Canal": {
+          lat: 9.101,
+          lng: -79.7,
+          descriptor: "Transiting the Panama Canal.",
+          zoom: 8,
+        },
+        "Fuerte Amador (Panama City), Panama": { lat: 8.9305, lng: -79.535 },
+        "Puntarenas, Costa Rica": { lat: 9.9778, lng: -84.8333 },
+        "Puerto Chiapas, Mexico": { lat: 14.69, lng: -92.421 },
+        "Puerto Vallarta, Mexico": { lat: 20.6534, lng: -105.2253 },
+        "Honolulu, HI": { lat: 21.3069, lng: -157.8583 },
+        "Nawiliwili, Kauai, HI": { lat: 21.9586, lng: -159.3502 },
+        "Cross the international date line": {
+          lat: 15,
+          lng: -179.5,
+          descriptor: "Crossing the International Date Line.",
+          zoom: 4,
+        },
+        "Tokyo, Japan": { lat: 35.6762, lng: 139.6503 },
+        "Osaka, Japan": { lat: 34.6937, lng: 135.5023 },
+        "Kochi, Japan": { lat: 33.5597, lng: 133.5311 },
+        "Keelung, Taiwan": { lat: 25.1283, lng: 121.7417 },
+        "Hong Kong": { lat: 22.3193, lng: 114.1694 },
+        "Halong Bay (Hanoi), Vietnam": { lat: 20.9101, lng: 107.1839 },
+        "Da Nang (Hue), Vietnam": { lat: 16.0544, lng: 108.2022 },
+        "Ho Chi Minh City (Saigon), Vietnam": { lat: 10.8231, lng: 106.6297 },
+        "Sihanoukville, Cambodia": { lat: 10.625, lng: 103.523 },
+        "Ko Kood, Thailand": { lat: 11.658, lng: 102.543 },
+        "Laem Chabang (Bangkok), Thailand": { lat: 13.0948, lng: 100.8838 },
+        Singapore: { lat: 1.3521, lng: 103.8198 },
+        "Tokushima, Japan": { lat: 34.0703, lng: 134.554 },
+        "Kobe, Japan": { lat: 34.6901, lng: 135.1955 },
+        "Kagoshima, Japan": { lat: 31.5966, lng: 130.5571 },
+        "Nagasaki, Japan": { lat: 32.7503, lng: 129.8777 },
+        "Busan (Pusan), South Korea": { lat: 35.1796, lng: 129.0756 },
+        "Shimonoeski, Japan": { lat: 33.9578, lng: 130.9418 },
+        "Hiroshima, Japan": { lat: 34.3853, lng: 132.4553 },
+        "Beppu, Japan": { lat: 33.2846, lng: 131.4912 },
+        "Shimizu, Japan": { lat: 35.015, lng: 138.4895 },
+        "Yokohama, Japan": { lat: 35.4437, lng: 139.638 },
+      };
+
+      const itineraryEntries = Object.entries(staticItinerary)
+        .map(([date, label]) => ({ date, label }))
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      const itineraryByDate = new Map(
+        itineraryEntries.map((entry) => [entry.date, entry])
+      );
+
+      itineraryEntries.forEach((entry, index) => {
+        entry.index = index;
+      });
+
+      const map = L.map("map", {
+        zoomControl: false,
+        attributionControl: false,
+      }).setView([0, 0], 2);
+
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        {
+          subdomains: "abcd",
+          maxZoom: 19,
+        }
+      ).addTo(map);
+
+      const markerIcon = L.divIcon({
+        className: "kels-pin",
+        html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 14px 30px rgba(0,113,227,0.32);font-size:26px;line-height:1;">🚢</div>`,
+      });
+
+      let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
+      marker.bindTooltip("Kels' ship", { direction: "top", offset: [0, -18] });
+
+      const locationStatusEl = document.getElementById("location-status");
+      const locationLabelEl = document.getElementById("location-label");
+      const tomorrowStatusEl = document.getElementById("tomorrow-status");
+      const shipStatusEl = document.getElementById("ship-status");
+
+      function resolveStatusState(text) {
+        if (!text) return "unknown";
+        const normalized = text.toLowerCase();
+        if (normalized.includes("sea") || normalized.includes("route")) {
+          return "sea";
+        }
+        if (normalized.includes("dock") || normalized.includes("port")) {
+          return "docked";
+        }
+        return "unknown";
       }
-      return 'Docked';
-    }
 
-    function determineStatusFromEntry(entry) {
-      if (!entry) {
-        return { label: 'Status unknown', state: 'unknown' };
+      function setShipStatus(text, state = resolveStatusState(text)) {
+        shipStatusEl.textContent = text;
+        shipStatusEl.dataset.state = state;
       }
-      const statusText = entry.status || deriveStatusFromLabel(entry.label);
-      return { label: statusText, state: resolveStatusState(statusText) };
-    }
 
-    function buildEntryData(entry) {
-      if (!entry) return null;
-      const info = locationReference[entry.label] || {};
-      let coords = hasCoords(info) ? { lat: info.lat, lng: info.lng } : null;
-      let descriptor = info.descriptor;
-      let displayLabel = info.displayLabel || entry.label;
-      let previousPort = null;
-      let nextPort = null;
-      let status = deriveStatusFromLabel(entry.label);
+      function getLocalISO(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
 
-      if (entry.label === 'At Sea') {
-        displayLabel = 'At sea';
-        const previous = findNeighborWithCoords(entry.index, -1);
-        const next = findNeighborWithCoords(entry.index, 1);
-        previousPort = previous ? previous.entry.label : null;
-        nextPort = next ? next.entry.label : null;
+      function hasCoords(info) {
+        return info && Number.isFinite(info.lat) && Number.isFinite(info.lng);
+      }
+
+      function interpolateLng(start, end, t) {
+        let diff = end - start;
+        if (Math.abs(diff) > 180) {
+          diff = diff > 0 ? diff - 360 : diff + 360;
+        }
+        let value = start + diff * t;
+        if (value > 180) value -= 360;
+        if (value < -180) value += 360;
+        return value;
+      }
+
+      function findNeighborWithCoords(startIndex, direction) {
+        let index = startIndex + direction;
+        while (index >= 0 && index < itineraryEntries.length) {
+          const candidate = itineraryEntries[index];
+          const info = locationReference[candidate.label];
+          if (hasCoords(info)) {
+            return {
+              entry: candidate,
+              info,
+              coords: { lat: info.lat, lng: info.lng },
+            };
+          }
+          index += direction;
+        }
+        return null;
+      }
+
+      function deriveStatusFromLabel(label) {
+        if (!label) return "Status unknown";
+        const normalized = label.toLowerCase();
+        if (
+          normalized.includes("sea") ||
+          normalized.includes("transit") ||
+          normalized.includes("cross")
+        ) {
+          return "Somewhere at sea";
+        }
+        return "Docked";
+      }
+
+      function determineStatusFromEntry(entry) {
+        if (!entry) {
+          return { label: "Status unknown", state: "unknown" };
+        }
+        const statusText = entry.status || deriveStatusFromLabel(entry.label);
+        return { label: statusText, state: resolveStatusState(statusText) };
+      }
+
+      function buildEntryData(entry) {
+        if (!entry) return null;
+        const info = locationReference[entry.label] || {};
+        let coords = hasCoords(info) ? { lat: info.lat, lng: info.lng } : null;
+        let descriptor = info.descriptor;
+        let displayLabel = info.displayLabel || entry.label;
+        let previousPort = null;
+        let nextPort = null;
+        let status = deriveStatusFromLabel(entry.label);
+
+        if (entry.label === "At Sea") {
+          displayLabel = "At sea";
+          const previous = findNeighborWithCoords(entry.index, -1);
+          const next = findNeighborWithCoords(entry.index, 1);
+          previousPort = previous ? previous.entry.label : null;
+          nextPort = next ? next.entry.label : null;
 
           if (!descriptor) {
             if (previous && next) {
@@ -556,7 +608,7 @@
             } else if (next) {
               descriptor = `Approaching ${next.entry.label}.`;
             } else {
-              descriptor = 'Kels is currently sailing the open ocean.';
+              descriptor = "Kels is currently sailing the open ocean.";
             }
           }
 
@@ -566,8 +618,10 @@
               const relative = entry.index - previous.entry.index;
               const t = totalSpan > 0 ? relative / totalSpan : 0;
               coords = {
-                lat: previous.coords.lat + (next.coords.lat - previous.coords.lat) * t,
-                lng: interpolateLng(previous.coords.lng, next.coords.lng, t)
+                lat:
+                  previous.coords.lat +
+                  (next.coords.lat - previous.coords.lat) * t,
+                lng: interpolateLng(previous.coords.lng, next.coords.lng, t),
               };
             } else if (previous) {
               coords = { ...previous.coords };
@@ -579,7 +633,12 @@
           descriptor = `Docked near ${displayLabel}.`;
         }
 
-        const zoom = typeof info.zoom === 'number' ? info.zoom : entry.label === 'At Sea' ? 4 : 6;
+        const zoom =
+          typeof info.zoom === "number"
+            ? info.zoom
+            : entry.label === "At Sea"
+            ? 4
+            : 6;
 
         return {
           date: entry.date,
@@ -590,286 +649,306 @@
           zoom,
           previousPort,
           nextPort,
-          status
+          status,
         };
       }
 
-    function getEntryForDate(date) {
-      const iso = getLocalISO(date);
-      let entry = itineraryByDate.get(iso);
-      if (!entry) {
-        let index = itineraryEntries.findIndex(item => item.date > iso);
-        if (index === -1) {
-          entry = itineraryEntries[itineraryEntries.length - 1];
-        } else if (index === 0) {
-          entry = itineraryEntries[0];
-        } else {
-          entry = itineraryEntries[index - 1];
+      function getEntryForDate(date) {
+        const iso = getLocalISO(date);
+        let entry = itineraryByDate.get(iso);
+        if (!entry) {
+          let index = itineraryEntries.findIndex((item) => item.date > iso);
+          if (index === -1) {
+            entry = itineraryEntries[itineraryEntries.length - 1];
+          } else if (index === 0) {
+            entry = itineraryEntries[0];
+          } else {
+            entry = itineraryEntries[index - 1];
+          }
+        }
+        return buildEntryData(entry);
+      }
+
+      function buildStatusText(entry) {
+        if (!entry) {
+          return "We could not determine the current itinerary position.";
+        }
+        if (entry.coords) {
+          const latStr = entry.coords.lat.toFixed(4);
+          const lngStr = entry.coords.lng.toFixed(4);
+          return `${entry.descriptor} (Lat: ${latStr}, Lon: ${lngStr})`;
+        }
+        return entry.descriptor || "Tracking the latest voyage update.";
+      }
+
+      function persistLastKnown(entry) {
+        if (!entry || !entry.coords) return;
+        try {
+          localStorage.setItem(
+            "kels-last-coords",
+            JSON.stringify({
+              lat: entry.coords.lat,
+              lng: entry.coords.lng,
+              label: entry.label,
+              descriptor: entry.descriptor,
+              status: entry.status || shipStatusEl.textContent || null,
+              storedAt: Date.now(),
+            })
+          );
+        } catch (error) {
+          console.warn("Unable to persist last known position", error);
         }
       }
-      return buildEntryData(entry);
-    }
 
-    function buildStatusText(entry) {
-      if (!entry) {
-        return 'We could not determine the current itinerary position.';
+      function readCachedLocation() {
+        try {
+          const cached = localStorage.getItem("kels-last-coords");
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            const lat = Number(parsed.lat);
+            const lng = Number(parsed.lng);
+            if (Number.isFinite(lat) && Number.isFinite(lng)) {
+              return {
+                lat,
+                lng,
+                label: parsed.label,
+                descriptor: parsed.descriptor,
+                status: parsed.status || null,
+                storedAt: parsed.storedAt,
+              };
+            }
+          }
+        } catch (error) {
+          console.warn("Failed to read cached coordinates", error);
+        }
+        return null;
       }
-      if (entry.coords) {
-        const latStr = entry.coords.lat.toFixed(4);
-        const lngStr = entry.coords.lng.toFixed(4);
-        return `${entry.descriptor} (Lat: ${latStr}, Lon: ${lngStr})`;
-      }
-      return entry.descriptor || 'Tracking the latest voyage update.';
-    }
 
-    function persistLastKnown(entry) {
-      if (!entry || !entry.coords) return;
-      try {
-        localStorage.setItem(
-          'kels-last-coords',
-          JSON.stringify({
-            lat: entry.coords.lat,
-            lng: entry.coords.lng,
-            label: entry.label,
-            descriptor: entry.descriptor,
-            status: entry.status || shipStatusEl.textContent || null,
-            storedAt: Date.now()
-          })
+      function setMapToEntry(entry, { animate = false } = {}) {
+        if (!entry || !entry.coords) return;
+        const view = [entry.coords.lat, entry.coords.lng];
+        const targetZoom = typeof entry.zoom === "number" ? entry.zoom : 6;
+        marker.setLatLng(view);
+        if (animate) {
+          map.flyTo(view, targetZoom, { duration: 1.2 });
+        } else {
+          map.setView(view, targetZoom);
+        }
+      }
+
+      function formatTomorrowStatus() {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const entry = getEntryForDate(tomorrow);
+        if (!entry) {
+          return "Tomorrow: Itinerary unavailable";
+        }
+        if (entry.rawLabel === "At Sea") {
+          if (entry.previousPort && entry.nextPort) {
+            return `Tomorrow: At sea between ${entry.previousPort} and ${entry.nextPort}`;
+          }
+          return "Tomorrow: At sea";
+        }
+        return `Tomorrow: ${entry.label}`;
+      }
+
+      async function fetchLiveShipPosition() {
+        const proxyUrl =
+          "https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1094";
+        const response = await fetch(proxyUrl, {
+          headers: {
+            Accept: "text/plain",
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Unexpected response status: ${response.status}`);
+        }
+
+        const rawText = await response.text();
+        const condensed = rawText.replace(/\s+/g, " ");
+        const sentenceMatch = condensed.match(
+          /Seabourn Encore current position is[^.]+/i
         );
-      } catch (error) {
-        console.warn('Unable to persist last known position', error);
-      }
-    }
+        if (!sentenceMatch) {
+          return null;
+        }
 
-    function readCachedLocation() {
-      try {
-        const cached = localStorage.getItem('kels-last-coords');
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          const lat = Number(parsed.lat);
-          const lng = Number(parsed.lng);
-          if (Number.isFinite(lat) && Number.isFinite(lng)) {
-            return {
-              lat,
-              lng,
-              label: parsed.label,
-              descriptor: parsed.descriptor,
-              status: parsed.status || null,
-              storedAt: parsed.storedAt
+        const sentence = sentenceMatch[0].trim();
+        const coordsRegex =
+          /coordinates\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
+        const coordsMatch = coordsRegex.exec(sentence);
+        if (!coordsMatch) {
+          return null;
+        }
+
+        const rawLat = parseFloat(coordsMatch[1]);
+        const rawLng = parseFloat(coordsMatch[3]);
+        if (!Number.isFinite(rawLat) || !Number.isFinite(rawLng)) {
+          return null;
+        }
+
+        const latitude =
+          coordsMatch[2].toUpperCase() === "S" ? rawLat * -1 : rawLat;
+        const longitude =
+          coordsMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
+        const remainder = sentence.slice(
+          coordsMatch.index + coordsMatch[0].length
+        );
+
+        let destination = null;
+        let isAtSea = false;
+
+        // Only check for "en route to" in the sentence - this is the reliable indicator
+        const routeMatch = remainder.match(/en route to\s*([^.,;]+)/i);
+        if (routeMatch) {
+          destination = routeMatch[1].trim();
+          isAtSea = true;
+        }
+
+        let port = null;
+        // Only check for port in the sentence context (not entire page) and only if not at sea
+        if (!isAtSea) {
+          const portMatch = sentence.match(
+            /currently at(?: the)? port of\s*([^.<]+)/i
+          );
+          if (portMatch) {
+            port = portMatch[1].replace(/\s+/g, " ").trim();
+          }
+        }
+
+        return {
+          coords: { lat: latitude, lng: longitude },
+          destination,
+          port,
+          isAtSea,
+          summary: sentence,
+        };
+      }
+
+      async function updateLivePosition(todayEntry) {
+        try {
+          const live = await fetchLiveShipPosition();
+          if (!live) {
+            return;
+          }
+
+          const statusLabel = live.isAtSea ? "Somewhere at sea" : "Docked";
+          const statusState = live.isAtSea ? "sea" : "docked";
+          setShipStatus(statusLabel, statusState);
+
+          let labelText = "Live coordinates";
+          if (live.isAtSea) {
+            if (live.destination) {
+              labelText = `En route to ${live.destination}`;
+            } else if (todayEntry && todayEntry.nextPort) {
+              labelText = `En route to ${todayEntry.nextPort}`;
+            } else {
+              labelText = "Sailing the open ocean";
+            }
+          } else if (live.port) {
+            labelText = `Docked at ${live.port}`;
+          } else if (live.destination) {
+            labelText = live.destination;
+          }
+
+          locationLabelEl.textContent = labelText;
+
+          if (live.coords) {
+            const latStr = live.coords.lat.toFixed(4);
+            const lngStr = live.coords.lng.toFixed(4);
+            let detail;
+            if (live.isAtSea) {
+              if (live.destination) {
+                detail = `Currently sailing en route to ${live.destination}.`;
+              } else if (todayEntry && todayEntry.nextPort) {
+                detail = `Currently sailing toward ${todayEntry.nextPort}.`;
+              } else {
+                detail = "Currently sailing the open ocean.";
+              }
+            } else if (live.port) {
+              detail = `Currently alongside ${live.port}.`;
+            } else {
+              detail = "Latest live coordinates received.";
+            }
+
+            locationStatusEl.textContent = `Live update: ${detail} (Lat: ${latStr}, Lon: ${lngStr}).`;
+            setMapToEntry(
+              { coords: live.coords, zoom: live.isAtSea ? 6 : 8 },
+              { animate: true }
+            );
+            persistLastKnown({
+              coords: live.coords,
+              label: labelText,
+              descriptor: locationStatusEl.textContent,
+              status: statusLabel,
+            });
+          } else if (live.summary) {
+            locationStatusEl.textContent = `Live update: ${live.summary}`;
+          }
+        } catch (error) {
+          console.warn("Unable to fetch live ship data", error);
+        }
+      }
+
+      function init() {
+        const todayEntry = getEntryForDate(new Date());
+        const cached = readCachedLocation();
+
+        let statusText =
+          "We could not determine the current itinerary position.";
+        let labelText = "Status unknown";
+        let statusInfo = { label: "Status unknown", state: "unknown" };
+
+        if (todayEntry) {
+          labelText = todayEntry.label;
+          statusInfo = determineStatusFromEntry(todayEntry);
+          if (todayEntry.coords) {
+            setMapToEntry(todayEntry, { animate: true });
+            statusText = buildStatusText(todayEntry);
+            persistLastKnown(todayEntry);
+          } else if (cached) {
+            setMapToEntry({
+              coords: { lat: cached.lat, lng: cached.lng },
+              zoom: todayEntry.zoom,
+            });
+            statusText = `${
+              todayEntry.descriptor || "Showing cached location."
+            } (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
+            if (cached.status) {
+              statusInfo = {
+                label: cached.status,
+                state: resolveStatusState(cached.status),
+              };
+            }
+          } else {
+            statusText = todayEntry.descriptor || statusText;
+          }
+        } else if (cached) {
+          setMapToEntry({
+            coords: { lat: cached.lat, lng: cached.lng },
+            zoom: 5,
+          });
+          labelText = cached.label || "Cached coordinates";
+          statusText = `${
+            cached.descriptor || "Showing cached location."
+          } (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
+          if (cached.status) {
+            statusInfo = {
+              label: cached.status,
+              state: resolveStatusState(cached.status),
             };
           }
         }
-      } catch (error) {
-        console.warn('Failed to read cached coordinates', error);
-      }
-      return null;
-    }
 
-    function setMapToEntry(entry, { animate = false } = {}) {
-      if (!entry || !entry.coords) return;
-      const view = [entry.coords.lat, entry.coords.lng];
-      const targetZoom = typeof entry.zoom === 'number' ? entry.zoom : 6;
-      marker.setLatLng(view);
-      if (animate) {
-        map.flyTo(view, targetZoom, { duration: 1.2 });
-      } else {
-        map.setView(view, targetZoom);
-      }
-    }
-
-    function formatTomorrowStatus() {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const entry = getEntryForDate(tomorrow);
-      if (!entry) {
-        return 'Tomorrow: Itinerary unavailable';
-      }
-      if (entry.rawLabel === 'At Sea') {
-        if (entry.previousPort && entry.nextPort) {
-          return `Tomorrow: At sea between ${entry.previousPort} and ${entry.nextPort}`;
-        }
-        return 'Tomorrow: At sea';
-      }
-      return `Tomorrow: ${entry.label}`;
-    }
-
-    async function fetchLiveShipPosition() {
-      const proxyUrl = 'https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1094';
-      const response = await fetch(proxyUrl, {
-        headers: {
-          Accept: 'text/plain'
-        }
-      });
-      if (!response.ok) {
-        throw new Error(`Unexpected response status: ${response.status}`);
-      }
-
-      const rawText = await response.text();
-      const condensed = rawText.replace(/\s+/g, ' ');
-      const sentenceMatch = condensed.match(/Seabourn Encore current position is[^.]+/i);
-      if (!sentenceMatch) {
-        return null;
-      }
-
-      const sentence = sentenceMatch[0].trim();
-      const coordsRegex = /coordinates\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
-      const coordsMatch = coordsRegex.exec(sentence);
-      if (!coordsMatch) {
-        return null;
-      }
-
-      const rawLat = parseFloat(coordsMatch[1]);
-      const rawLng = parseFloat(coordsMatch[3]);
-      if (!Number.isFinite(rawLat) || !Number.isFinite(rawLng)) {
-        return null;
-      }
-
-      const latitude = coordsMatch[2].toUpperCase() === 'S' ? rawLat * -1 : rawLat;
-      const longitude = coordsMatch[4].toUpperCase() === 'W' ? rawLng * -1 : rawLng;
-      const remainder = sentence.slice(coordsMatch.index + coordsMatch[0].length);
-
-      let destination = null;
-      let isAtSea = false;
-      let port = null;
-      
-      // Check for "at sea" indicators in the sentence (more reliable than port check)
-      const atSeaPatterns = [
-        /en route to\s*([^.,;]+)/i,
-        /sailing/i,
-        /\bat sea\b/i,
-        /cruising/i
-      ];
-      
-      for (const pattern of atSeaPatterns) {
-        const match = remainder.match(pattern);
-        if (match) {
-          isAtSea = true;
-          if (match[1]) destination = match[1].trim();
-          break;
-        }
-      }
-      
-      // Only check for port in the sentence context (not entire page) and only if not at sea
-      if (!isAtSea) {
-        const portMatch = sentence.match(/currently at(?: the)? port of\s*([^.<]+)/i);
-        if (portMatch) {
-          port = portMatch[1].replace(/\s+/g, ' ').trim();
-        }
-      }
-
-      return {
-        coords: { lat: latitude, lng: longitude },
-        destination,
-        port,
-        isAtSea,
-        summary: sentence
-      };
-    }
-
-    async function updateLivePosition(todayEntry) {
-      try {
-        const live = await fetchLiveShipPosition();
-        if (!live) {
-          return;
-        }
-
-        const statusLabel = live.isAtSea ? 'Somewhere at sea' : 'Docked';
-        const statusState = live.isAtSea ? 'sea' : 'docked';
-        setShipStatus(statusLabel, statusState);
-
-        let labelText = 'Live coordinates';
-        if (live.isAtSea) {
-          if (live.destination) {
-            labelText = `En route to ${live.destination}`;
-          } else if (todayEntry && todayEntry.nextPort) {
-            labelText = `En route to ${todayEntry.nextPort}`;
-          } else {
-            labelText = 'Sailing the open ocean';
-          }
-        } else if (live.port) {
-          labelText = `Docked at ${live.port}`;
-        } else if (live.destination) {
-          labelText = live.destination;
-        }
-
+        locationStatusEl.textContent = statusText;
         locationLabelEl.textContent = labelText;
+        setShipStatus(statusInfo.label, statusInfo.state);
+        tomorrowStatusEl.textContent = formatTomorrowStatus();
 
-        if (live.coords) {
-          const latStr = live.coords.lat.toFixed(4);
-          const lngStr = live.coords.lng.toFixed(4);
-          let detail;
-          if (live.isAtSea) {
-            if (live.destination) {
-              detail = `Currently sailing en route to ${live.destination}.`;
-            } else if (todayEntry && todayEntry.nextPort) {
-              detail = `Currently sailing toward ${todayEntry.nextPort}.`;
-            } else {
-              detail = 'Currently sailing the open ocean.';
-            }
-          } else if (live.port) {
-            detail = `Currently alongside ${live.port}.`;
-          } else {
-            detail = 'Latest live coordinates received.';
-          }
-
-          locationStatusEl.textContent = `Live update: ${detail} (Lat: ${latStr}, Lon: ${lngStr}).`;
-          setMapToEntry({ coords: live.coords, zoom: live.isAtSea ? 6 : 8 }, { animate: true });
-          persistLastKnown({
-            coords: live.coords,
-            label: labelText,
-            descriptor: locationStatusEl.textContent,
-            status: statusLabel
-          });
-        } else if (live.summary) {
-          locationStatusEl.textContent = `Live update: ${live.summary}`;
-        }
-      } catch (error) {
-        console.warn('Unable to fetch live ship data', error);
-      }
-    }
-
-    function init() {
-      const todayEntry = getEntryForDate(new Date());
-      const cached = readCachedLocation();
-
-      let statusText = 'We could not determine the current itinerary position.';
-      let labelText = 'Status unknown';
-      let statusInfo = { label: 'Status unknown', state: 'unknown' };
-
-      if (todayEntry) {
-        labelText = todayEntry.label;
-        statusInfo = determineStatusFromEntry(todayEntry);
-        if (todayEntry.coords) {
-          setMapToEntry(todayEntry, { animate: true });
-          statusText = buildStatusText(todayEntry);
-          persistLastKnown(todayEntry);
-        } else if (cached) {
-          setMapToEntry({ coords: { lat: cached.lat, lng: cached.lng }, zoom: todayEntry.zoom });
-          statusText = `${todayEntry.descriptor || 'Showing cached location.'} (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
-          if (cached.status) {
-            statusInfo = { label: cached.status, state: resolveStatusState(cached.status) };
-          }
-        } else {
-          statusText = todayEntry.descriptor || statusText;
-        }
-      } else if (cached) {
-        setMapToEntry({ coords: { lat: cached.lat, lng: cached.lng }, zoom: 5 });
-        labelText = cached.label || 'Cached coordinates';
-        statusText = `${cached.descriptor || 'Showing cached location.'} (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
-        if (cached.status) {
-          statusInfo = { label: cached.status, state: resolveStatusState(cached.status) };
-        }
+        updateLivePosition(todayEntry);
       }
 
-      locationStatusEl.textContent = statusText;
-      locationLabelEl.textContent = labelText;
-      setShipStatus(statusInfo.label, statusInfo.state);
-      tomorrowStatusEl.textContent = formatTomorrowStatus();
-
-      updateLivePosition(todayEntry);
-    }
-
-    init();
-  </script>
-</body>
+      init();
+    </script>
+  </body>
 </html>
