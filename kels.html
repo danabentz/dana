@@ -156,13 +156,176 @@
   <script>
     const proxySources = [
       'https://r.jina.ai/https://www.cruisemapper.com/?imo=9731171',
-      'https://cors.isomorphic-git.org/https://www.cruisemapper.com/?imo=9731171'
+      'https://r.jina.ai/http://www.cruisemapper.com/?imo=9731171',
+      'https://cors.isomorphic-git.org/https://www.cruisemapper.com/?imo=9731171',
+      'https://r.jina.ai/https://cors.isomorphic-git.org/https://www.cruisemapper.com/?imo=9731171'
     ];
 
-    const itinerarySources = [
-      'https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1072?tab=itinerary',
-      'https://cors.isomorphic-git.org/https://www.cruisemapper.com/ships/Seabourn-Encore-1072?tab=itinerary'
-    ];
+    const staticItinerary = {
+      '2025-10-19': 'Piraeus (Athens), Greece',
+      '2025-10-20': 'Gythion (Sparta & Mystras), Greece',
+      '2025-10-21': 'Chania (Crete), Greece',
+      '2025-10-22': 'Mykonos, Greece',
+      '2025-10-23': 'Kusadasi (Ephesus), Turkey',
+      '2025-10-24': 'Çesme, Turkey',
+      '2025-10-25': 'At Sea',
+      '2025-10-26': 'Istanbul, Turkey',
+      '2025-10-27': 'Canakkale (Troy), Turkey',
+      '2025-10-28': 'Izmir, Turkey',
+      '2025-10-29': 'Pátmos, Greece',
+      '2025-10-30': 'Rhodes, Greece',
+      '2025-10-31': 'At Sea',
+      '2025-11-01': 'Spétsai, Greece',
+      '2025-11-02': 'Piraeus (Athens), Greece',
+      '2025-11-03': 'Náfplio, Greece',
+      '2025-11-04': 'Katakolon (Olympia), Greece',
+      '2025-11-05': 'Kérkira (Corfu), Greece',
+      '2025-11-06': 'Kotor, Montenegro',
+      '2025-11-07': 'Brindisi (Lecce), Italy',
+      '2025-11-08': 'At Sea',
+      '2025-11-09': 'Lipari',
+      '2025-11-10': 'Naples',
+      '2025-11-11': 'Civitavecchia (Rome), Italy',
+      '2025-11-12': 'Ajaccio',
+      '2025-11-13': 'Alghero',
+      '2025-11-14': 'Mahón, Menorca',
+      '2025-11-15': 'Ibiza, Spain',
+      '2025-11-16': 'Cartagena, Spain',
+      '2025-11-17': 'Motril',
+      '2025-11-18': 'Ceuta',
+      '2025-11-19': 'Lisbon, Portugal',
+      '2025-11-20': 'At Sea',
+      '2025-11-21': 'At Sea',
+      '2025-11-22': 'At Sea',
+      '2025-11-23': 'At Sea',
+      '2025-11-24': 'At Sea',
+      '2025-11-25': 'At Sea',
+      '2025-11-26': 'At Sea',
+      '2025-11-27': 'At Sea',
+      '2025-11-28': 'Hamilton, Bermuda',
+      '2025-11-29': 'Hamilton, Bermuda',
+      '2025-11-30': 'At Sea',
+      '2025-12-01': 'At Sea',
+      '2025-12-02': 'Miami, FL',
+      '2025-12-03': 'At Sea',
+      '2025-12-04': 'At Sea',
+      '2025-12-05': 'At Sea',
+      '2025-12-06': 'Kralendijk, Bonaire',
+      '2025-12-07': 'Willemstad, Curacao',
+      '2025-12-08': 'At Sea',
+      '2025-12-09': 'Cartagena, Colombia',
+      '2025-12-10': 'At Sea',
+      '2025-12-11': 'Transit the Panama Canal',
+      '2025-12-12': 'Fuerte Amador (Panama City), Panama',
+      '2025-12-13': 'At Sea',
+      '2025-12-14': 'Puntarenas, Costa Rica',
+      '2025-12-15': 'At Sea',
+      '2025-12-16': 'Puerto Chiapas, Mexico',
+      '2025-12-17': 'At Sea',
+      '2025-12-18': 'At Sea',
+      '2025-12-19': 'Puerto Vallarta, Mexico',
+      '2025-12-20': 'At Sea',
+      '2025-12-21': 'At Sea',
+      '2025-12-22': 'At Sea',
+      '2025-12-23': 'At Sea',
+      '2025-12-24': 'At Sea',
+      '2025-12-25': 'At Sea',
+      '2025-12-26': 'At Sea',
+      '2025-12-27': 'At Sea',
+      '2025-12-28': 'Honolulu, HI',
+      '2025-12-29': 'Honolulu, HI',
+      '2025-12-30': 'Nawiliwili, Kauai, HI',
+      '2025-12-31': 'At Sea',
+      '2026-01-01': 'At Sea',
+      '2026-01-02': 'At Sea',
+      '2026-01-03': 'At Sea',
+      '2026-01-04': 'At Sea',
+      '2026-01-05': 'Cross the international date line',
+      '2026-01-06': 'At Sea',
+      '2026-01-07': 'At Sea',
+      '2026-01-08': 'At Sea',
+      '2026-01-09': 'At Sea',
+      '2026-01-10': 'Tokyo, Japan',
+      '2026-01-11': 'At Sea',
+      '2026-01-12': 'Osaka, Japan',
+      '2026-01-13': 'Kochi, Japan',
+      '2026-01-14': 'At Sea',
+      '2026-01-15': 'At Sea',
+      '2026-01-16': 'Keelung, Taiwan',
+      '2026-01-17': 'At Sea',
+      '2026-01-18': 'Hong Kong',
+      '2026-01-19': 'At Sea',
+      '2026-01-20': 'Halong Bay (Hanoi), Vietnam',
+      '2026-01-21': 'At Sea',
+      '2026-01-22': 'Da Nang (Hue), Vietnam',
+      '2026-01-23': 'At Sea',
+      '2026-01-24': 'Ho Chi Minh City (Saigon), Vietnam',
+      '2026-01-25': 'Ho Chi Minh City (Saigon), Vietnam',
+      '2026-01-26': 'At Sea',
+      '2026-01-27': 'Sihanoukville, Cambodia',
+      '2026-01-28': 'Ko Kood, Thailand',
+      '2026-01-29': 'Laem Chabang (Bangkok), Thailand',
+      '2026-01-30': 'At Sea',
+      '2026-01-31': 'At Sea',
+      '2026-02-01': 'Singapore',
+      '2026-02-02': 'At Sea',
+      '2026-02-03': 'At Sea',
+      '2026-02-04': 'Laem Chabang (Bangkok), Thailand',
+      '2026-02-05': 'Ko Kood, Thailand',
+      '2026-02-06': 'Sihanoukville, Cambodia',
+      '2026-02-07': 'At Sea',
+      '2026-02-08': 'Ho Chi Minh City (Saigon), Vietnam',
+      '2026-02-09': 'Ho Chi Minh City (Saigon), Vietnam',
+      '2026-02-10': 'At Sea',
+      '2026-02-11': 'Da Nang (Hue), Vietnam',
+      '2026-02-12': 'At Sea',
+      '2026-02-13': 'Halong Bay (Hanoi), Vietnam',
+      '2026-02-14': 'At Sea',
+      '2026-02-15': 'Hong Kong',
+      '2026-02-16': 'At Sea',
+      '2026-02-17': 'Halong Bay (Hanoi), Vietnam',
+      '2026-02-18': 'At Sea',
+      '2026-02-19': 'Da Nang (Hue), Vietnam',
+      '2026-02-20': 'At Sea',
+      '2026-02-21': 'Ho Chi Minh City (Saigon), Vietnam',
+      '2026-02-22': 'Ho Chi Minh City (Saigon), Vietnam',
+      '2026-02-23': 'At Sea',
+      '2026-02-24': 'Sihanoukville, Cambodia',
+      '2026-02-25': 'Ko Kood, Thailand',
+      '2026-02-26': 'Laem Chabang (Bangkok), Thailand',
+      '2026-02-27': 'At Sea',
+      '2026-02-28': 'At Sea',
+      '2026-03-01': 'Singapore',
+      '2026-03-02': 'At Sea',
+      '2026-03-03': 'Ho Chi Minh City (Saigon), Vietnam',
+      '2026-03-04': 'Ho Chi Minh City (Saigon), Vietnam',
+      '2026-03-05': 'At Sea',
+      '2026-03-06': 'Da Nang (Hue), Vietnam',
+      '2026-03-07': 'At Sea',
+      '2026-03-08': 'Hong Kong',
+      '2026-03-09': 'Hong Kong',
+      '2026-03-10': 'At Sea',
+      '2026-03-11': 'Keelung, Taiwan',
+      '2026-03-12': 'At Sea',
+      '2026-03-13': 'At Sea',
+      '2026-03-14': 'Tokushima, Japan',
+      '2026-03-15': 'At Sea',
+      '2026-03-16': 'Tokyo, Japan',
+      '2026-03-17': 'At Sea',
+      '2026-03-18': 'Kobe, Japan',
+      '2026-03-19': 'At Sea',
+      '2026-03-20': 'Kagoshima, Japan',
+      '2026-03-21': 'Nagasaki, Japan',
+      '2026-03-22': 'Nagasaki, Japan',
+      '2026-03-23': 'Busan (Pusan), South Korea',
+      '2026-03-24': 'Shimonoeski, Japan',
+      '2026-03-25': 'Hiroshima, Japan',
+      '2026-03-26': 'Beppu, Japan',
+      '2026-03-27': 'Kochi, Japan',
+      '2026-03-28': 'At Sea',
+      '2026-03-29': 'Shimizu, Japan',
+      '2026-03-30': 'Yokohama, Japan'
+    };
 
     const map = L.map('map', {
       zoomControl: false,
@@ -209,22 +372,73 @@
     }
 
     function extractCoordinates(html) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      const coordinateSelectors = [
+        '[data-lat][data-lon]',
+        '[data-latitude][data-longitude]',
+        'meta[property="place:location:latitude"]',
+        'meta[property="place:location:longitude"]',
+        'meta[name="og:latitude"]',
+        'meta[name="og:longitude"]',
+        '.ship-position__coordinates',
+        '.ship-position [data-lat]'
+      ];
+
+      for (const selector of coordinateSelectors) {
+        const el = doc.querySelector(selector);
+        if (!el) continue;
+
+        if (el.tagName === 'META') {
+          const latMeta = doc.querySelector('meta[property="place:location:latitude"], meta[name="og:latitude"]');
+          const lonMeta = doc.querySelector('meta[property="place:location:longitude"], meta[name="og:longitude"]');
+          if (latMeta && lonMeta) {
+            const lat = parseFloat(latMeta.getAttribute('content'));
+            const lon = parseFloat(lonMeta.getAttribute('content'));
+            if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
+              return { lat, lon, lng: lon };
+            }
+          }
+        }
+
+        if (el.dataset && (el.dataset.lat || el.dataset.latitude)) {
+          const lat = parseFloat(el.dataset.lat || el.dataset.latitude);
+          const lon = parseFloat(el.dataset.lon || el.dataset.longitude);
+          if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
+            return { lat, lon, lng: lon };
+          }
+        }
+
+        const text = el.textContent || '';
+        const pairMatch = text.match(/(-?\d+(?:\.\d+)?)[^\d-]+(-?\d+(?:\.\d+)?)/);
+        if (pairMatch) {
+          const lat = parseFloat(pairMatch[1]);
+          const lon = parseFloat(pairMatch[2]);
+          if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
+            return { lat, lon, lng: lon };
+          }
+        }
+      }
+
       const patterns = [
         /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?lon"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
+        /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?lng"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
         /"latitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"longitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
-        /data-lat="(-?\d+(?:\.\d+)?)"[^>]+data-lon[g]?="(-?\d+(?:\.\d+)?)"/i,
-        /Lat(?:itude)?\s*[:=]\s*(-?\d+(?:\.\d+)?)[^\d-]+Lon(?:gitude)?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i
+        /'lat'\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*'?lon'?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
+        /Lat(?:itude)?[^-\d]*(\-?\d+(?:\.\d+)?)[^\d-]+Lon(?:gitude)?[^-\d]*(\-?\d+(?:\.\d+)?)/i
       ];
       for (const regex of patterns) {
         const match = regex.exec(html);
         if (match) {
-          return {
-            lat: parseFloat(match[1]),
-            lon: parseFloat(match[2]),
-            lng: parseFloat(match[2])
-          };
+          const lat = parseFloat(match[1]);
+          const lon = parseFloat(match[2]);
+          if (!Number.isNaN(lat) && !Number.isNaN(lon)) {
+            return { lat, lon, lng: lon };
+          }
         }
       }
+
       return null;
     }
 
@@ -279,67 +493,32 @@
       return { label: 'Status unknown', descriptor: 'We could not read the latest port information.' };
     }
 
-    function formatTomorrow(itineraryText) {
-      try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(itineraryText, 'text/html');
-        const rows = Array.from(doc.querySelectorAll('table tr'));
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
+    function formatTomorrowFromStatic() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
 
-        const isSameDay = (dateObj, target) => {
-          return (
-            dateObj.getFullYear() === target.getFullYear() &&
-            dateObj.getMonth() === target.getMonth() &&
-            dateObj.getDate() === target.getDate()
-          );
-        };
+      const isoDate = tomorrow.toISOString().slice(0, 10);
+      const destination = staticItinerary[isoDate];
 
-        for (const row of rows) {
-          const cells = Array.from(row.querySelectorAll('td'));
-          if (cells.length < 2) continue;
-          const dateText = cells[0].textContent.trim();
-          if (!dateText) continue;
-
-          let parsedDate = null;
-          // Try ISO or long-form dates
-          const isoMatch = dateText.match(/(\d{4}-\d{2}-\d{2})/);
-          if (isoMatch) {
-            parsedDate = new Date(isoMatch[1] + 'T00:00:00Z');
-          } else {
-            const alt = dateText.replace(/(st|nd|rd|th)/gi, '');
-            parsedDate = new Date(`${alt} UTC`);
-          }
-
-          if (parsedDate && !isNaN(parsedDate)) {
-            if (isSameDay(parsedDate, tomorrow)) {
-              const port = cells[1].textContent.trim();
-              const note = cells[2] ? cells[2].textContent.trim() : '';
-              const normalizedPort = port || note || 'At sea';
-              if (/at sea/i.test(`${port} ${note}`)) {
-                return 'Tomorrow: At sea';
-              }
-              return `Tomorrow: ${normalizedPort}`;
-            }
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to parse itinerary', error);
+      if (!destination) {
+        return 'Tomorrow: Itinerary unavailable';
       }
-      return 'Tomorrow: Itinerary unavailable';
+
+      if (/at sea/i.test(destination)) {
+        return 'Tomorrow: At sea';
+      }
+
+      return `Tomorrow: ${destination}`;
     }
 
     async function init() {
       try {
-        const [positionHtml, itineraryHtml] = await Promise.all([
-          fetchViaProxies(proxySources),
-          fetchViaProxies(itinerarySources)
-        ]);
+        const positionHtml = await fetchViaProxies(proxySources);
 
         const coords = extractCoordinates(positionHtml);
         const locationDetails = extractLocationLabel(positionHtml);
-        const tomorrowText = formatTomorrow(itineraryHtml);
+        const tomorrowText = formatTomorrowFromStatic();
 
         if (coords) {
           marker.setLatLng([coords.lat, coords.lon || coords.lng]);
@@ -355,7 +534,7 @@
         console.error(error);
         locationStatusEl.textContent = 'We could not reach the cruise tracker right now.';
         locationLabelEl.textContent = 'Status unavailable';
-        tomorrowStatusEl.textContent = 'Tomorrow: Data unavailable';
+        tomorrowStatusEl.textContent = formatTomorrowFromStatic();
       }
     }
 
