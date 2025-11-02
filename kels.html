@@ -730,16 +730,31 @@
 
       let destination = null;
       let isAtSea = false;
-      const routeMatch = remainder.match(/en route to\s*([^.,;]+)/i);
-      if (routeMatch) {
-        destination = routeMatch[1].trim();
-        isAtSea = true;
-      }
-
       let port = null;
-      const portMatch = rawText.match(/currently at(?: the)? port of\s*([^.<]+)/i);
-      if (portMatch) {
-        port = portMatch[1].replace(/\s+/g, ' ').trim();
+      
+      // Check for "at sea" indicators in the sentence (more reliable than port check)
+      const atSeaPatterns = [
+        /en route to\s*([^.,;]+)/i,
+        /sailing/i,
+        /\bat sea\b/i,
+        /cruising/i
+      ];
+      
+      for (const pattern of atSeaPatterns) {
+        const match = remainder.match(pattern);
+        if (match) {
+          isAtSea = true;
+          if (match[1]) destination = match[1].trim();
+          break;
+        }
+      }
+      
+      // Only check for port in the sentence context (not entire page) and only if not at sea
+      if (!isAtSea) {
+        const portMatch = sentence.match(/currently at(?: the)? port of\s*([^.<]+)/i);
+        if (portMatch) {
+          port = portMatch[1].replace(/\s+/g, ' ').trim();
+        }
       }
 
       return {
