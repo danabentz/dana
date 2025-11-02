@@ -769,28 +769,28 @@
         const rawText = await response.text();
         console.log("[FETCH] Raw text length:", rawText.length);
 
-        // Find the specific div with id "trackerItemSchedulePosition"
-        const divMatch = rawText.match(
-          /<div[^>]*id\s*=\s*["']trackerItemSchedulePosition["'][^>]*>(.*?)<\/div>/is
+        // Search for the position sentence directly (proxy strips HTML structure)
+        // Pattern: "Seabourn Encore current position is at coordinates X N / Y E en route to..."
+        const positionMatch = rawText.match(
+          /Seabourn Encore current position is[^.]+/i
         );
-        if (!divMatch) {
-          console.warn(
-            "[FETCH] Div not found. Searching for trackerItemSchedulePosition..."
-          );
-          const hasId = rawText.includes("trackerItemSchedulePosition");
-          console.log("[FETCH] Has trackerItemSchedulePosition ID?", hasId);
+        if (!positionMatch) {
+          console.warn("[FETCH] Position sentence not found");
           return null;
         }
 
-        const divContent = divMatch[1];
-        console.log("[FETCH] Div content found:", divContent.substring(0, 200));
+        const positionText = positionMatch[0];
+        console.log(
+          "[FETCH] Position text found:",
+          positionText.substring(0, 150)
+        );
 
-        // Extract coordinates from the div
+        // Extract coordinates from the position text
         const coordsRegex =
           /coordinates?\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
-        const coordsMatch = coordsRegex.exec(divContent);
+        const coordsMatch = coordsRegex.exec(positionText);
         if (!coordsMatch) {
-          console.warn("[FETCH] Coordinates not found in div content");
+          console.warn("[FETCH] Coordinates not found in position text");
           return null;
         }
 
@@ -809,31 +809,29 @@
           coordsMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
         console.log("[FETCH] Parsed coordinates:", latitude, longitude);
 
-        // Check if div contains "en route" text
+        // Check if position text contains "en route" - this is the key indicator
         let destination = null;
         let isAtSea = false;
-        console.log("[FETCH] Checking for 'en route' in div content...");
-        const routeMatch = divContent.match(/en route to\s*([^<.,;]+)/i);
+        console.log("[FETCH] Checking for 'en route to' in position text...");
+        const routeMatch = positionText.match(/en route to\s*([^.,;]+)/i);
         console.log("[FETCH] Route match result:", routeMatch);
         if (routeMatch) {
           destination = routeMatch[1].trim();
           isAtSea = true;
           console.log("[FETCH] ✅ SHIP IS AT SEA. Destination:", destination);
         } else {
+          console.log("[FETCH] ❌ 'en route to' not found in position text");
           console.log(
-            "[FETCH] ❌ 'en route' not found. Checking full div content for 'route'..."
-          );
-          console.log(
-            "[FETCH] Div contains 'route'?",
-            divContent.toLowerCase().includes("route")
+            "[FETCH] Position text contains 'route'?",
+            positionText.toLowerCase().includes("route")
           );
         }
 
         let port = null;
         // Only check for port if not at sea
         if (!isAtSea) {
-          const portMatch = divContent.match(
-            /currently at(?: the)? port of\s*([^<.,;]+)/i
+          const portMatch = positionText.match(
+            /currently at(?: the)? port of\s*([^.,;]+)/i
           );
           if (portMatch) {
             port = portMatch[1].replace(/\s+/g, " ").trim();
@@ -846,7 +844,7 @@
           destination,
           port,
           isAtSea,
-          summary: divContent.trim(),
+          summary: positionText.trim(),
         };
         console.log("[FETCH] Final result:", result);
         return result;
