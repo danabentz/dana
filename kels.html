@@ -765,18 +765,21 @@
         }
 
         const rawText = await response.text();
-        const condensed = rawText.replace(/\s+/g, " ");
-        const sentenceMatch = condensed.match(
-          /Seabourn Encore current position is[^.]+/i
+
+        // Find the specific div with id "trackerItemSchedulePosition"
+        const divMatch = rawText.match(
+          /<div[^>]*id\s*=\s*["']trackerItemSchedulePosition["'][^>]*>(.*?)<\/div>/is
         );
-        if (!sentenceMatch) {
+        if (!divMatch) {
           return null;
         }
 
-        const sentence = sentenceMatch[0].trim();
+        const divContent = divMatch[1];
+
+        // Extract coordinates from the div
         const coordsRegex =
-          /coordinates\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
-        const coordsMatch = coordsRegex.exec(sentence);
+          /coordinates?\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
+        const coordsMatch = coordsRegex.exec(divContent);
         if (!coordsMatch) {
           return null;
         }
@@ -791,25 +794,21 @@
           coordsMatch[2].toUpperCase() === "S" ? rawLat * -1 : rawLat;
         const longitude =
           coordsMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
-        const remainder = sentence.slice(
-          coordsMatch.index + coordsMatch[0].length
-        );
 
+        // Check if div contains "en route" text
         let destination = null;
         let isAtSea = false;
-
-        // Only check for "en route to" in the sentence - this is the reliable indicator
-        const routeMatch = remainder.match(/en route to\s*([^.,;]+)/i);
+        const routeMatch = divContent.match(/en route to\s*([^<.,;]+)/i);
         if (routeMatch) {
           destination = routeMatch[1].trim();
           isAtSea = true;
         }
 
         let port = null;
-        // Only check for port in the sentence context (not entire page) and only if not at sea
+        // Only check for port if not at sea
         if (!isAtSea) {
-          const portMatch = sentence.match(
-            /currently at(?: the)? port of\s*([^.<]+)/i
+          const portMatch = divContent.match(
+            /currently at(?: the)? port of\s*([^<.,;]+)/i
           );
           if (portMatch) {
             port = portMatch[1].replace(/\s+/g, " ").trim();
@@ -821,7 +820,7 @@
           destination,
           port,
           isAtSea,
-          summary: sentence,
+          summary: divContent.trim(),
         };
       }
 
