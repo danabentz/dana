@@ -23,12 +23,6 @@
       --backdrop: radial-gradient(circle at 20% 20%, rgba(0, 113, 227, 0.3), transparent 60%),
         radial-gradient(circle at 80% 10%, rgba(255, 59, 48, 0.2), transparent 60%),
         linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
-      --status-sea: #d35400;
-      --status-sea-bg: rgba(255, 149, 0, 0.18);
-      --status-docked: #1c7c3c;
-      --status-docked-bg: rgba(48, 209, 88, 0.2);
-      --status-unknown: #4a4a4f;
-      --status-unknown-bg: rgba(110, 110, 115, 0.16);
     }
 
     * {
@@ -76,37 +70,6 @@
       gap: 0.75rem;
       align-items: center;
       text-align: center;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.045em;
-      text-transform: uppercase;
-      padding: 0.45rem 1.15rem;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-
-    .status-badge[data-state='sea'] {
-      background: var(--status-sea-bg);
-      color: var(--status-sea);
-    }
-
-    .status-badge[data-state='docked'] {
-      background: var(--status-docked-bg);
-      color: var(--status-docked);
-    }
-
-    .status-badge[data-state='unknown'] {
-      background: var(--status-unknown-bg);
-      color: var(--status-unknown);
     }
 
     .status p {
@@ -182,7 +145,6 @@
 
     <section class="status" aria-live="polite">
       <div class="sparkle" aria-hidden="true"></div>
-      <span id="ship-status" class="status-badge" role="status" data-state="unknown">Loading status...</span>
       <p id="location-status">Loading Kels' current adventure...</p>
       <strong id="location-label"></strong>
     </section>
@@ -469,24 +431,6 @@
     const locationStatusEl = document.getElementById('location-status');
     const locationLabelEl = document.getElementById('location-label');
     const tomorrowStatusEl = document.getElementById('tomorrow-status');
-    const shipStatusEl = document.getElementById('ship-status');
-
-    function resolveStatusState(text) {
-      if (!text) return 'unknown';
-      const normalized = text.toLowerCase();
-      if (normalized.includes('sea') || normalized.includes('route')) {
-        return 'sea';
-      }
-      if (normalized.includes('dock') || normalized.includes('port')) {
-        return 'docked';
-      }
-      return 'unknown';
-    }
-
-    function setShipStatus(text, state = resolveStatusState(text)) {
-      shipStatusEl.textContent = text;
-      shipStatusEl.dataset.state = state;
-    }
 
     function getLocalISO(date) {
       const year = date.getFullYear();
@@ -527,23 +471,6 @@
       return null;
     }
 
-    function deriveStatusFromLabel(label) {
-      if (!label) return 'Status unknown';
-      const normalized = label.toLowerCase();
-      if (normalized.includes('sea') || normalized.includes('transit') || normalized.includes('cross')) {
-        return 'Somewhere at sea';
-      }
-      return 'Docked';
-    }
-
-    function determineStatusFromEntry(entry) {
-      if (!entry) {
-        return { label: 'Status unknown', state: 'unknown' };
-      }
-      const statusText = entry.status || deriveStatusFromLabel(entry.label);
-      return { label: statusText, state: resolveStatusState(statusText) };
-    }
-
     function buildEntryData(entry) {
       if (!entry) return null;
       const info = locationReference[entry.label] || {};
@@ -552,7 +479,6 @@
       let displayLabel = info.displayLabel || entry.label;
       let previousPort = null;
       let nextPort = null;
-      let status = deriveStatusFromLabel(entry.label);
 
       if (entry.label === 'At Sea') {
         displayLabel = 'At sea';
@@ -561,51 +487,50 @@
         previousPort = previous ? previous.entry.label : null;
         nextPort = next ? next.entry.label : null;
 
-          if (!descriptor) {
-            if (previous && next) {
-              descriptor = `Sailing between ${previous.entry.label} and ${next.entry.label}.`;
-            } else if (previous) {
-              descriptor = `Sailing onward from ${previous.entry.label}.`;
-            } else if (next) {
-              descriptor = `Approaching ${next.entry.label}.`;
-            } else {
-              descriptor = 'Kels is currently sailing the open ocean.';
-            }
+        if (!descriptor) {
+          if (previous && next) {
+            descriptor = `Sailing between ${previous.entry.label} and ${next.entry.label}.`;
+          } else if (previous) {
+            descriptor = `Sailing onward from ${previous.entry.label}.`;
+          } else if (next) {
+            descriptor = `Approaching ${next.entry.label}.`;
+          } else {
+            descriptor = 'Kels is currently sailing the open ocean.';
           }
-
-          if (!coords) {
-            if (previous && next) {
-              const totalSpan = next.entry.index - previous.entry.index;
-              const relative = entry.index - previous.entry.index;
-              const t = totalSpan > 0 ? relative / totalSpan : 0;
-              coords = {
-                lat: previous.coords.lat + (next.coords.lat - previous.coords.lat) * t,
-                lng: interpolateLng(previous.coords.lng, next.coords.lng, t)
-              };
-            } else if (previous) {
-              coords = { ...previous.coords };
-            } else if (next) {
-              coords = { ...next.coords };
-            }
-          }
-        } else if (!descriptor) {
-          descriptor = `Docked near ${displayLabel}.`;
         }
 
-        const zoom = typeof info.zoom === 'number' ? info.zoom : entry.label === 'At Sea' ? 4 : 6;
-
-        return {
-          date: entry.date,
-          rawLabel: entry.label,
-          label: displayLabel,
-          descriptor,
-          coords,
-          zoom,
-          previousPort,
-          nextPort,
-          status
-        };
+        if (!coords) {
+          if (previous && next) {
+            const totalSpan = next.entry.index - previous.entry.index;
+            const relative = entry.index - previous.entry.index;
+            const t = totalSpan > 0 ? relative / totalSpan : 0;
+            coords = {
+              lat: previous.coords.lat + (next.coords.lat - previous.coords.lat) * t,
+              lng: interpolateLng(previous.coords.lng, next.coords.lng, t)
+            };
+          } else if (previous) {
+            coords = { ...previous.coords };
+          } else if (next) {
+            coords = { ...next.coords };
+          }
+        }
+      } else if (!descriptor) {
+        descriptor = `Docked near ${displayLabel}.`;
       }
+
+      const zoom = typeof info.zoom === 'number' ? info.zoom : entry.label === 'At Sea' ? 4 : 6;
+
+      return {
+        date: entry.date,
+        rawLabel: entry.label,
+        label: displayLabel,
+        descriptor,
+        coords,
+        zoom,
+        previousPort,
+        nextPort
+      };
+    }
 
     function getEntryForDate(date) {
       const iso = getLocalISO(date);
@@ -645,7 +570,6 @@
             lng: entry.coords.lng,
             label: entry.label,
             descriptor: entry.descriptor,
-            status: entry.status || shipStatusEl.textContent || null,
             storedAt: Date.now()
           })
         );
@@ -659,17 +583,8 @@
         const cached = localStorage.getItem('kels-last-coords');
         if (cached) {
           const parsed = JSON.parse(cached);
-          const lat = Number(parsed.lat);
-          const lng = Number(parsed.lng);
-          if (Number.isFinite(lat) && Number.isFinite(lng)) {
-            return {
-              lat,
-              lng,
-              label: parsed.label,
-              descriptor: parsed.descriptor,
-              status: parsed.status || null,
-              storedAt: parsed.storedAt
-            };
+          if (Number.isFinite(parsed.lat) && Number.isFinite(parsed.lng)) {
+            return parsed;
           }
         }
       } catch (error) {
@@ -706,137 +621,15 @@
       return `Tomorrow: ${entry.label}`;
     }
 
-    async function fetchLiveShipPosition() {
-      const proxyUrl = 'https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1094';
-      const response = await fetch(proxyUrl, {
-        headers: {
-          Accept: 'text/plain'
-        }
-      });
-      if (!response.ok) {
-        throw new Error(`Unexpected response status: ${response.status}`);
-      }
-
-      const rawText = await response.text();
-      const condensed = rawText.replace(/\s+/g, ' ');
-      const sentenceMatch = condensed.match(/Seabourn Encore current position is[^.]+/i);
-      if (!sentenceMatch) {
-        return null;
-      }
-
-      const sentence = sentenceMatch[0].trim();
-      const coordsRegex = /coordinates\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
-      const coordsMatch = coordsRegex.exec(sentence);
-      if (!coordsMatch) {
-        return null;
-      }
-
-      const rawLat = parseFloat(coordsMatch[1]);
-      const rawLng = parseFloat(coordsMatch[3]);
-      if (!Number.isFinite(rawLat) || !Number.isFinite(rawLng)) {
-        return null;
-      }
-
-      const latitude = coordsMatch[2].toUpperCase() === 'S' ? rawLat * -1 : rawLat;
-      const longitude = coordsMatch[4].toUpperCase() === 'W' ? rawLng * -1 : rawLng;
-      const remainder = sentence.slice(coordsMatch.index + coordsMatch[0].length);
-
-      let destination = null;
-      let isAtSea = false;
-      const routeMatch = remainder.match(/en route to\s*([^.,;]+)/i);
-      if (routeMatch) {
-        destination = routeMatch[1].trim();
-        isAtSea = true;
-      }
-
-      let port = null;
-      const portMatch = rawText.match(/currently at(?: the)? port of\s*([^.<]+)/i);
-      if (portMatch) {
-        port = portMatch[1].replace(/\s+/g, ' ').trim();
-      }
-
-      return {
-        coords: { lat: latitude, lng: longitude },
-        destination,
-        port,
-        isAtSea,
-        summary: sentence
-      };
-    }
-
-    async function updateLivePosition(todayEntry) {
-      try {
-        const live = await fetchLiveShipPosition();
-        if (!live) {
-          return;
-        }
-
-        const statusLabel = live.isAtSea ? 'Somewhere at sea' : 'Docked';
-        const statusState = live.isAtSea ? 'sea' : 'docked';
-        setShipStatus(statusLabel, statusState);
-
-        let labelText = 'Live coordinates';
-        if (live.isAtSea) {
-          if (live.destination) {
-            labelText = `En route to ${live.destination}`;
-          } else if (todayEntry && todayEntry.nextPort) {
-            labelText = `En route to ${todayEntry.nextPort}`;
-          } else {
-            labelText = 'Sailing the open ocean';
-          }
-        } else if (live.port) {
-          labelText = `Docked at ${live.port}`;
-        } else if (live.destination) {
-          labelText = live.destination;
-        }
-
-        locationLabelEl.textContent = labelText;
-
-        if (live.coords) {
-          const latStr = live.coords.lat.toFixed(4);
-          const lngStr = live.coords.lng.toFixed(4);
-          let detail;
-          if (live.isAtSea) {
-            if (live.destination) {
-              detail = `Currently sailing en route to ${live.destination}.`;
-            } else if (todayEntry && todayEntry.nextPort) {
-              detail = `Currently sailing toward ${todayEntry.nextPort}.`;
-            } else {
-              detail = 'Currently sailing the open ocean.';
-            }
-          } else if (live.port) {
-            detail = `Currently alongside ${live.port}.`;
-          } else {
-            detail = 'Latest live coordinates received.';
-          }
-
-          locationStatusEl.textContent = `Live update: ${detail} (Lat: ${latStr}, Lon: ${lngStr}).`;
-          setMapToEntry({ coords: live.coords, zoom: live.isAtSea ? 6 : 8 }, { animate: true });
-          persistLastKnown({
-            coords: live.coords,
-            label: labelText,
-            descriptor: locationStatusEl.textContent,
-            status: statusLabel
-          });
-        } else if (live.summary) {
-          locationStatusEl.textContent = `Live update: ${live.summary}`;
-        }
-      } catch (error) {
-        console.warn('Unable to fetch live ship data', error);
-      }
-    }
-
     function init() {
       const todayEntry = getEntryForDate(new Date());
       const cached = readCachedLocation();
 
       let statusText = 'We could not determine the current itinerary position.';
       let labelText = 'Status unknown';
-      let statusInfo = { label: 'Status unknown', state: 'unknown' };
 
       if (todayEntry) {
         labelText = todayEntry.label;
-        statusInfo = determineStatusFromEntry(todayEntry);
         if (todayEntry.coords) {
           setMapToEntry(todayEntry, { animate: true });
           statusText = buildStatusText(todayEntry);
@@ -844,9 +637,6 @@
         } else if (cached) {
           setMapToEntry({ coords: { lat: cached.lat, lng: cached.lng }, zoom: todayEntry.zoom });
           statusText = `${todayEntry.descriptor || 'Showing cached location.'} (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
-          if (cached.status) {
-            statusInfo = { label: cached.status, state: resolveStatusState(cached.status) };
-          }
         } else {
           statusText = todayEntry.descriptor || statusText;
         }
@@ -854,17 +644,11 @@
         setMapToEntry({ coords: { lat: cached.lat, lng: cached.lng }, zoom: 5 });
         labelText = cached.label || 'Cached coordinates';
         statusText = `${cached.descriptor || 'Showing cached location.'} (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
-        if (cached.status) {
-          statusInfo = { label: cached.status, state: resolveStatusState(cached.status) };
-        }
       }
 
       locationStatusEl.textContent = statusText;
       locationLabelEl.textContent = labelText;
-      setShipStatus(statusInfo.label, statusInfo.state);
       tomorrowStatusEl.textContent = formatTomorrowStatus();
-
-      updateLivePosition(todayEntry);
     }
 
     init();
