@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Where in the world is Kels?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    :root {
+      color-scheme: light dark;
+      --surface: rgba(255, 255, 255, 0.72);
+      --text: #0b1526;
+      --accent: #0071e3;
+      --accent-soft: rgba(0, 113, 227, 0.16);
+      --backdrop: radial-gradient(circle at 20% 20%, rgba(0, 113, 227, 0.3), transparent 60%),
+        radial-gradient(circle at 80% 10%, rgba(255, 59, 48, 0.2), transparent 60%),
+        linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      background: var(--backdrop);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      color: var(--text);
+    }
+
+    .shell {
+      width: min(900px, 100%);
+      background: var(--surface);
+      border-radius: 28px;
+      box-shadow: 0 30px 80px rgba(16, 40, 88, 0.2);
+      backdrop-filter: blur(22px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 2.75rem;
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    header {
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.3rem, 4vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .status {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+      text-align: center;
+    }
+
+    .status p {
+      margin: 0;
+      font-size: 1.15rem;
+      line-height: 1.5;
+    }
+
+    .status strong {
+      font-size: 1.35rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    #map {
+      width: 100%;
+      height: clamp(360px, 55vh, 520px);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+
+    footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.1rem;
+      flex-wrap: wrap;
+    }
+
+    .sparkle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 214, 10, 0.9), rgba(255, 149, 0, 0.7));
+      box-shadow: 0 0 20px rgba(255, 214, 10, 0.7);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 2rem 1rem;
+      }
+
+      .shell {
+        padding: 2rem;
+        gap: 1.75rem;
+      }
+
+      .status p {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <h1>Where in the world is Kels?</h1>
+    </header>
+
+    <section class="status" aria-live="polite">
+      <div class="sparkle" aria-hidden="true"></div>
+      <p id="location-status">Loading Kels' current adventure...</p>
+      <strong id="location-label"></strong>
+    </section>
+
+    <div id="map" role="img" aria-label="Map showing Kels' current location"></div>
+
+    <footer>
+      <span>🏊‍♀️</span>
+      <span id="tomorrow-status">Loading tomorrow's plan...</span>
+    </footer>
+  </main>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script>
+    const proxySources = [
+      'https://r.jina.ai/https://www.cruisemapper.com/?imo=9731171',
+      'https://cors.isomorphic-git.org/https://www.cruisemapper.com/?imo=9731171'
+    ];
+
+    const itinerarySources = [
+      'https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1072?tab=itinerary',
+      'https://cors.isomorphic-git.org/https://www.cruisemapper.com/ships/Seabourn-Encore-1072?tab=itinerary'
+    ];
+
+    const map = L.map('map', {
+      zoomControl: false,
+      attributionControl: false
+    }).setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map);
+
+    const markerIcon = L.divIcon({
+      className: 'kels-pin',
+      html: `<div style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 10px 25px rgba(0,113,227,0.35);"><div style="width:18px;height:18px;border-radius:50%;background:#0071e3;box-shadow:0 6px 12px rgba(0,0,0,0.16);"></div></div>`
+    });
+
+    let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
+
+    const locationStatusEl = document.getElementById('location-status');
+    const locationLabelEl = document.getElementById('location-label');
+    const tomorrowStatusEl = document.getElementById('tomorrow-status');
+
+    async function fetchViaProxies(sources) {
+      for (const url of sources) {
+        try {
+          const response = await fetch(url, {
+            headers: {
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+              'Cache-Control': 'no-cache'
+            },
+            mode: 'cors'
+          });
+          if (response.ok) {
+            const text = await response.text();
+            if (text && text.trim().length > 0) {
+              return text;
+            }
+          }
+        } catch (error) {
+          console.warn('Proxy fetch failed for', url, error);
+        }
+      }
+      throw new Error('Unable to reach data sources.');
+    }
+
+    function extractCoordinates(html) {
+      const patterns = [
+        /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?lon"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
+        /"latitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"longitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
+        /data-lat="(-?\d+(?:\.\d+)?)"[^>]+data-lon[g]?="(-?\d+(?:\.\d+)?)"/i,
+        /Lat(?:itude)?\s*[:=]\s*(-?\d+(?:\.\d+)?)[^\d-]+Lon(?:gitude)?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i
+      ];
+      for (const regex of patterns) {
+        const match = regex.exec(html);
+        if (match) {
+          return {
+            lat: parseFloat(match[1]),
+            lon: parseFloat(match[2]),
+            lng: parseFloat(match[2])
+          };
+        }
+      }
+      return null;
+    }
+
+    function extractLocationLabel(html) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const textContent = doc.body ? doc.body.textContent : '';
+
+      if (textContent && /At Sea/i.test(textContent)) {
+        return { label: 'At sea', descriptor: 'Kels is currently sailing the open ocean.' };
+      }
+
+      const portSelectors = [
+        '[data-port]',
+        '.ship-port strong',
+        '.ship-position strong',
+        '.ship-position__port',
+        '.ship-position__status'
+      ];
+
+      for (const selector of portSelectors) {
+        const el = doc.querySelector(selector);
+        if (el && el.textContent.trim()) {
+          const text = el.textContent.trim();
+          if (/At Sea/i.test(text)) {
+            return { label: 'At sea', descriptor: 'Kels is currently sailing the open ocean.' };
+          }
+          return { label: text, descriptor: `Docked near ${text}.` };
+        }
+      }
+
+      const inPortMatch = html.match(/In Port:?\s*<[^>]*>([^<]+)<\/[^>]+>/i) || html.match(/In Port:?\s*([^<\n]+)/i);
+      if (inPortMatch && inPortMatch[1]) {
+        const port = inPortMatch[1].trim();
+        return { label: port, descriptor: `Docked near ${port}.` };
+      }
+
+      const destinationMatch = html.match(/Destination:?\s*([^<\n]+)/i);
+      if (destinationMatch && destinationMatch[1]) {
+        const destination = destinationMatch[1].trim();
+        return { label: destination, descriptor: `Cruising toward ${destination}.` };
+      }
+
+      if (textContent) {
+        const cleaned = textContent.split('\n').map(line => line.trim()).filter(Boolean);
+        const line = cleaned.find(l => /Port/i.test(l) || /Destination/i.test(l));
+        if (line) {
+          return { label: line, descriptor: `Tracking update: ${line}` };
+        }
+      }
+
+      return { label: 'Status unknown', descriptor: 'We could not read the latest port information.' };
+    }
+
+    function formatTomorrow(itineraryText) {
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(itineraryText, 'text/html');
+        const rows = Array.from(doc.querySelectorAll('table tr'));
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+
+        const isSameDay = (dateObj, target) => {
+          return (
+            dateObj.getFullYear() === target.getFullYear() &&
+            dateObj.getMonth() === target.getMonth() &&
+            dateObj.getDate() === target.getDate()
+          );
+        };
+
+        for (const row of rows) {
+          const cells = Array.from(row.querySelectorAll('td'));
+          if (cells.length < 2) continue;
+          const dateText = cells[0].textContent.trim();
+          if (!dateText) continue;
+
+          let parsedDate = null;
+          // Try ISO or long-form dates
+          const isoMatch = dateText.match(/(\d{4}-\d{2}-\d{2})/);
+          if (isoMatch) {
+            parsedDate = new Date(isoMatch[1] + 'T00:00:00Z');
+          } else {
+            const alt = dateText.replace(/(st|nd|rd|th)/gi, '');
+            parsedDate = new Date(`${alt} UTC`);
+          }
+
+          if (parsedDate && !isNaN(parsedDate)) {
+            if (isSameDay(parsedDate, tomorrow)) {
+              const port = cells[1].textContent.trim();
+              const note = cells[2] ? cells[2].textContent.trim() : '';
+              const normalizedPort = port || note || 'At sea';
+              if (/at sea/i.test(`${port} ${note}`)) {
+                return 'Tomorrow: At sea';
+              }
+              return `Tomorrow: ${normalizedPort}`;
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to parse itinerary', error);
+      }
+      return 'Tomorrow: Itinerary unavailable';
+    }
+
+    async function init() {
+      try {
+        const [positionHtml, itineraryHtml] = await Promise.all([
+          fetchViaProxies(proxySources),
+          fetchViaProxies(itinerarySources)
+        ]);
+
+        const coords = extractCoordinates(positionHtml);
+        const locationDetails = extractLocationLabel(positionHtml);
+        const tomorrowText = formatTomorrow(itineraryHtml);
+
+        if (coords) {
+          marker.setLatLng([coords.lat, coords.lon || coords.lng]);
+          map.setView([coords.lat, coords.lon || coords.lng], 5);
+        } else {
+          locationDetails.label = locationDetails.label || 'Coordinates unavailable';
+        }
+
+        locationStatusEl.textContent = locationDetails.descriptor;
+        locationLabelEl.textContent = locationDetails.label;
+        tomorrowStatusEl.textContent = tomorrowText;
+      } catch (error) {
+        console.error(error);
+        locationStatusEl.textContent = 'We could not reach the cruise tracker right now.';
+        locationLabelEl.textContent = 'Status unavailable';
+        tomorrowStatusEl.textContent = 'Tomorrow: Data unavailable';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
