@@ -155,6 +155,9 @@
   ></script>
   <script>
     const proxySources = [
+      'https://api.allorigins.win/raw?url=https://www.cruisemapper.com/?imo=9731171',
+      'https://thingproxy.freeboard.io/fetch/https://www.cruisemapper.com/?imo=9731171',
+      'https://proxy.cors.sh/https://www.cruisemapper.com/?imo=9731171',
       'https://r.jina.ai/https://www.cruisemapper.com/?imo=9731171',
       'https://r.jina.ai/http://www.cruisemapper.com/?imo=9731171',
       'https://cors.isomorphic-git.org/https://www.cruisemapper.com/?imo=9731171',
@@ -339,10 +342,11 @@
 
     const markerIcon = L.divIcon({
       className: 'kels-pin',
-      html: `<div style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 10px 25px rgba(0,113,227,0.35);"><div style="width:18px;height:18px;border-radius:50%;background:#0071e3;box-shadow:0 6px 12px rgba(0,0,0,0.16);"></div></div>`
+      html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 14px 30px rgba(0,113,227,0.32);font-size:26px;line-height:1;">🚢</div>`
     });
 
     let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
+    marker.bindTooltip("Kels' ship", { direction: 'top', offset: [0, -18] });
 
     const locationStatusEl = document.getElementById('location-status');
     const locationLabelEl = document.getElementById('location-label');
@@ -354,14 +358,22 @@
           const response = await fetch(url, {
             headers: {
               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-              'Cache-Control': 'no-cache'
+              'Cache-Control': 'no-cache',
+              'x-cors-api-key': 'temp_cors_api_key'
             },
             mode: 'cors'
           });
           if (response.ok) {
-            const text = await response.text();
-            if (text && text.trim().length > 0) {
-              return text;
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+              const json = await response.json();
+              const html = json.contents || json.html || '';
+              if (html.trim().length > 0) return html;
+            } else {
+              const text = await response.text();
+              if (text && text.trim().length > 0) {
+                return text;
+              }
             }
           }
         } catch (error) {
@@ -451,7 +463,9 @@
       const patterns = [
         /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?lon"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
         /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?lng"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
+        /"lat"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"?long"?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
         /"latitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*"longitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
+        /"latitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)[^\d-]+"longitude"\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
         /'lat'\s*[:=]\s*(-?\d+(?:\.\d+)?)\s*,\s*'?lon'?\s*[:=]\s*(-?\d+(?:\.\d+)?)/i,
         /Lat(?:itude)?[^-\d]*(\-?\d+(?:\.\d+)?)[^\d-]+Lon(?:gitude)?[^-\d]*(\-?\d+(?:\.\d+)?)/i
       ];
@@ -547,23 +561,57 @@
         const locationDetails = extractLocationLabel(positionHtml);
         const tomorrowText = formatTomorrowFromStatic();
 
+        let statusText = locationDetails.descriptor || 'Tracking the latest voyage update.';
         if (coords) {
           const lng = Number.isFinite(coords.lng) ? coords.lng : coords.lon;
           if (Number.isFinite(coords.lat) && Number.isFinite(lng)) {
             marker.setLatLng([coords.lat, lng]);
-            map.setView([coords.lat, lng], 5);
+            map.flyTo([coords.lat, lng], 5, { duration: 1.2 });
+            const latStr = coords.lat.toFixed(4);
+            const lngStr = lng.toFixed(4);
+            statusText = `${locationDetails.descriptor} (Lat: ${latStr}, Lon: ${lngStr})`;
+            try {
+              localStorage.setItem(
+                'kels-last-coords',
+                JSON.stringify({ lat: coords.lat, lng, label: locationDetails.label, descriptor: locationDetails.descriptor, storedAt: Date.now() })
+              );
+            } catch (storageError) {
+              console.warn('Unable to persist last known position', storageError);
+            }
           }
         } else {
           locationDetails.label = locationDetails.label || 'Coordinates unavailable';
         }
 
-        locationStatusEl.textContent = locationDetails.descriptor;
-        locationLabelEl.textContent = locationDetails.label;
+        locationStatusEl.textContent = statusText;
+        locationLabelEl.textContent = locationDetails.label || 'Status unknown';
         tomorrowStatusEl.textContent = tomorrowText;
       } catch (error) {
         console.error(error);
-        locationStatusEl.textContent = 'We could not reach the cruise tracker right now.';
-        locationLabelEl.textContent = 'Status unavailable';
+        const fallback = (() => {
+          try {
+            const cached = localStorage.getItem('kels-last-coords');
+            if (cached) {
+              return JSON.parse(cached);
+            }
+          } catch (storageError) {
+            console.warn('Failed to read cached coordinates', storageError);
+          }
+          return null;
+        })();
+
+        if (fallback && Number.isFinite(fallback.lat) && Number.isFinite(fallback.lng)) {
+          marker.setLatLng([fallback.lat, fallback.lng]);
+          map.setView([fallback.lat, fallback.lng], 5);
+          const latStr = fallback.lat.toFixed(4);
+          const lngStr = fallback.lng.toFixed(4);
+          locationStatusEl.textContent = `${fallback.descriptor || 'Showing cached location.'} (Lat: ${latStr}, Lon: ${lngStr})`;
+          locationLabelEl.textContent = fallback.label || 'Cached coordinates';
+        } else {
+          locationStatusEl.textContent = 'We could not reach the cruise tracker right now.';
+          locationLabelEl.textContent = 'Status unavailable';
+        }
+
         tomorrowStatusEl.textContent = formatTomorrowFromStatic();
       }
     }
