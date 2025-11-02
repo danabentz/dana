@@ -755,38 +755,51 @@
       async function fetchLiveShipPosition() {
         const proxyUrl =
           "https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1094";
+        console.log("[FETCH] Starting live position fetch...");
         const response = await fetch(proxyUrl, {
           headers: {
             Accept: "text/plain",
           },
         });
         if (!response.ok) {
+          console.error("[FETCH] Response not OK:", response.status);
           throw new Error(`Unexpected response status: ${response.status}`);
         }
 
         const rawText = await response.text();
+        console.log("[FETCH] Raw text length:", rawText.length);
 
         // Find the specific div with id "trackerItemSchedulePosition"
         const divMatch = rawText.match(
           /<div[^>]*id\s*=\s*["']trackerItemSchedulePosition["'][^>]*>(.*?)<\/div>/is
         );
         if (!divMatch) {
+          console.warn(
+            "[FETCH] Div not found. Searching for trackerItemSchedulePosition..."
+          );
+          const hasId = rawText.includes("trackerItemSchedulePosition");
+          console.log("[FETCH] Has trackerItemSchedulePosition ID?", hasId);
           return null;
         }
 
         const divContent = divMatch[1];
+        console.log("[FETCH] Div content found:", divContent.substring(0, 200));
 
         // Extract coordinates from the div
         const coordsRegex =
           /coordinates?\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
         const coordsMatch = coordsRegex.exec(divContent);
         if (!coordsMatch) {
+          console.warn("[FETCH] Coordinates not found in div content");
           return null;
         }
+
+        console.log("[FETCH] Coordinates matched:", coordsMatch[0]);
 
         const rawLat = parseFloat(coordsMatch[1]);
         const rawLng = parseFloat(coordsMatch[3]);
         if (!Number.isFinite(rawLat) || !Number.isFinite(rawLng)) {
+          console.warn("[FETCH] Invalid coordinates:", rawLat, rawLng);
           return null;
         }
 
@@ -794,14 +807,26 @@
           coordsMatch[2].toUpperCase() === "S" ? rawLat * -1 : rawLat;
         const longitude =
           coordsMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
+        console.log("[FETCH] Parsed coordinates:", latitude, longitude);
 
         // Check if div contains "en route" text
         let destination = null;
         let isAtSea = false;
+        console.log("[FETCH] Checking for 'en route' in div content...");
         const routeMatch = divContent.match(/en route to\s*([^<.,;]+)/i);
+        console.log("[FETCH] Route match result:", routeMatch);
         if (routeMatch) {
           destination = routeMatch[1].trim();
           isAtSea = true;
+          console.log("[FETCH] ✅ SHIP IS AT SEA. Destination:", destination);
+        } else {
+          console.log(
+            "[FETCH] ❌ 'en route' not found. Checking full div content for 'route'..."
+          );
+          console.log(
+            "[FETCH] Div contains 'route'?",
+            divContent.toLowerCase().includes("route")
+          );
         }
 
         let port = null;
@@ -812,27 +837,43 @@
           );
           if (portMatch) {
             port = portMatch[1].replace(/\s+/g, " ").trim();
+            console.log("[FETCH] Port found:", port);
           }
         }
 
-        return {
+        const result = {
           coords: { lat: latitude, lng: longitude },
           destination,
           port,
           isAtSea,
           summary: divContent.trim(),
         };
+        console.log("[FETCH] Final result:", result);
+        return result;
       }
 
       async function updateLivePosition(todayEntry) {
         try {
+          console.log(
+            "[UPDATE] Starting updateLivePosition. todayEntry:",
+            todayEntry?.label
+          );
           const live = await fetchLiveShipPosition();
           if (!live) {
+            console.warn("[UPDATE] No live data received");
             return;
           }
 
+          console.log("[UPDATE] Live data received:", {
+            isAtSea: live.isAtSea,
+            destination: live.destination,
+            port: live.port,
+            coords: live.coords,
+          });
+
           const statusLabel = live.isAtSea ? "Somewhere at sea" : "Docked";
           const statusState = live.isAtSea ? "sea" : "docked";
+          console.log("[UPDATE] Setting status:", statusLabel, statusState);
           setShipStatus(statusLabel, statusState);
 
           let labelText = "Live coordinates";
@@ -850,6 +891,7 @@
             labelText = live.destination;
           }
 
+          console.log("[UPDATE] Setting label text:", labelText);
           locationLabelEl.textContent = labelText;
 
           if (live.coords) {
@@ -870,6 +912,7 @@
               detail = "Latest live coordinates received.";
             }
 
+            console.log("[UPDATE] Setting detail:", detail);
             locationStatusEl.textContent = `Live update: ${detail} (Lat: ${latStr}, Lon: ${lngStr}).`;
             setMapToEntry(
               { coords: live.coords, zoom: live.isAtSea ? 6 : 8 },
@@ -881,17 +924,33 @@
               descriptor: locationStatusEl.textContent,
               status: statusLabel,
             });
+            console.log(
+              "[UPDATE] ✅ Update complete. Status:",
+              statusLabel,
+              "Label:",
+              labelText
+            );
           } else if (live.summary) {
             locationStatusEl.textContent = `Live update: ${live.summary}`;
+            console.log("[UPDATE] Used summary instead of coords");
           }
         } catch (error) {
+          console.error("[UPDATE] Error:", error);
           console.warn("Unable to fetch live ship data", error);
         }
       }
 
       function init() {
+        console.log("[INIT] Starting initialization...");
         const todayEntry = getEntryForDate(new Date());
         const cached = readCachedLocation();
+
+        console.log(
+          "[INIT] todayEntry:",
+          todayEntry?.label,
+          todayEntry?.rawLabel
+        );
+        console.log("[INIT] cached:", cached?.label);
 
         let statusText =
           "We could not determine the current itinerary position.";
@@ -901,6 +960,10 @@
         if (todayEntry) {
           labelText = todayEntry.label;
           statusInfo = determineStatusFromEntry(todayEntry);
+          console.log(
+            "[INIT] Setting initial status from itinerary:",
+            statusInfo
+          );
           if (todayEntry.coords) {
             setMapToEntry(todayEntry, { animate: true });
             statusText = buildStatusText(todayEntry);
@@ -939,11 +1002,18 @@
           }
         }
 
+        console.log(
+          "[INIT] Setting initial display - Label:",
+          labelText,
+          "Status:",
+          statusInfo.label
+        );
         locationStatusEl.textContent = statusText;
         locationLabelEl.textContent = labelText;
         setShipStatus(statusInfo.label, statusInfo.state);
         tomorrowStatusEl.textContent = formatTomorrowStatus();
 
+        console.log("[INIT] Calling updateLivePosition...");
         updateLivePosition(todayEntry);
       }
 
