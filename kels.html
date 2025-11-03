@@ -1179,12 +1179,45 @@
           console.log("[UPDATE] Setting status:", statusLabel, statusState);
           setShipStatus(statusLabel, statusState);
 
+          // If at sea, use itinerary to find the next port destination
           let labelText = "Live coordinates";
+          let itineraryDestination = null;
+
           if (live.isAtSea) {
-            if (live.destination) {
-              labelText = `En route to ${live.destination}`;
-            } else if (todayEntry && todayEntry.nextPort) {
-              labelText = `En route to ${todayEntry.nextPort}`;
+            // Find next port from itinerary
+            if (todayEntry) {
+              const todayDate = new Date();
+              const todayISO = getLocalISO(todayDate);
+
+              // Find the next entry that's not "At Sea"
+              let nextPortEntry = null;
+              for (let i = 0; i < itineraryEntries.length; i++) {
+                const entry = itineraryEntries[i];
+                // Start looking from today or after
+                if (entry.date >= todayISO && entry.label !== "At Sea") {
+                  nextPortEntry = entry;
+                  break;
+                }
+              }
+
+              if (nextPortEntry) {
+                itineraryDestination = nextPortEntry.label;
+                console.log(
+                  "[UPDATE] Found next port from itinerary:",
+                  itineraryDestination
+                );
+              } else if (todayEntry.nextPort) {
+                itineraryDestination = todayEntry.nextPort;
+                console.log(
+                  "[UPDATE] Using todayEntry.nextPort:",
+                  itineraryDestination
+                );
+              }
+            }
+
+            // Always use itinerary destination if available, ignore scraped destination
+            if (itineraryDestination) {
+              labelText = `En route to ${itineraryDestination}`;
             } else {
               labelText = "Sailing the open ocean";
             }
@@ -1203,8 +1236,9 @@
             const lngStr = live.coords.lng.toFixed(4);
             let detail;
             if (live.isAtSea) {
-              if (live.destination) {
-                detail = `Currently sailing en route to ${live.destination}.`;
+              // Use itinerary destination instead of scraped destination
+              if (itineraryDestination) {
+                detail = `Currently sailing en route to ${itineraryDestination}.`;
               } else if (todayEntry && todayEntry.nextPort) {
                 detail = `Currently sailing toward ${todayEntry.nextPort}.`;
               } else {
@@ -1237,8 +1271,9 @@
           } else if (live.isAtSea) {
             // We have "en route" status but no coordinates - still show the status
             let detail;
-            if (live.destination) {
-              detail = `Currently sailing en route to ${live.destination}.`;
+            // Use itinerary destination instead of scraped destination
+            if (itineraryDestination) {
+              detail = `Currently sailing en route to ${itineraryDestination}.`;
             } else if (todayEntry && todayEntry.nextPort) {
               detail = `Currently sailing toward ${todayEntry.nextPort}.`;
             } else {
