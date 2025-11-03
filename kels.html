@@ -752,10 +752,9 @@
         return `Tomorrow: ${entry.label}`;
       }
 
-      async function fetchFromVesselFinder() {
+      async function fetchCoordinatesFromShipXplorer() {
         const proxyUrl =
-          "https://r.jina.ai/https://www.vesselfinder.com/vessels/details/9731171";
-        console.log("[VF] Trying VesselFinder...");
+          "https://r.jina.ai/https://www.shipxplorer.com/data/vessels/SEABOURN-ENCORE-IMO-9731171-MMSI-311000464";
         try {
           const response = await fetch(proxyUrl, {
             headers: {
@@ -763,444 +762,84 @@
             },
           });
           if (!response.ok) {
-            console.warn("[VF] Response not OK:", response.status);
+            console.warn("[SX] Response not OK:", response.status);
             return null;
           }
 
           const rawText = await response.text();
-          console.log("[VF] Raw text length:", rawText.length);
 
-          // Look for the paragraph with class "text2" which contains the position info
-          const text2Match = rawText.match(
-            /<p[^>]*class\s*=\s*["'][^"']*text2[^"']*["'][^>]*>(.*?)<\/p>/is
+          // Find Latitude div - look for id="title" containing "Latitude" followed by id="value"
+          let latValue = null;
+          let lngValue = null;
+
+          // Try to find latitude - search for "Latitude" title and get its value
+          const latMatch = rawText.match(
+            /<div[^>]*id\s*=\s*["']title["'][^>]*>Latitude<\/div>\s*<div[^>]*id\s*=\s*["']value["'][^>]*>([^<]+)<\/div>/is
           );
-          if (!text2Match) {
-            console.warn("[VF] text2 paragraph not found");
-            return null;
+          if (latMatch) {
+            latValue = parseFloat(latMatch[1].trim());
+            console.log("[SX] Found Latitude:", latValue);
           }
 
-          const text2Content = text2Match[1];
-          console.log(
-            "[VF] text2 content found:",
-            text2Content.substring(0, 200)
+          // Try to find longitude - search for "Longitude" title and get its value
+          const lngMatch = rawText.match(
+            /<div[^>]*id\s*=\s*["']title["'][^>]*>Longitude<\/div>\s*<div[^>]*id\s*=\s*["']value["'][^>]*>([^<]+)<\/div>/is
           );
-
-          // Extract coordinates - look for "at [location]" or coordinates pattern
-          // Pattern: "at Aegean Sea" or coordinates like "37.35305 N / 23.78063 E"
-          let coordsMatch = text2Content.match(
-            /([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
-          );
-          let latitude = null;
-          let longitude = null;
-
-          if (!coordsMatch) {
-            // Try to find coordinates in the full raw text
-            coordsMatch = rawText.match(
-              /([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
-            );
+          if (lngMatch) {
+            lngValue = parseFloat(lngMatch[1].trim());
+            console.log("[SX] Found Longitude:", lngValue);
           }
 
-          if (coordsMatch) {
-            const rawLat = parseFloat(coordsMatch[1]);
-            const rawLng = parseFloat(coordsMatch[3]);
-            if (Number.isFinite(rawLat) && Number.isFinite(rawLng)) {
-              latitude =
-                coordsMatch[2].toUpperCase() === "S" ? rawLat * -1 : rawLat;
-              longitude =
-                coordsMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
-              console.log("[VF] Coordinates found:", latitude, longitude);
-            }
+          if (Number.isFinite(latValue) && Number.isFinite(lngValue)) {
+            console.log("[SX] ✅ Coordinates extracted:", latValue, lngValue);
+            return { lat: latValue, lng: lngValue };
           }
 
-          // Check if "en route to" is in the text2 paragraph
-          let destination = null;
-          let isAtSea = false;
-          const routeMatch = text2Content.match(
-            /en route to\s*<strong>([^<]+)<\/strong>/i
-          );
-          if (routeMatch) {
-            destination = routeMatch[1].trim();
-            isAtSea = true;
-            console.log("[VF] ✅ SHIP IS AT SEA. Destination:", destination);
-          } else {
-            // Try without strong tags
-            const routeMatchAlt = text2Content.match(
-              /en route to\s*([^,.<]+)/i
-            );
-            if (routeMatchAlt) {
-              destination = routeMatchAlt[1].trim();
-              isAtSea = true;
-              console.log(
-                "[VF] ✅ SHIP IS AT SEA. Destination (alt):",
-                destination
-              );
-            }
-          }
-
-          if (isAtSea && latitude && longitude) {
-            return {
-              coords: { lat: latitude, lng: longitude },
-              destination,
-              port: null,
-              isAtSea: true,
-              summary: text2Content.trim(),
-            };
-          }
-
-          // If we found "en route" but no coordinates, still return at sea status
-          if (isAtSea) {
-            console.log(
-              "[VF] Found 'en route' but no coordinates - will use itinerary coords"
-            );
-            return {
-              coords: null,
-              destination,
-              port: null,
-              isAtSea: true,
-              summary: text2Content.trim(),
-            };
-          }
-
-          console.log("[VF] No 'en route' found in text2");
           return null;
         } catch (error) {
-          console.warn("[VF] Error fetching from VesselFinder:", error);
+          console.warn("[SX] Error fetching from ShipXplorer:", error);
           return null;
         }
       }
 
       async function fetchLiveShipPosition() {
-        // Try VesselFinder first
-        const vfResult = await fetchFromVesselFinder();
-        if (vfResult && vfResult.isAtSea) {
-          console.log("[FETCH] ✅ Successfully got data from VesselFinder");
-          return vfResult;
-        }
-
-        console.log(
-          "[FETCH] VesselFinder didn't work, falling back to CruiseMapper..."
-        );
-
-        // Fallback to CruiseMapper
-        const proxyUrl =
-          "https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1094";
-        console.log(
-          "[FETCH] Starting live position fetch from CruiseMapper..."
-        );
-        const response = await fetch(proxyUrl, {
-          headers: {
-            Accept: "text/plain",
-          },
-        });
-        if (!response.ok) {
-          console.error("[FETCH] Response not OK:", response.status);
-          throw new Error(`Unexpected response status: ${response.status}`);
-        }
-
-        const rawText = await response.text();
-        console.log("[FETCH] Raw text length:", rawText.length);
-
-        // Debug: Check if key terms exist
-        const hasSeabourn = rawText.includes("Seabourn");
-        const hasEncore = rawText.includes("Encore");
-        const hasCoordinates = rawText.includes("coordinates");
-        const hasEnRoute = rawText.includes("en route");
-        console.log(
-          "[FETCH] Debug - Has 'Seabourn':",
-          hasSeabourn,
-          "Has 'Encore':",
-          hasEncore,
-          "Has 'coordinates':",
-          hasCoordinates,
-          "Has 'en route':",
-          hasEnRoute
-        );
-
-        // PRIORITY: Check for "en route" first - this is the most important indicator
-        // Even if we can't extract coordinates, we should return "at sea" status
-        const routeMatchInRaw = rawText.match(/en route to\s*([^.,;\n<]+)/i);
-        const isAtSeaDetected = !!routeMatchInRaw;
-        const destinationFromRaw = routeMatchInRaw
-          ? routeMatchInRaw[1].trim()
-          : null;
-
-        if (isAtSeaDetected) {
-          console.log(
-            "[FETCH] ✅ 'en route' detected in raw text! Destination:",
-            destinationFromRaw
-          );
-        }
-
-        // First, try to find the trackerItemSchedulePosition div and extract coordinates from it
-        let extractedCoords = null;
-        const trackerDivMatch = rawText.match(
-          /<div[^>]*id\s*=\s*["']trackerItemSchedulePosition["'][^>]*>(.*?)<\/div>/is
-        );
-        if (trackerDivMatch) {
-          const divContent = trackerDivMatch[1];
-          console.log("[FETCH] Found trackerItemSchedulePosition div");
-
-          // Extract coordinates from the div: "coordinates 37.1518 N / 23.78906 E"
-          const coordsInDiv = divContent.match(
-            /coordinates\s+([\d.]+)\s+([NS])\s*\/\s*([\d.]+)\s+([EW])/i
-          );
-          if (coordsInDiv) {
-            const rawLat = parseFloat(coordsInDiv[1]);
-            const rawLng = parseFloat(coordsInDiv[3]);
-            if (Number.isFinite(rawLat) && Number.isFinite(rawLng)) {
-              extractedCoords = {
-                lat:
-                  coordsInDiv[2].toUpperCase() === "S" ? rawLat * -1 : rawLat,
-                lng:
-                  coordsInDiv[4].toUpperCase() === "W" ? rawLng * -1 : rawLng,
-              };
-              console.log(
-                "[FETCH] ✅ Extracted coordinates from trackerItemSchedulePosition:",
-                extractedCoords
+        // Fetch both in parallel for speed
+        const [cruiseMapperStatus, shipXplorerCoords] = await Promise.all([
+          // Quick check: Just detect "en route" from CruiseMapper
+          (async () => {
+            try {
+              const response = await fetch(
+                "https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1094",
+                { headers: { Accept: "text/plain" } }
               );
+              if (!response.ok) return null;
+              const text = await response.text();
+              const routeMatch = text.match(/en route to\s*([^.,;\n<]+)/i);
+              if (routeMatch) {
+                console.log("[FETCH] ✅ 'en route' detected from CruiseMapper");
+                return { isAtSea: true, destination: routeMatch[1].trim() };
+              }
+              return { isAtSea: false };
+            } catch (error) {
+              console.warn("[FETCH] CruiseMapper error:", error);
+              return null;
             }
-          }
-        }
+          })(),
+          // Get coordinates from ShipXplorer
+          fetchCoordinatesFromShipXplorer(),
+        ]);
 
-        // Try multiple flexible patterns to find the position text
-        let positionText = null;
-        const patterns = [
-          /Seabourn Encore current position is[^.]+/i,
-          /Seabourn\s+Encore[^.]*coordinates[^.]+/i,
-          /Encore[^.]*current position[^.]+/i,
-          /coordinates[^.]*en route[^.]+/i,
-          /[\d.]+\s*[NS]\s*\/\s*[\d.]+\s*[EW][^.]*en route[^.]+/i,
-        ];
+        // Use results
+        const coords = shipXplorerCoords;
+        const isAtSea = cruiseMapperStatus?.isAtSea || false;
 
-        for (const pattern of patterns) {
-          const match = rawText.match(pattern);
-          if (match) {
-            positionText = match[0];
-            console.log(
-              "[FETCH] Found position text with pattern:",
-              pattern.toString()
-            );
-            break;
-          }
-        }
-
-        if (!positionText) {
-          console.warn(
-            "[FETCH] Position sentence not found. Searching for coordinates and route separately..."
-          );
-          // Fallback: try to find coordinates and "en route" separately
-          const coordsMatch = rawText.match(
-            /[\d.]+\s*[NS]\s*\/\s*[\d.]+\s*[EW]/i
-          );
-          const routeMatch = rawText.match(/en route to\s*[^.\n]+/i);
-
-          if (coordsMatch && routeMatch) {
-            // Try to find text around the coordinates
-            const coordsIndex = rawText.indexOf(coordsMatch[0]);
-            const start = Math.max(0, coordsIndex - 100);
-            const end = Math.min(
-              rawText.length,
-              coordsIndex + coordsMatch[0].length + 200
-            );
-            positionText = rawText.substring(start, end);
-            console.log(
-              "[FETCH] Using fallback method - extracted text around coordinates"
-            );
-          } else {
-            console.warn("[FETCH] Could not find coordinates or route text");
-            // BUT if we detected "en route" earlier, still return at sea status
-            if (isAtSeaDetected) {
-              console.log(
-                "[FETCH] Returning 'at sea' status" +
-                  (extractedCoords
-                    ? " with coordinates from div"
-                    : " even without coordinates (fallback)")
-              );
-              return {
-                coords: extractedCoords,
-                destination: destinationFromRaw,
-                port: null,
-                isAtSea: true,
-                summary: rawText.substring(0, 300),
-              };
-            }
-            // Show a sample of the raw text for debugging
-            console.log(
-              "[FETCH] Sample of raw text (first 500 chars):",
-              rawText.substring(0, 500)
-            );
-            console.log(
-              "[FETCH] Sample of raw text (last 500 chars):",
-              rawText.substring(rawText.length - 500)
-            );
-            return null;
-          }
-        }
-
-        console.log(
-          "[FETCH] Position text found:",
-          positionText.substring(0, 200)
-        );
-
-        // Extract coordinates from the position text (or whole raw text if needed)
-        const searchText = positionText || rawText;
-        const coordsRegex =
-          /coordinates?\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
-        const coordsMatch = coordsRegex.exec(searchText);
-        if (!coordsMatch) {
-          // Try pattern without "coordinates" word
-          const altCoordsRegex = /([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
-          const altMatch = altCoordsRegex.exec(searchText);
-          if (!altMatch) {
-            console.warn("[FETCH] Coordinates not found in position text");
-            // BUT if we detected "en route" earlier, still return at sea status
-            if (isAtSeaDetected) {
-              console.log(
-                "[FETCH] Returning 'at sea' status" +
-                  (extractedCoords
-                    ? " with coordinates from div"
-                    : " even without coordinates")
-              );
-              return {
-                coords: extractedCoords,
-                destination: destinationFromRaw,
-                port: null,
-                isAtSea: true,
-                summary: rawText.substring(0, 300),
-              };
-            }
-            return null;
-          }
-          // Use alternative match
-          const rawLat = parseFloat(altMatch[1]);
-          const rawLng = parseFloat(altMatch[3]);
-          if (!Number.isFinite(rawLat) || !Number.isFinite(rawLng)) {
-            console.warn("[FETCH] Invalid coordinates:", rawLat, rawLng);
-            // BUT if we detected "en route" earlier, still return at sea status
-            if (isAtSeaDetected) {
-              console.log(
-                "[FETCH] Returning 'at sea' status" +
-                  (extractedCoords
-                    ? " with coordinates from div"
-                    : " (invalid coords, using div coords if available)")
-              );
-              return {
-                coords: extractedCoords,
-                destination: destinationFromRaw,
-                port: null,
-                isAtSea: true,
-                summary: rawText.substring(0, 300),
-              };
-            }
-            return null;
-          }
-          const latitude =
-            altMatch[2].toUpperCase() === "S" ? rawLat * -1 : rawLat;
-          const longitude =
-            altMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
-
-          // Check for "en route" in searchText
-          const routeMatch = searchText.match(/en route to\s*([^.,;\n]+)/i);
-          const isAtSea = !!routeMatch;
-          const destination = routeMatch ? routeMatch[1].trim() : null;
-
-          console.log("[FETCH] Using alternative coordinate extraction");
-          return {
-            coords: extractedCoords || { lat: latitude, lng: longitude },
-            destination,
-            port: null,
-            isAtSea,
-            summary: positionText || searchText.substring(0, 200),
-          };
-        }
-
-        console.log("[FETCH] Coordinates matched:", coordsMatch[0]);
-
-        const rawLat = parseFloat(coordsMatch[1]);
-        const rawLng = parseFloat(coordsMatch[3]);
-        if (!Number.isFinite(rawLat) || !Number.isFinite(rawLng)) {
-          console.warn("[FETCH] Invalid coordinates:", rawLat, rawLng);
-          // BUT if we detected "en route" earlier, still return at sea status
-          if (isAtSeaDetected) {
-            console.log(
-              "[FETCH] Returning 'at sea' status" +
-                (extractedCoords
-                  ? " with coordinates from div"
-                  : " (invalid coords, using div coords if available)")
-            );
-            return {
-              coords: extractedCoords,
-              destination: destinationFromRaw,
-              port: null,
-              isAtSea: true,
-              summary: rawText.substring(0, 300),
-            };
-          }
-          return null;
-        }
-
-        const latitude =
-          coordsMatch[2].toUpperCase() === "S" ? rawLat * -1 : rawLat;
-        const longitude =
-          coordsMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
-        console.log("[FETCH] Parsed coordinates:", latitude, longitude);
-
-        // Check if position text contains "en route" - use earlier detection if available
-        let destination = null;
-        let isAtSea = false;
-
-        // Prioritize the earlier detection from rawText
-        if (isAtSeaDetected) {
-          isAtSea = true;
-          destination = destinationFromRaw;
-          console.log(
-            "[FETCH] ✅ Using earlier 'en route' detection. Destination:",
-            destination
-          );
-        } else {
-          // Fallback: check searchText
-          console.log("[FETCH] Checking for 'en route to' in search text...");
-          const routeMatch = searchText.match(/en route to\s*([^.,;\n]+)/i);
-          console.log("[FETCH] Route match result:", routeMatch);
-          if (routeMatch) {
-            destination = routeMatch[1].trim();
-            isAtSea = true;
-            console.log("[FETCH] ✅ SHIP IS AT SEA. Destination:", destination);
-          } else {
-            console.log("[FETCH] ❌ 'en route to' not found in search text");
-            console.log(
-              "[FETCH] Search text contains 'route'?",
-              searchText.toLowerCase().includes("route")
-            );
-          }
-        }
-
-        let port = null;
-        // Only check for port if not at sea
-        if (!isAtSea) {
-          const portMatch = searchText.match(
-            /currently at(?: the)? port of\s*([^.,;\n]+)/i
-          );
-          if (portMatch) {
-            port = portMatch[1].replace(/\s+/g, " ").trim();
-            console.log("[FETCH] Port found:", port);
-          }
-        }
-
-        const result = {
-          coords: extractedCoords || { lat: latitude, lng: longitude },
-          destination,
-          port,
+        return {
+          coords,
+          destination: cruiseMapperStatus?.destination || null,
+          port: null,
           isAtSea,
-          summary: (positionText || searchText.substring(0, 200)).trim(),
+          summary: "Live position update",
         };
-        console.log("[FETCH] Final result:", result);
-        if (extractedCoords) {
-          console.log(
-            "[FETCH] Using coordinates from trackerItemSchedulePosition div"
-          );
-        }
-        return result;
       }
 
       async function updateLivePosition(todayEntry) {
