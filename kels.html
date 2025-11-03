@@ -1189,12 +1189,12 @@
               const todayDate = new Date();
               const todayISO = getLocalISO(todayDate);
 
-              // Find the next entry that's not "At Sea"
+              // Find the next entry that's not "At Sea" (must be AFTER today, not today)
               let nextPortEntry = null;
               for (let i = 0; i < itineraryEntries.length; i++) {
                 const entry = itineraryEntries[i];
-                // Start looking from today or after
-                if (entry.date >= todayISO && entry.label !== "At Sea") {
+                // Only look at dates AFTER today (not >=, so we skip today)
+                if (entry.date > todayISO && entry.label !== "At Sea") {
                   nextPortEntry = entry;
                   break;
                 }
