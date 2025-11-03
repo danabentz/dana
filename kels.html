@@ -931,6 +931,37 @@
           );
         }
 
+        // First, try to find the trackerItemSchedulePosition div and extract coordinates from it
+        let extractedCoords = null;
+        const trackerDivMatch = rawText.match(
+          /<div[^>]*id\s*=\s*["']trackerItemSchedulePosition["'][^>]*>(.*?)<\/div>/is
+        );
+        if (trackerDivMatch) {
+          const divContent = trackerDivMatch[1];
+          console.log("[FETCH] Found trackerItemSchedulePosition div");
+
+          // Extract coordinates from the div: "coordinates 37.1518 N / 23.78906 E"
+          const coordsInDiv = divContent.match(
+            /coordinates\s+([\d.]+)\s+([NS])\s*\/\s*([\d.]+)\s+([EW])/i
+          );
+          if (coordsInDiv) {
+            const rawLat = parseFloat(coordsInDiv[1]);
+            const rawLng = parseFloat(coordsInDiv[3]);
+            if (Number.isFinite(rawLat) && Number.isFinite(rawLng)) {
+              extractedCoords = {
+                lat:
+                  coordsInDiv[2].toUpperCase() === "S" ? rawLat * -1 : rawLat,
+                lng:
+                  coordsInDiv[4].toUpperCase() === "W" ? rawLng * -1 : rawLng,
+              };
+              console.log(
+                "[FETCH] ✅ Extracted coordinates from trackerItemSchedulePosition:",
+                extractedCoords
+              );
+            }
+          }
+        }
+
         // Try multiple flexible patterns to find the position text
         let positionText = null;
         const patterns = [
@@ -980,10 +1011,13 @@
             // BUT if we detected "en route" earlier, still return at sea status
             if (isAtSeaDetected) {
               console.log(
-                "[FETCH] Returning 'at sea' status even without coordinates (fallback)"
+                "[FETCH] Returning 'at sea' status" +
+                  (extractedCoords
+                    ? " with coordinates from div"
+                    : " even without coordinates (fallback)")
               );
               return {
-                coords: null,
+                coords: extractedCoords,
                 destination: destinationFromRaw,
                 port: null,
                 isAtSea: true,
@@ -1022,10 +1056,13 @@
             // BUT if we detected "en route" earlier, still return at sea status
             if (isAtSeaDetected) {
               console.log(
-                "[FETCH] Returning 'at sea' status even without coordinates"
+                "[FETCH] Returning 'at sea' status" +
+                  (extractedCoords
+                    ? " with coordinates from div"
+                    : " even without coordinates")
               );
               return {
-                coords: null,
+                coords: extractedCoords,
                 destination: destinationFromRaw,
                 port: null,
                 isAtSea: true,
@@ -1042,10 +1079,13 @@
             // BUT if we detected "en route" earlier, still return at sea status
             if (isAtSeaDetected) {
               console.log(
-                "[FETCH] Returning 'at sea' status even with invalid coordinates"
+                "[FETCH] Returning 'at sea' status" +
+                  (extractedCoords
+                    ? " with coordinates from div"
+                    : " (invalid coords, using div coords if available)")
               );
               return {
-                coords: null,
+                coords: extractedCoords,
                 destination: destinationFromRaw,
                 port: null,
                 isAtSea: true,
@@ -1066,7 +1106,7 @@
 
           console.log("[FETCH] Using alternative coordinate extraction");
           return {
-            coords: { lat: latitude, lng: longitude },
+            coords: extractedCoords || { lat: latitude, lng: longitude },
             destination,
             port: null,
             isAtSea,
@@ -1083,10 +1123,13 @@
           // BUT if we detected "en route" earlier, still return at sea status
           if (isAtSeaDetected) {
             console.log(
-              "[FETCH] Returning 'at sea' status even with invalid coordinates"
+              "[FETCH] Returning 'at sea' status" +
+                (extractedCoords
+                  ? " with coordinates from div"
+                  : " (invalid coords, using div coords if available)")
             );
             return {
-              coords: null,
+              coords: extractedCoords,
               destination: destinationFromRaw,
               port: null,
               isAtSea: true,
@@ -1145,13 +1188,18 @@
         }
 
         const result = {
-          coords: { lat: latitude, lng: longitude },
+          coords: extractedCoords || { lat: latitude, lng: longitude },
           destination,
           port,
           isAtSea,
           summary: (positionText || searchText.substring(0, 200)).trim(),
         };
         console.log("[FETCH] Final result:", result);
+        if (extractedCoords) {
+          console.log(
+            "[FETCH] Using coordinates from trackerItemSchedulePosition div"
+          );
+        }
         return result;
       }
 
