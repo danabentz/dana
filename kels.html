@@ -769,29 +769,124 @@
         const rawText = await response.text();
         console.log("[FETCH] Raw text length:", rawText.length);
 
-        // Search for the position sentence directly (proxy strips HTML structure)
-        // Pattern: "Seabourn Encore current position is at coordinates X N / Y E en route to..."
-        const positionMatch = rawText.match(
-          /Seabourn Encore current position is[^.]+/i
+        // Debug: Check if key terms exist
+        const hasSeabourn = rawText.includes("Seabourn");
+        const hasEncore = rawText.includes("Encore");
+        const hasCoordinates = rawText.includes("coordinates");
+        const hasEnRoute = rawText.includes("en route");
+        console.log(
+          "[FETCH] Debug - Has 'Seabourn':",
+          hasSeabourn,
+          "Has 'Encore':",
+          hasEncore,
+          "Has 'coordinates':",
+          hasCoordinates,
+          "Has 'en route':",
+          hasEnRoute
         );
-        if (!positionMatch) {
-          console.warn("[FETCH] Position sentence not found");
-          return null;
+
+        // Try multiple flexible patterns to find the position text
+        let positionText = null;
+        const patterns = [
+          /Seabourn Encore current position is[^.]+/i,
+          /Seabourn\s+Encore[^.]*coordinates[^.]+/i,
+          /Encore[^.]*current position[^.]+/i,
+          /coordinates[^.]*en route[^.]+/i,
+          /[\d.]+\s*[NS]\s*\/\s*[\d.]+\s*[EW][^.]*en route[^.]+/i,
+        ];
+
+        for (const pattern of patterns) {
+          const match = rawText.match(pattern);
+          if (match) {
+            positionText = match[0];
+            console.log(
+              "[FETCH] Found position text with pattern:",
+              pattern.toString()
+            );
+            break;
+          }
         }
 
-        const positionText = positionMatch[0];
+        if (!positionText) {
+          console.warn(
+            "[FETCH] Position sentence not found. Searching for coordinates and route separately..."
+          );
+          // Fallback: try to find coordinates and "en route" separately
+          const coordsMatch = rawText.match(
+            /[\d.]+\s*[NS]\s*\/\s*[\d.]+\s*[EW]/i
+          );
+          const routeMatch = rawText.match(/en route to\s*[^.\n]+/i);
+
+          if (coordsMatch && routeMatch) {
+            // Try to find text around the coordinates
+            const coordsIndex = rawText.indexOf(coordsMatch[0]);
+            const start = Math.max(0, coordsIndex - 100);
+            const end = Math.min(
+              rawText.length,
+              coordsIndex + coordsMatch[0].length + 200
+            );
+            positionText = rawText.substring(start, end);
+            console.log(
+              "[FETCH] Using fallback method - extracted text around coordinates"
+            );
+          } else {
+            console.warn("[FETCH] Could not find coordinates or route text");
+            // Show a sample of the raw text for debugging
+            console.log(
+              "[FETCH] Sample of raw text (first 500 chars):",
+              rawText.substring(0, 500)
+            );
+            console.log(
+              "[FETCH] Sample of raw text (last 500 chars):",
+              rawText.substring(rawText.length - 500)
+            );
+            return null;
+          }
+        }
+
         console.log(
           "[FETCH] Position text found:",
-          positionText.substring(0, 150)
+          positionText.substring(0, 200)
         );
 
-        // Extract coordinates from the position text
+        // Extract coordinates from the position text (or whole raw text if needed)
+        const searchText = positionText || rawText;
         const coordsRegex =
           /coordinates?\s*([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
-        const coordsMatch = coordsRegex.exec(positionText);
+        const coordsMatch = coordsRegex.exec(searchText);
         if (!coordsMatch) {
-          console.warn("[FETCH] Coordinates not found in position text");
-          return null;
+          // Try pattern without "coordinates" word
+          const altCoordsRegex = /([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i;
+          const altMatch = altCoordsRegex.exec(searchText);
+          if (!altMatch) {
+            console.warn("[FETCH] Coordinates not found in position text");
+            return null;
+          }
+          // Use alternative match
+          const rawLat = parseFloat(altMatch[1]);
+          const rawLng = parseFloat(altMatch[3]);
+          if (!Number.isFinite(rawLat) || !Number.isFinite(rawLng)) {
+            console.warn("[FETCH] Invalid coordinates:", rawLat, rawLng);
+            return null;
+          }
+          const latitude =
+            altMatch[2].toUpperCase() === "S" ? rawLat * -1 : rawLat;
+          const longitude =
+            altMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
+
+          // Check for "en route" in searchText
+          const routeMatch = searchText.match(/en route to\s*([^.,;\n]+)/i);
+          const isAtSea = !!routeMatch;
+          const destination = routeMatch ? routeMatch[1].trim() : null;
+
+          console.log("[FETCH] Using alternative coordinate extraction");
+          return {
+            coords: { lat: latitude, lng: longitude },
+            destination,
+            port: null,
+            isAtSea,
+            summary: positionText || searchText.substring(0, 200),
+          };
         }
 
         console.log("[FETCH] Coordinates matched:", coordsMatch[0]);
@@ -812,26 +907,26 @@
         // Check if position text contains "en route" - this is the key indicator
         let destination = null;
         let isAtSea = false;
-        console.log("[FETCH] Checking for 'en route to' in position text...");
-        const routeMatch = positionText.match(/en route to\s*([^.,;]+)/i);
+        console.log("[FETCH] Checking for 'en route to' in search text...");
+        const routeMatch = searchText.match(/en route to\s*([^.,;\n]+)/i);
         console.log("[FETCH] Route match result:", routeMatch);
         if (routeMatch) {
           destination = routeMatch[1].trim();
           isAtSea = true;
           console.log("[FETCH] ✅ SHIP IS AT SEA. Destination:", destination);
         } else {
-          console.log("[FETCH] ❌ 'en route to' not found in position text");
+          console.log("[FETCH] ❌ 'en route to' not found in search text");
           console.log(
-            "[FETCH] Position text contains 'route'?",
-            positionText.toLowerCase().includes("route")
+            "[FETCH] Search text contains 'route'?",
+            searchText.toLowerCase().includes("route")
           );
         }
 
         let port = null;
         // Only check for port if not at sea
         if (!isAtSea) {
-          const portMatch = positionText.match(
-            /currently at(?: the)? port of\s*([^.,;]+)/i
+          const portMatch = searchText.match(
+            /currently at(?: the)? port of\s*([^.,;\n]+)/i
           );
           if (portMatch) {
             port = portMatch[1].replace(/\s+/g, " ").trim();
@@ -844,7 +939,7 @@
           destination,
           port,
           isAtSea,
-          summary: positionText.trim(),
+          summary: (positionText || searchText.substring(0, 200)).trim(),
         };
         console.log("[FETCH] Final result:", result);
         return result;
