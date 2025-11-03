@@ -752,10 +752,141 @@
         return `Tomorrow: ${entry.label}`;
       }
 
+      async function fetchFromVesselFinder() {
+        const proxyUrl =
+          "https://r.jina.ai/https://www.vesselfinder.com/vessels/details/9731171";
+        console.log("[VF] Trying VesselFinder...");
+        try {
+          const response = await fetch(proxyUrl, {
+            headers: {
+              Accept: "text/plain",
+            },
+          });
+          if (!response.ok) {
+            console.warn("[VF] Response not OK:", response.status);
+            return null;
+          }
+
+          const rawText = await response.text();
+          console.log("[VF] Raw text length:", rawText.length);
+
+          // Look for the paragraph with class "text2" which contains the position info
+          const text2Match = rawText.match(
+            /<p[^>]*class\s*=\s*["'][^"']*text2[^"']*["'][^>]*>(.*?)<\/p>/is
+          );
+          if (!text2Match) {
+            console.warn("[VF] text2 paragraph not found");
+            return null;
+          }
+
+          const text2Content = text2Match[1];
+          console.log(
+            "[VF] text2 content found:",
+            text2Content.substring(0, 200)
+          );
+
+          // Extract coordinates - look for "at [location]" or coordinates pattern
+          // Pattern: "at Aegean Sea" or coordinates like "37.35305 N / 23.78063 E"
+          let coordsMatch = text2Content.match(
+            /([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
+          );
+          let latitude = null;
+          let longitude = null;
+
+          if (!coordsMatch) {
+            // Try to find coordinates in the full raw text
+            coordsMatch = rawText.match(
+              /([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
+            );
+          }
+
+          if (coordsMatch) {
+            const rawLat = parseFloat(coordsMatch[1]);
+            const rawLng = parseFloat(coordsMatch[3]);
+            if (Number.isFinite(rawLat) && Number.isFinite(rawLng)) {
+              latitude =
+                coordsMatch[2].toUpperCase() === "S" ? rawLat * -1 : rawLat;
+              longitude =
+                coordsMatch[4].toUpperCase() === "W" ? rawLng * -1 : rawLng;
+              console.log("[VF] Coordinates found:", latitude, longitude);
+            }
+          }
+
+          // Check if "en route to" is in the text2 paragraph
+          let destination = null;
+          let isAtSea = false;
+          const routeMatch = text2Content.match(
+            /en route to\s*<strong>([^<]+)<\/strong>/i
+          );
+          if (routeMatch) {
+            destination = routeMatch[1].trim();
+            isAtSea = true;
+            console.log("[VF] ✅ SHIP IS AT SEA. Destination:", destination);
+          } else {
+            // Try without strong tags
+            const routeMatchAlt = text2Content.match(
+              /en route to\s*([^,.<]+)/i
+            );
+            if (routeMatchAlt) {
+              destination = routeMatchAlt[1].trim();
+              isAtSea = true;
+              console.log(
+                "[VF] ✅ SHIP IS AT SEA. Destination (alt):",
+                destination
+              );
+            }
+          }
+
+          if (isAtSea && latitude && longitude) {
+            return {
+              coords: { lat: latitude, lng: longitude },
+              destination,
+              port: null,
+              isAtSea: true,
+              summary: text2Content.trim(),
+            };
+          }
+
+          // If we found "en route" but no coordinates, still return at sea status
+          if (isAtSea) {
+            console.log(
+              "[VF] Found 'en route' but no coordinates - will use itinerary coords"
+            );
+            return {
+              coords: null,
+              destination,
+              port: null,
+              isAtSea: true,
+              summary: text2Content.trim(),
+            };
+          }
+
+          console.log("[VF] No 'en route' found in text2");
+          return null;
+        } catch (error) {
+          console.warn("[VF] Error fetching from VesselFinder:", error);
+          return null;
+        }
+      }
+
       async function fetchLiveShipPosition() {
+        // Try VesselFinder first
+        const vfResult = await fetchFromVesselFinder();
+        if (vfResult && vfResult.isAtSea) {
+          console.log("[FETCH] ✅ Successfully got data from VesselFinder");
+          return vfResult;
+        }
+
+        console.log(
+          "[FETCH] VesselFinder didn't work, falling back to CruiseMapper..."
+        );
+
+        // Fallback to CruiseMapper
         const proxyUrl =
           "https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1094";
-        console.log("[FETCH] Starting live position fetch...");
+        console.log(
+          "[FETCH] Starting live position fetch from CruiseMapper..."
+        );
         const response = await fetch(proxyUrl, {
           headers: {
             Accept: "text/plain",
@@ -987,6 +1118,7 @@
           console.log("[UPDATE] Setting label text:", labelText);
           locationLabelEl.textContent = labelText;
 
+          // Update status even if no coords (VesselFinder might return "en route" without coords)
           if (live.coords) {
             const latStr = live.coords.lat.toFixed(4);
             const lngStr = live.coords.lng.toFixed(4);
@@ -1023,6 +1155,18 @@
               "Label:",
               labelText
             );
+          } else if (live.isAtSea) {
+            // We have "en route" status but no coordinates - still show the status
+            let detail;
+            if (live.destination) {
+              detail = `Currently sailing en route to ${live.destination}.`;
+            } else if (todayEntry && todayEntry.nextPort) {
+              detail = `Currently sailing toward ${todayEntry.nextPort}.`;
+            } else {
+              detail = "Currently sailing the open ocean.";
+            }
+            locationStatusEl.textContent = `Live update: ${detail}`;
+            console.log("[UPDATE] ✅ Status updated (no coords):", statusLabel);
           } else if (live.summary) {
             locationStatusEl.textContent = `Live update: ${live.summary}`;
             console.log("[UPDATE] Used summary instead of coords");
