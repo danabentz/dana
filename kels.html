@@ -53,10 +53,23 @@
           sans-serif;
         background: var(--backdrop);
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding: 3rem 1.5rem;
+        gap: 1.5rem;
+        padding: 2rem 1.5rem 3rem;
         color: var(--text);
+      }
+
+      .countdown-banner {
+        width: min(900px, 100%);
+        background: var(--accent);
+        color: white;
+        border-radius: 999px;
+        padding: 0.85rem 1.75rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-align: center;
+        box-shadow: 0 18px 40px rgba(0, 113, 227, 0.3);
       }
 
       .shell {
@@ -170,6 +183,11 @@
           padding: 2rem 1rem;
         }
 
+        .countdown-banner {
+          font-size: 0.95rem;
+          padding: 0.75rem 1.25rem;
+        }
+
         .shell {
           padding: 2rem;
           gap: 1.75rem;
@@ -182,6 +200,9 @@
     </style>
   </head>
   <body>
+    <div class="countdown-banner" id="countdown-banner">
+      Loading days until Kels is home...
+    </div>
     <main class="shell">
       <header>
         <h1>Where in the world is Kels?</h1>
@@ -218,6 +239,21 @@
       crossorigin=""
     ></script>
     <script>
+      const countdownBanner = document.getElementById("countdown-banner");
+      const targetDate = new Date("2026-05-15T00:00:00");
+      const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+      function updateCountdown() {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const diff = targetDate - today;
+        const daysRemaining = diff > 0 ? Math.ceil(diff / MS_PER_DAY) : 0;
+        countdownBanner.textContent = `${daysRemaining} days until Kels is home! 🏡`;
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000 * 60 * 60);
+
       const staticItinerary = {
         "2025-10-19": "Piraeus (Athens), Greece",
         "2025-10-20": "Gythion (Sparta & Mystras), Greece",
