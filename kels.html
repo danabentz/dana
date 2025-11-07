@@ -40,6 +40,7 @@
         --status-docked-bg: rgba(58, 180, 122, 0.18);
         --status-unknown: #4f5363;
         --status-unknown-bg: rgba(124, 130, 155, 0.16);
+        --pin-shadow: rgba(0, 113, 227, 0.32);
       }
 
       * {
@@ -65,6 +66,33 @@
         color: #4d213b;
       }
 
+      body.christmas-mode {
+        --surface: rgba(255, 255, 255, 0.9);
+        --text: #12211c;
+        --accent: #b91c1c;
+        --accent-soft: rgba(185, 28, 28, 0.16);
+        --backdrop: radial-gradient(
+            circle at 22% 18%,
+            rgba(185, 28, 28, 0.18),
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 78% 12%,
+            rgba(22, 101, 52, 0.16),
+            transparent 55%
+          ),
+          linear-gradient(135deg, #f3f7f5 0%, #edf4f0 45%, #f9eeec 100%);
+        --status-sea: #166534;
+        --status-sea-bg: rgba(22, 101, 52, 0.16);
+        --status-docked: #b91c1c;
+        --status-docked-bg: rgba(185, 28, 28, 0.16);
+        --status-unknown: #0f172a;
+        --status-unknown-bg: rgba(15, 23, 42, 0.12);
+        --pin-shadow: rgba(15, 118, 110, 0.3);
+        background: var(--backdrop);
+        color: var(--text);
+      }
+
       .countdown-banner {
         width: min(900px, 100%);
         background: var(--accent);
@@ -75,6 +103,25 @@
         font-weight: 600;
         text-align: center;
         box-shadow: 0 18px 40px rgba(0, 113, 227, 0.3);
+      }
+
+      .christmas-banner {
+        width: min(900px, 100%);
+        background: linear-gradient(135deg, #14532d, #166534);
+        color: #fef2f2;
+        border-radius: 999px;
+        padding: 1.05rem 1.75rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-align: center;
+        box-shadow: 0 22px 55px rgba(14, 116, 65, 0.35);
+        margin: 0;
+      }
+
+      .christmas-banner[hidden] {
+        display: none;
       }
 
       .shell {
@@ -132,6 +179,17 @@
         background: rgba(255, 255, 255, 0.9);
         border: 1px solid rgba(226, 198, 255, 0.7);
         box-shadow: 0 28px 72px rgba(143, 58, 154, 0.22);
+      }
+
+      body.christmas-mode main.shell {
+        background: rgba(255, 255, 255, 0.86);
+        border-radius: 32px;
+        border: 1px solid rgba(15, 118, 110, 0.2);
+        box-shadow: 0 32px 80px rgba(15, 118, 110, 0.28);
+      }
+
+      body.christmas-mode header h1 {
+        color: #14532d;
       }
 
       .shell.birthday-visible header h1 {
@@ -237,6 +295,11 @@
         box-shadow: 0 0 20px rgba(255, 214, 10, 0.7);
       }
 
+      body.christmas-mode .sparkle {
+        background: linear-gradient(135deg, rgba(236, 72, 153, 0.8), rgba(239, 68, 68, 0.75));
+        box-shadow: 0 0 22px rgba(239, 68, 68, 0.65);
+      }
+
       @media (max-width: 600px) {
         body {
           padding: 2rem 1rem;
@@ -259,6 +322,9 @@
     </style>
   </head>
   <body>
+    <div id="christmas-banner" class="christmas-banner" hidden>
+      Merry Christmas!
+    </div>
     <section class="birthday-shell" id="birthday-shell" hidden>
       <div class="birthday-content">
         <h1>HAPPY BIRTHDAY KELS!</h1>
@@ -310,6 +376,7 @@
       const countdownBanner = document.getElementById("countdown-banner");
       const mainShell = document.querySelector("main.shell");
       const birthdayShell = document.getElementById("birthday-shell");
+      const christmasBanner = document.getElementById("christmas-banner");
       const urlParams = new URLSearchParams(window.location.search);
       const todayReference = new Date();
       const isBirthdayDate =
@@ -321,6 +388,17 @@
         urlParams.get("birthday") === "1";
       const isBirthday = isBirthdayDate || forcedBirthday;
 
+      const isChristmasDate =
+        todayReference.getFullYear() === 2025 &&
+        todayReference.getMonth() === 11 &&
+        todayReference.getDate() === 25;
+      const forcedChristmas =
+        urlParams.get("mode") === "xmas" ||
+        urlParams.get("holiday") === "xmas" ||
+        urlParams.get("xmas") === "1" ||
+        urlParams.has("xmas");
+      const isChristmas = isChristmasDate || forcedChristmas;
+
       if (isBirthday) {
         document.body.classList.add("birthday-mode");
         if (birthdayShell) birthdayShell.removeAttribute("hidden");
@@ -330,6 +408,17 @@
         if (forcedBirthday && !isBirthdayDate) {
           console.info(
             "[INIT] Birthday preview mode enabled via URL parameter."
+          );
+        }
+      }
+
+      if (isChristmas) {
+        document.body.classList.add("christmas-mode");
+        if (christmasBanner) christmasBanner.removeAttribute("hidden");
+        document.title = "Merry Christmas, Kels!";
+        if (forcedChristmas && !isChristmasDate) {
+          console.info(
+            "[INIT] Christmas preview mode enabled via URL parameter."
           );
         }
       }
@@ -611,7 +700,7 @@
         entry.index = index;
       });
 
-      const markerEmoji = isBirthday ? "🎁" : "🚢";
+      const markerEmoji = isBirthday ? "🎁" : isChristmas ? "🎄" : "🚢";
 
       const map = L.map("map", {
         zoomControl: false,
@@ -628,7 +717,7 @@
 
       const markerIcon = L.divIcon({
         className: "kels-pin",
-        html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 14px 30px rgba(0,113,227,0.32);font-size:26px;line-height:1;">${markerEmoji}</div>`,
+        html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--accent-soft);backdrop-filter:blur(6px);box-shadow:0 14px 30px var(--pin-shadow);color:var(--accent);font-size:26px;line-height:1;">${markerEmoji}</div>`,
       });
 
       let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
