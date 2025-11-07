@@ -60,6 +60,11 @@
         color: var(--text);
       }
 
+      body.birthday-mode {
+        background: linear-gradient(135deg, #fff5f7 0%, #ffe3f1 50%, #fff8d6 100%);
+        color: #7a003c;
+      }
+
       .countdown-banner {
         width: min(900px, 100%);
         background: var(--accent);
@@ -82,6 +87,80 @@
         padding: 2.75rem;
         display: grid;
         gap: 2.5rem;
+      }
+
+      .birthday-shell {
+        position: relative;
+        width: min(900px, 100%);
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 32px;
+        padding: clamp(2.5rem, 5vw, 4.5rem);
+        text-align: center;
+        box-shadow: 0 28px 70px rgba(255, 105, 180, 0.25);
+        overflow: hidden;
+      }
+
+      .birthday-shell[hidden] {
+        display: none;
+      }
+
+      .birthday-shell h1 {
+        margin: 0 0 1rem;
+        font-size: clamp(3rem, 8vw, 4.75rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #d6336c;
+        text-shadow: 0 12px 32px rgba(214, 51, 108, 0.35);
+      }
+
+      .birthday-lead {
+        font-size: clamp(1.4rem, 4vw, 2rem);
+        margin: 0 0 0.75rem;
+        font-weight: 600;
+        color: #9c0c4f;
+      }
+
+      .birthday-sub {
+        font-size: clamp(1.15rem, 3vw, 1.5rem);
+        margin: 0;
+        color: #7a003c;
+      }
+
+      .birthday-confetti {
+        position: absolute;
+        top: -60px;
+        bottom: -60px;
+        width: clamp(80px, 12vw, 140px);
+        background-image: radial-gradient(circle at 20% 20%, #ff6bcb 12%, transparent 13%),
+          radial-gradient(circle at 80% 40%, #ffd43b 10%, transparent 12%),
+          radial-gradient(circle at 40% 70%, #74c0fc 10%, transparent 13%),
+          radial-gradient(circle at 65% 15%, #82c91e 10%, transparent 13%),
+          radial-gradient(circle at 30% 40%, #845ef7 12%, transparent 14%);
+        opacity: 0.75;
+        pointer-events: none;
+      }
+
+      .birthday-confetti--left {
+        left: 0;
+      }
+
+      .birthday-confetti--right {
+        right: 0;
+      }
+
+      .shell.birthday-visible {
+        background: rgba(255, 255, 255, 0.88);
+        border: 2px solid rgba(255, 183, 213, 0.55);
+        box-shadow: 0 26px 65px rgba(214, 51, 108, 0.2);
+      }
+
+      .shell.birthday-visible header h1 {
+        color: #c2255c;
+      }
+
+      .shell.birthday-visible .status-badge {
+        background: rgba(255, 214, 229, 0.6);
+        color: #c2255c;
       }
 
       header {
@@ -200,6 +279,17 @@
     </style>
   </head>
   <body>
+    <section class="birthday-shell" id="birthday-shell" hidden>
+      <div class="birthday-confetti birthday-confetti--left" aria-hidden="true"></div>
+      <div class="birthday-confetti birthday-confetti--right" aria-hidden="true"></div>
+      <div class="birthday-content">
+        <h1>HAPPY BIRTHDAY KELS!</h1>
+        <p class="birthday-lead">Wishing you the most magical day at sea.</p>
+        <p class="birthday-sub">
+          The voyage pauses today to celebrate you – enjoy every sparkling moment! 🎁
+        </p>
+      </div>
+    </section>
     <div class="countdown-banner" id="countdown-banner">
       Loading days until Kels is home...
     </div>
@@ -240,6 +330,31 @@
     ></script>
     <script>
       const countdownBanner = document.getElementById("countdown-banner");
+      const mainShell = document.querySelector("main.shell");
+      const birthdayShell = document.getElementById("birthday-shell");
+      const urlParams = new URLSearchParams(window.location.search);
+      const todayReference = new Date();
+      const isBirthdayDate =
+        todayReference.getFullYear() === 2025 &&
+        todayReference.getMonth() === 10 &&
+        todayReference.getDate() === 26;
+      const forcedBirthday =
+        urlParams.get("mode") === "birthday" ||
+        urlParams.get("birthday") === "1";
+      const isBirthday = isBirthdayDate || forcedBirthday;
+
+      if (isBirthday) {
+        document.body.classList.add("birthday-mode");
+        if (birthdayShell) birthdayShell.removeAttribute("hidden");
+        if (countdownBanner) countdownBanner.style.display = "none";
+        if (mainShell) mainShell.classList.add("birthday-visible");
+        document.title = "Happy Birthday Kels!";
+        if (forcedBirthday && !isBirthdayDate) {
+          console.info(
+            "[INIT] Birthday preview mode enabled via URL parameter."
+          );
+        }
+      }
       const targetDate = new Date("2026-05-15T00:00:00");
       const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -252,7 +367,9 @@
       }
 
       updateCountdown();
-      setInterval(updateCountdown, 1000 * 60 * 60);
+      if (!isBirthday) {
+        setInterval(updateCountdown, 1000 * 60 * 60);
+      }
 
       const staticItinerary = {
         "2025-10-19": "Piraeus (Athens), Greece",
@@ -516,6 +633,8 @@
         entry.index = index;
       });
 
+      const markerEmoji = isBirthday ? "🎁" : "🚢";
+
       const map = L.map("map", {
         zoomControl: false,
         attributionControl: false,
@@ -531,7 +650,7 @@
 
       const markerIcon = L.divIcon({
         className: "kels-pin",
-        html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 14px 30px rgba(0,113,227,0.32);font-size:26px;line-height:1;">🚢</div>`,
+        html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:rgba(0,113,227,0.18);backdrop-filter:blur(6px);box-shadow:0 14px 30px rgba(0,113,227,0.32);font-size:26px;line-height:1;">${markerEmoji}</div>`,
       });
 
       let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
@@ -1015,6 +1134,10 @@
       }
 
       function init() {
+        if (isBirthday) {
+          console.log("[INIT] Birthday mode active - skipping voyage data.");
+          return;
+        }
         console.log("[INIT] Starting initialization...");
         const todayEntry = getEntryForDate(new Date());
         const cached = readCachedLocation();
