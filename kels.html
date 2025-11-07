@@ -341,7 +341,7 @@
     <section class="birthday-shell" id="birthday-shell" hidden>
       <div class="birthday-content">
         <h1>HAPPY BIRTHDAY KELS!</h1>
-        <p class="birthday-lead">Wishing you the most magical day at sea.</p>
+        <p class="birthday-lead">Today’s forecast: a perfect day at sea</p>
       </div>
     </section>
     <div class="countdown-banner" id="countdown-banner">
@@ -880,7 +880,8 @@
         entry.index = index;
       });
 
-      const markerEmoji = isBirthday ? "🎁" : isChristmas ? "🎄" : "🚢";
+      const markerEmoji = isBirthday ? "🎁" : isChristmas ? "🎄" : null;
+      const useImage = !isBirthday && !isChristmas;
 
       const map = L.map("map", {
         zoomControl: false,
@@ -897,11 +898,17 @@
 
       const markerIcon = L.divIcon({
         className: "kels-pin",
-        html: `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--accent-soft);backdrop-filter:blur(6px);box-shadow:0 14px 30px var(--pin-shadow);color:var(--accent);font-size:26px;line-height:1;">${markerEmoji}</div>`,
+        iconSize: useImage ? [108, 108] : [48, 48],
+        html: useImage
+          ? `<div style="display:flex;align-items:center;justify-content:center;width:108px;height:108px;border-radius:50%;background:var(--accent-soft);backdrop-filter:blur(6px);box-shadow:0 14px 30px var(--pin-shadow);padding:9px;"><img src="cruise-ship.png" alt="Kels' ship" style="width:100%;height:100%;object-fit:contain;display:block;" /></div>`
+          : `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--accent-soft);backdrop-filter:blur(6px);box-shadow:0 14px 30px var(--pin-shadow);color:var(--accent);font-size:26px;line-height:1;">${markerEmoji}</div>`,
       });
 
       let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
-      marker.bindTooltip("Kels' ship", { direction: "top", offset: [0, -18] });
+      marker.bindTooltip("Kels' ship", {
+        direction: "top",
+        offset: useImage ? [0, -41] : [0, -18],
+      });
 
       const locationStatusEl = document.getElementById("location-status");
       const locationLabelEl = document.getElementById("location-label");
