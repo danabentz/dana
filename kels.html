@@ -62,7 +62,12 @@
       }
 
       body.birthday-mode {
-        background: linear-gradient(135deg, #fdf8ff 0%, #f9ecf5 50%, #fff7eb 100%);
+        background: linear-gradient(
+          135deg,
+          #fdf8ff 0%,
+          #f9ecf5 50%,
+          #fff7eb 100%
+        );
         color: #4d213b;
       }
 
@@ -139,7 +144,12 @@
       .birthday-shell {
         position: relative;
         width: min(900px, 100%);
-        background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 246, 251, 0.9) 60%, rgba(250, 239, 255, 0.88) 100%);
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.92) 0%,
+          rgba(255, 246, 251, 0.9) 60%,
+          rgba(250, 239, 255, 0.88) 100%
+        );
         border-radius: 36px;
         padding: clamp(3rem, 5vw, 4.75rem);
         text-align: center;
@@ -173,7 +183,6 @@
         margin: 0;
         color: #553350;
       }
-
 
       .shell.birthday-visible {
         background: rgba(255, 255, 255, 0.9);
@@ -296,7 +305,11 @@
       }
 
       body.christmas-mode .sparkle {
-        background: linear-gradient(135deg, rgba(236, 72, 153, 0.8), rgba(239, 68, 68, 0.75));
+        background: linear-gradient(
+          135deg,
+          rgba(236, 72, 153, 0.8),
+          rgba(239, 68, 68, 0.75)
+        );
         box-shadow: 0 0 22px rgba(239, 68, 68, 0.65);
       }
 
@@ -329,9 +342,6 @@
       <div class="birthday-content">
         <h1>HAPPY BIRTHDAY KELS!</h1>
         <p class="birthday-lead">Wishing you the most magical day at sea.</p>
-        <p class="birthday-sub">
-          The voyage pauses today to celebrate you – enjoy every sparkling moment! 🎁
-        </p>
       </div>
     </section>
     <div class="countdown-banner" id="countdown-banner">
@@ -372,6 +382,7 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script>
       const countdownBanner = document.getElementById("countdown-banner");
       const mainShell = document.querySelector("main.shell");
@@ -410,6 +421,81 @@
             "[INIT] Birthday preview mode enabled via URL parameter."
           );
         }
+
+        // Trigger confetti celebration
+        function triggerConfetti() {
+          const duration = 3000;
+          const end = Date.now() + duration;
+          const colors = [
+            "#ff6b9d",
+            "#c084fc",
+            "#a78bfa",
+            "#f472b6",
+            "#ec4899",
+            "#fbbf24",
+            "#f59e0b",
+          ];
+
+          (function frame() {
+            confetti({
+              particleCount: 3,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 },
+              colors: colors,
+            });
+            confetti({
+              particleCount: 3,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 },
+              colors: colors,
+            });
+
+            if (Date.now() < end) {
+              requestAnimationFrame(frame);
+            }
+          })();
+        }
+
+        // Initial confetti burst
+        setTimeout(() => {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: [
+              "#ff6b9d",
+              "#c084fc",
+              "#a78bfa",
+              "#f472b6",
+              "#ec4899",
+              "#fbbf24",
+              "#f59e0b",
+            ],
+          });
+        }, 500);
+
+        // Continuous confetti from sides
+        setTimeout(triggerConfetti, 1000);
+
+        // Periodic bursts every 5 seconds
+        setInterval(() => {
+          confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.5 },
+            colors: [
+              "#ff6b9d",
+              "#c084fc",
+              "#a78bfa",
+              "#f472b6",
+              "#ec4899",
+              "#fbbf24",
+              "#f59e0b",
+            ],
+          });
+        }, 5000);
       }
 
       if (isChristmas) {
@@ -427,7 +513,11 @@
 
       function updateCountdown() {
         const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const today = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
         const diff = targetDate - today;
         const daysRemaining = diff > 0 ? Math.ceil(diff / MS_PER_DAY) : 0;
         countdownBanner.textContent = `${daysRemaining} days until Kels is home! 🏡`;
