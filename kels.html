@@ -424,6 +424,10 @@
 
         // Trigger confetti celebration
         function triggerConfetti() {
+          if (typeof confetti === "undefined") {
+            console.warn("[CONFETTI] Library not loaded yet");
+            return;
+          }
           const duration = 3000;
           const end = Date.now() + duration;
           const colors = [
@@ -437,6 +441,7 @@
           ];
 
           (function frame() {
+            if (typeof confetti === "undefined") return;
             confetti({
               particleCount: 3,
               angle: 60,
@@ -460,20 +465,22 @@
 
         // Initial confetti burst
         setTimeout(() => {
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: [
-              "#ff6b9d",
-              "#c084fc",
-              "#a78bfa",
-              "#f472b6",
-              "#ec4899",
-              "#fbbf24",
-              "#f59e0b",
-            ],
-          });
+          if (typeof confetti !== "undefined") {
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+              colors: [
+                "#ff6b9d",
+                "#c084fc",
+                "#a78bfa",
+                "#f472b6",
+                "#ec4899",
+                "#fbbf24",
+                "#f59e0b",
+              ],
+            });
+          }
         }, 500);
 
         // Continuous confetti from sides
@@ -481,20 +488,22 @@
 
         // Periodic bursts every 5 seconds
         setInterval(() => {
-          confetti({
-            particleCount: 50,
-            spread: 60,
-            origin: { y: 0.5 },
-            colors: [
-              "#ff6b9d",
-              "#c084fc",
-              "#a78bfa",
-              "#f472b6",
-              "#ec4899",
-              "#fbbf24",
-              "#f59e0b",
-            ],
-          });
+          if (typeof confetti !== "undefined") {
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { y: 0.5 },
+              colors: [
+                "#ff6b9d",
+                "#c084fc",
+                "#a78bfa",
+                "#f472b6",
+                "#ec4899",
+                "#fbbf24",
+                "#f59e0b",
+              ],
+            });
+          }
         }, 5000);
       }
 
@@ -507,6 +516,87 @@
             "[INIT] Christmas preview mode enabled via URL parameter."
           );
         }
+
+        // Trigger confetti celebration
+        function triggerChristmasConfetti() {
+          if (typeof confetti === "undefined") {
+            console.warn("[CONFETTI] Library not loaded yet");
+            return;
+          }
+          const duration = 3000;
+          const end = Date.now() + duration;
+          const colors = [
+            "#b91c1c",
+            "#dc2626",
+            "#ef4444",
+            "#166534",
+            "#15803d",
+            "#22c55e",
+          ];
+
+          (function frame() {
+            if (typeof confetti === "undefined") return;
+            confetti({
+              particleCount: 3,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 },
+              colors: colors,
+            });
+            confetti({
+              particleCount: 3,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 },
+              colors: colors,
+            });
+
+            if (Date.now() < end) {
+              requestAnimationFrame(frame);
+            }
+          })();
+        }
+
+        // Initial confetti burst
+        setTimeout(() => {
+          if (typeof confetti !== "undefined") {
+            confetti({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+              colors: [
+                "#b91c1c",
+                "#dc2626",
+                "#ef4444",
+                "#166534",
+                "#15803d",
+                "#22c55e",
+              ],
+            });
+          }
+        }, 500);
+
+        // Continuous confetti from sides
+        setTimeout(triggerChristmasConfetti, 1000);
+
+        // Periodic bursts every 5 seconds
+        setInterval(() => {
+          if (typeof confetti !== "undefined") {
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { y: 0.5 },
+              colors: [
+                "#b91c1c",
+                "#dc2626",
+                "#ef4444",
+                "#166534",
+                "#15803d",
+                "#22c55e",
+              ],
+            });
+          }
+        }, 5000);
       }
       const targetDate = new Date("2026-05-15T00:00:00");
       const MS_PER_DAY = 1000 * 60 * 60 * 24;
