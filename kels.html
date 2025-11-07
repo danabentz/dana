@@ -18,28 +18,28 @@
     />
     <style>
       :root {
-        color-scheme: light dark;
-        --surface: rgba(255, 255, 255, 0.72);
-        --text: #0b1526;
-        --accent: #0071e3;
-        --accent-soft: rgba(0, 113, 227, 0.16);
+        color-scheme: light;
+        --surface: rgba(255, 255, 255, 0.82);
+        --text: #152033;
+        --accent: #5a3fd4;
+        --accent-soft: rgba(90, 63, 212, 0.16);
         --backdrop: radial-gradient(
-            circle at 20% 20%,
-            rgba(0, 113, 227, 0.3),
-            transparent 60%
+            circle at 18% 20%,
+            rgba(90, 63, 212, 0.24),
+            transparent 58%
           ),
           radial-gradient(
-            circle at 80% 10%,
-            rgba(255, 59, 48, 0.2),
-            transparent 60%
+            circle at 78% 8%,
+            rgba(231, 109, 161, 0.2),
+            transparent 55%
           ),
-          linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
-        --status-sea: #d35400;
-        --status-sea-bg: rgba(255, 149, 0, 0.18);
-        --status-docked: #1c7c3c;
-        --status-docked-bg: rgba(48, 209, 88, 0.2);
-        --status-unknown: #4a4a4f;
-        --status-unknown-bg: rgba(110, 110, 115, 0.16);
+          linear-gradient(135deg, #f2f4fb 0%, #f9f0f3 45%, #fef8ee 100%);
+        --status-sea: #c06c0d;
+        --status-sea-bg: rgba(255, 180, 60, 0.18);
+        --status-docked: #1f7d52;
+        --status-docked-bg: rgba(58, 180, 122, 0.18);
+        --status-unknown: #4f5363;
+        --status-unknown-bg: rgba(124, 130, 155, 0.16);
       }
 
       * {
@@ -61,8 +61,8 @@
       }
 
       body.birthday-mode {
-        background: linear-gradient(135deg, #fff5f7 0%, #ffe3f1 50%, #fff8d6 100%);
-        color: #7a003c;
+        background: linear-gradient(135deg, #fdf8ff 0%, #f9ecf5 50%, #fff7eb 100%);
+        color: #4d213b;
       }
 
       .countdown-banner {
@@ -80,23 +80,24 @@
       .shell {
         width: min(900px, 100%);
         background: var(--surface);
-        border-radius: 28px;
-        box-shadow: 0 30px 80px rgba(16, 40, 88, 0.2);
-        backdrop-filter: blur(22px) saturate(150%);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        padding: 2.75rem;
+        border-radius: 30px;
+        box-shadow: 0 26px 70px rgba(27, 37, 68, 0.22);
+        backdrop-filter: blur(26px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.58);
+        padding: clamp(2.4rem, 4vw, 3rem);
         display: grid;
-        gap: 2.5rem;
+        gap: 2.4rem;
       }
 
       .birthday-shell {
         position: relative;
         width: min(900px, 100%);
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 32px;
-        padding: clamp(2.5rem, 5vw, 4.5rem);
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 246, 251, 0.9) 60%, rgba(250, 239, 255, 0.88) 100%);
+        border-radius: 36px;
+        padding: clamp(3rem, 5vw, 4.75rem);
         text-align: center;
-        box-shadow: 0 28px 70px rgba(255, 105, 180, 0.25);
+        box-shadow: 0 32px 82px rgba(145, 88, 188, 0.24);
+        border: 1px solid rgba(235, 194, 255, 0.55);
         overflow: hidden;
       }
 
@@ -106,56 +107,35 @@
 
       .birthday-shell h1 {
         margin: 0 0 1rem;
-        font-size: clamp(3rem, 8vw, 4.75rem);
-        letter-spacing: 0.08em;
+        font-size: clamp(3.2rem, 8vw, 5rem);
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: #d6336c;
-        text-shadow: 0 12px 32px rgba(214, 51, 108, 0.35);
+        color: #8f3a9a;
+        text-shadow: 0 14px 34px rgba(156, 70, 176, 0.38);
       }
 
       .birthday-lead {
-        font-size: clamp(1.4rem, 4vw, 2rem);
-        margin: 0 0 0.75rem;
+        font-size: clamp(1.45rem, 4vw, 2.1rem);
+        margin: 0 0 0.9rem;
         font-weight: 600;
-        color: #9c0c4f;
+        color: #6d2967;
       }
 
       .birthday-sub {
-        font-size: clamp(1.15rem, 3vw, 1.5rem);
+        font-size: clamp(1.2rem, 3vw, 1.55rem);
         margin: 0;
-        color: #7a003c;
+        color: #553350;
       }
 
-      .birthday-confetti {
-        position: absolute;
-        top: -60px;
-        bottom: -60px;
-        width: clamp(80px, 12vw, 140px);
-        background-image: radial-gradient(circle at 20% 20%, #ff6bcb 12%, transparent 13%),
-          radial-gradient(circle at 80% 40%, #ffd43b 10%, transparent 12%),
-          radial-gradient(circle at 40% 70%, #74c0fc 10%, transparent 13%),
-          radial-gradient(circle at 65% 15%, #82c91e 10%, transparent 13%),
-          radial-gradient(circle at 30% 40%, #845ef7 12%, transparent 14%);
-        opacity: 0.75;
-        pointer-events: none;
-      }
-
-      .birthday-confetti--left {
-        left: 0;
-      }
-
-      .birthday-confetti--right {
-        right: 0;
-      }
 
       .shell.birthday-visible {
-        background: rgba(255, 255, 255, 0.88);
-        border: 2px solid rgba(255, 183, 213, 0.55);
-        box-shadow: 0 26px 65px rgba(214, 51, 108, 0.2);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(226, 198, 255, 0.7);
+        box-shadow: 0 28px 72px rgba(143, 58, 154, 0.22);
       }
 
       .shell.birthday-visible header h1 {
-        color: #c2255c;
+        color: #6d2967;
       }
 
       .shell.birthday-visible .status-badge {
@@ -280,8 +260,6 @@
   </head>
   <body>
     <section class="birthday-shell" id="birthday-shell" hidden>
-      <div class="birthday-confetti birthday-confetti--left" aria-hidden="true"></div>
-      <div class="birthday-confetti birthday-confetti--right" aria-hidden="true"></div>
       <div class="birthday-content">
         <h1>HAPPY BIRTHDAY KELS!</h1>
         <p class="birthday-lead">Wishing you the most magical day at sea.</p>
@@ -1135,10 +1113,12 @@
 
       function init() {
         if (isBirthday) {
-          console.log("[INIT] Birthday mode active - skipping voyage data.");
-          return;
+          console.log(
+            "[INIT] Birthday mode active - displaying voyage data alongside the celebration."
+          );
+        } else {
+          console.log("[INIT] Starting initialization...");
         }
-        console.log("[INIT] Starting initialization...");
         const todayEntry = getEntryForDate(new Date());
         const cached = readCachedLocation();
 
