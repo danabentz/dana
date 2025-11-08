@@ -347,6 +347,7 @@
         .countdown-banner {
           font-size: 0.95rem;
           padding: 0.75rem 1.25rem;
+          margin-top: 3.5rem;
         }
 
         .shell {
@@ -359,10 +360,10 @@
         }
 
         .language-toggle {
-          top: 1rem;
-          right: 1rem;
-          padding: 0.4rem 0.85rem;
-          font-size: 0.85rem;
+          top: 0.5rem;
+          right: 0.5rem;
+          padding: 0.35rem 0.75rem;
+          font-size: 0.8rem;
         }
       }
     </style>
@@ -516,8 +517,10 @@
       const languageToggle = document.getElementById("language-toggle");
 
       function translatePage(lang) {
+        const previousLang = currentLanguage;
         currentLanguage = lang;
         const t = translations[lang];
+        const tPrev = translations[previousLang];
 
         // Update button text
         languageToggle.textContent = lang === "en" ? "Dansk" : "English";
@@ -542,7 +545,10 @@
         // Update countdown banner
         if (countdownBanner) {
           const currentText = countdownBanner.textContent;
-          if (currentText.includes("Loading")) {
+          if (
+            currentText.includes("Loading") ||
+            currentText.includes("Indlæser")
+          ) {
             countdownBanner.textContent = t.countdownLoading;
           } else {
             const daysMatch = currentText.match(/(\d+)/);
@@ -558,11 +564,20 @@
         const shipStatusEl = document.getElementById("ship-status");
         if (shipStatusEl) {
           const currentStatus = shipStatusEl.textContent;
-          if (currentStatus.includes("Loading")) {
+          if (
+            currentStatus.includes("Loading") ||
+            currentStatus.includes("Indlæser")
+          ) {
             shipStatusEl.textContent = t.statusLoading;
-          } else if (currentStatus.toLowerCase().includes("sea")) {
+          } else if (
+            currentStatus.toLowerCase().includes("sea") ||
+            currentStatus.toLowerCase().includes("søs")
+          ) {
             shipStatusEl.textContent = t.statusAtSea;
-          } else if (currentStatus.toLowerCase().includes("dock")) {
+          } else if (
+            currentStatus.toLowerCase().includes("dock") ||
+            currentStatus.toLowerCase().includes("fortøj")
+          ) {
             shipStatusEl.textContent = t.statusDocked;
           } else {
             shipStatusEl.textContent = t.statusUnknown;
@@ -573,15 +588,25 @@
         const locationStatusEl = document.getElementById("location-status");
         if (locationStatusEl) {
           const currentText = locationStatusEl.textContent;
-          if (currentText.includes("Loading")) {
+          if (
+            currentText.includes("Loading") ||
+            currentText.includes("Indlæser")
+          ) {
             locationStatusEl.textContent = t.locationLoading;
           } else {
-            // Try to translate common patterns
+            // Try to translate common patterns - check both English and Danish
             let translated = currentText;
+
+            // English patterns
             if (currentText.includes("Sailing between")) {
               const match = currentText.match(
                 /Sailing between (.+?) and (.+?)\./
               );
+              if (match) {
+                translated = t.sailingBetween(match[1], match[2]);
+              }
+            } else if (currentText.includes("Sejler mellem")) {
+              const match = currentText.match(/Sejler mellem (.+?) og (.+?)\./);
               if (match) {
                 translated = t.sailingBetween(match[1], match[2]);
               }
@@ -590,8 +615,18 @@
               if (match) {
                 translated = t.sailingOnward(match[1]);
               }
+            } else if (currentText.includes("Sejler videre fra")) {
+              const match = currentText.match(/Sejler videre fra (.+?)\./);
+              if (match) {
+                translated = t.sailingOnward(match[1]);
+              }
             } else if (currentText.includes("Approaching")) {
               const match = currentText.match(/Approaching (.+?)\./);
+              if (match) {
+                translated = t.approaching(match[1]);
+              }
+            } else if (currentText.includes("Nærmer sig")) {
+              const match = currentText.match(/Nærmer sig (.+?)\./);
               if (match) {
                 translated = t.approaching(match[1]);
               }
@@ -600,13 +635,25 @@
               if (match) {
                 translated = t.dockedNear(match[1]);
               }
-            } else if (currentText.includes("Transiting the Panama Canal")) {
+            } else if (currentText.includes("Fortøjet nær")) {
+              const match = currentText.match(/Fortøjet nær (.+?)\./);
+              if (match) {
+                translated = t.dockedNear(match[1]);
+              }
+            } else if (
+              currentText.includes("Transiting the Panama Canal") ||
+              currentText.includes("Passerer Panamakanalen")
+            ) {
               translated = t.transitingCanal;
             } else if (
-              currentText.includes("Crossing the International Date Line")
+              currentText.includes("Crossing the International Date Line") ||
+              currentText.includes("Krydser datolinjen")
             ) {
               translated = t.crossingDateLine;
-            } else if (currentText.includes("sailing the open ocean")) {
+            } else if (
+              currentText.includes("sailing the open ocean") ||
+              currentText.includes("Sejler i øjeblikket på det åbne hav")
+            ) {
               translated = t.currentlySailing;
             } else if (currentText.includes("Currently sailing toward")) {
               const match = currentText.match(
@@ -615,9 +662,26 @@
               if (match) {
                 translated = t.currentlySailingToward(match[1]);
               }
-            } else if (currentText.includes("Currently sailing en route")) {
+            } else if (currentText.includes("Sejler i øjeblikket mod")) {
+              const match = currentText.match(
+                /Sejler i øjeblikket mod (.+?)\./
+              );
+              if (match) {
+                translated = t.currentlySailingToward(match[1]);
+              }
+            } else if (
+              currentText.includes("Currently sailing en route") ||
+              currentText.includes("Currently sailing en route to")
+            ) {
               const match = currentText.match(
                 /Currently sailing en route to (.+?)\./
+              );
+              if (match) {
+                translated = t.currentlySailingEnRoute(match[1]);
+              }
+            } else if (currentText.includes("Sejler i øjeblikket på vej til")) {
+              const match = currentText.match(
+                /Sejler i øjeblikket på vej til (.+?)\./
               );
               if (match) {
                 translated = t.currentlySailingEnRoute(match[1]);
@@ -627,13 +691,97 @@
               if (match) {
                 translated = t.currentlyAlongside(match[1]);
               }
-            } else if (currentText.includes("Latest live coordinates")) {
+            } else if (currentText.includes("I øjeblikket ved siden af")) {
+              const match = currentText.match(
+                /I øjeblikket ved siden af (.+?)\./
+              );
+              if (match) {
+                translated = t.currentlyAlongside(match[1]);
+              }
+            } else if (
+              currentText.includes("Latest live coordinates") ||
+              currentText.includes("Seneste live koordinater")
+            ) {
               translated = t.latestCoordinates;
-            } else if (currentText.includes("Showing cached")) {
+            } else if (
+              currentText.includes("Showing cached") ||
+              currentText.includes("Viser cached")
+            ) {
               translated = t.showingCached;
-            } else if (currentText.includes("Live update:")) {
-              const afterPrefix = currentText.replace(/^Live update: /, "");
-              translated = t.liveUpdate + afterPrefix;
+            } else if (
+              currentText.includes("Live update:") ||
+              currentText.includes("Live opdatering:")
+            ) {
+              const afterPrefix = currentText.replace(
+                /^(Live update|Live opdatering):\s*/,
+                ""
+              );
+              // Try to translate the content after the prefix
+              let translatedAfter = afterPrefix;
+              if (afterPrefix.includes("Sejler i øjeblikket på vej til")) {
+                const match = afterPrefix.match(
+                  /Sejler i øjeblikket på vej til (.+?)\./
+                );
+                if (match) {
+                  translatedAfter = t.currentlySailingEnRoute(match[1]);
+                }
+              } else if (
+                afterPrefix.includes("Currently sailing en route to")
+              ) {
+                const match = afterPrefix.match(
+                  /Currently sailing en route to (.+?)\./
+                );
+                if (match) {
+                  translatedAfter = t.currentlySailingEnRoute(match[1]);
+                }
+              } else if (afterPrefix.includes("Sejler i øjeblikket mod")) {
+                const match = afterPrefix.match(
+                  /Sejler i øjeblikket mod (.+?)\./
+                );
+                if (match) {
+                  translatedAfter = t.currentlySailingToward(match[1]);
+                }
+              } else if (afterPrefix.includes("Currently sailing toward")) {
+                const match = afterPrefix.match(
+                  /Currently sailing toward (.+?)\./
+                );
+                if (match) {
+                  translatedAfter = t.currentlySailingToward(match[1]);
+                }
+              } else if (
+                afterPrefix.includes("Sejler i øjeblikket på det åbne hav")
+              ) {
+                translatedAfter = t.currentlySailing;
+              } else if (
+                afterPrefix.includes("Currently sailing the open ocean")
+              ) {
+                translatedAfter = t.currentlySailing;
+              } else if (afterPrefix.includes("I øjeblikket ved siden af")) {
+                const match = afterPrefix.match(
+                  /I øjeblikket ved siden af (.+?)\./
+                );
+                if (match) {
+                  translatedAfter = t.currentlyAlongside(match[1]);
+                }
+              } else if (afterPrefix.includes("Currently alongside")) {
+                const match = afterPrefix.match(/Currently alongside (.+?)\./);
+                if (match) {
+                  translatedAfter = t.currentlyAlongside(match[1]);
+                }
+              } else if (afterPrefix.includes("Seneste live koordinater")) {
+                translatedAfter = t.latestCoordinates;
+              } else if (afterPrefix.includes("Latest live coordinates")) {
+                translatedAfter = t.latestCoordinates;
+              }
+              // Extract coordinates if present
+              const coordsMatch = currentText.match(
+                /\(Lat: (.+?), Lon: (.+?)\)/
+              );
+              if (coordsMatch) {
+                translated = `${t.liveUpdate}${translatedAfter} (Lat: ${coordsMatch[1]}, Lon: ${coordsMatch[2]}).`;
+              } else {
+                translated = t.liveUpdate + translatedAfter;
+              }
             }
             locationStatusEl.textContent = translated;
           }
@@ -645,15 +793,28 @@
           const currentText = locationLabelEl.textContent;
           if (currentText) {
             let translated = currentText;
-            if (currentText.includes("En route to")) {
-              const match = currentText.match(/En route to (.+)/);
+            if (
+              currentText.includes("En route to") ||
+              currentText.includes("På vej til")
+            ) {
+              const match = currentText.match(
+                /(?:En route to|På vej til) (.+)/
+              );
               if (match) {
                 translated = t.enRouteTo(match[1]);
               }
-            } else if (currentText.includes("Sailing the open ocean")) {
+            } else if (
+              currentText.includes("Sailing the open ocean") ||
+              currentText.includes("Sejler på det åbne hav")
+            ) {
               translated = t.sailingOcean;
-            } else if (currentText.includes("Docked at")) {
-              const match = currentText.match(/Docked at (.+)/);
+            } else if (
+              currentText.includes("Docked at") ||
+              currentText.includes("Fortøjet ved")
+            ) {
+              const match = currentText.match(
+                /(?:Docked at|Fortøjet ved) (.+)/
+              );
               if (match) {
                 translated = t.dockedAt(match[1]);
               }
@@ -666,19 +827,36 @@
         const tomorrowStatusEl = document.getElementById("tomorrow-status");
         if (tomorrowStatusEl) {
           const currentText = tomorrowStatusEl.textContent;
-          if (currentText.includes("Loading")) {
+          if (
+            currentText.includes("Loading") ||
+            currentText.includes("Indlæser")
+          ) {
             tomorrowStatusEl.textContent = t.tomorrowLoading;
-          } else if (currentText.startsWith("Tomorrow: ")) {
-            const afterPrefix = currentText.replace(/^Tomorrow: /, "");
-            if (afterPrefix.includes("At sea between")) {
-              const match = afterPrefix.match(/At sea between (.+?) and (.+)/);
+          } else if (
+            currentText.startsWith("Tomorrow: ") ||
+            currentText.startsWith("I morgen: ")
+          ) {
+            const afterPrefix = currentText.replace(
+              /^(Tomorrow|I morgen):\s*/,
+              ""
+            );
+            if (
+              afterPrefix.includes("At sea between") ||
+              afterPrefix.includes("Til søs mellem")
+            ) {
+              const match = afterPrefix.match(
+                /(?:At sea between|Til søs mellem) (.+?) (?:and|og) (.+)/
+              );
               if (match) {
                 tomorrowStatusEl.textContent =
                   t.tomorrowPrefix + t.tomorrowAtSeaBetween(match[1], match[2]);
               }
-            } else if (afterPrefix === "At sea") {
+            } else if (afterPrefix === "At sea" || afterPrefix === "Til søs") {
               tomorrowStatusEl.textContent = t.tomorrowPrefix + t.tomorrowAtSea;
-            } else if (afterPrefix.includes("Itinerary unavailable")) {
+            } else if (
+              afterPrefix.includes("Itinerary unavailable") ||
+              afterPrefix.includes("Rejseplan utilgængelig")
+            ) {
               tomorrowStatusEl.textContent =
                 t.tomorrowPrefix + t.itineraryUnavailable;
             } else {
