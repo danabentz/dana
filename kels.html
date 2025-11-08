@@ -1724,6 +1724,110 @@
         }
       }
 
+      function getStatusFromItinerary(todayEntry) {
+        if (!todayEntry) return null;
+
+        const todayDate = new Date();
+        const todayISO = getLocalISO(todayDate);
+        const isAtSeaDay = todayEntry.rawLabel === "At Sea";
+
+        // If it's an "At Sea" day, she's at sea
+        if (isAtSeaDay) {
+          // Find next port destination
+          let nextPortEntry = null;
+          for (let i = 0; i < itineraryEntries.length; i++) {
+            const entry = itineraryEntries[i];
+            if (entry.date > todayISO && entry.label !== "At Sea") {
+              nextPortEntry = entry;
+              break;
+            }
+          }
+
+          return {
+            isAtSea: true,
+            destination: nextPortEntry
+              ? nextPortEntry.label
+              : todayEntry.nextPort || null,
+            port: null,
+            coords: todayEntry.coords,
+          };
+        }
+
+        // It's a port day - check if she's docked (9am-6pm local time) or at sea
+        const portInfo = locationReference[todayEntry.rawLabel];
+        if (!portInfo || !hasCoords(portInfo)) {
+          // No coordinates, can't determine timezone - assume at sea
+          let nextPortEntry = null;
+          for (let i = 0; i < itineraryEntries.length; i++) {
+            const entry = itineraryEntries[i];
+            if (entry.date > todayISO && entry.label !== "At Sea") {
+              nextPortEntry = entry;
+              break;
+            }
+          }
+          return {
+            isAtSea: true,
+            destination: nextPortEntry ? nextPortEntry.label : null,
+            port: null,
+            coords: null,
+          };
+        }
+
+        // Approximate timezone from longitude (rough approximation: 15 degrees = 1 hour)
+        // This is a simple approximation - not perfect but should work for most cases
+        const timezoneOffset = Math.round(portInfo.lng / 15);
+
+        // Get UTC time
+        const utcHours = todayDate.getUTCHours();
+        const utcMinutes = todayDate.getUTCMinutes();
+        const utcTimeMinutes = utcHours * 60 + utcMinutes;
+
+        // Calculate local time
+        const localTimeMinutes = utcTimeMinutes + timezoneOffset * 60;
+        // Normalize to 0-1440 (minutes in a day)
+        const normalizedMinutes = ((localTimeMinutes % 1440) + 1440) % 1440;
+        const localHours = Math.floor(normalizedMinutes / 60);
+        const localMinutes = normalizedMinutes % 60;
+
+        // Check if between 9am (540 minutes) and 6pm (1080 minutes)
+        const isDocked = normalizedMinutes >= 540 && normalizedMinutes < 1080;
+
+        console.log("[ITINERARY] Port day:", todayEntry.rawLabel);
+        console.log(
+          "[ITINERARY] Local time:",
+          localHours + ":" + String(localMinutes).padStart(2, "0")
+        );
+        console.log("[ITINERARY] Is docked (9am-6pm):", isDocked);
+
+        if (isDocked) {
+          return {
+            isAtSea: false,
+            destination: null,
+            port: todayEntry.label,
+            coords: todayEntry.coords,
+          };
+        } else {
+          // Outside docked hours - she's at sea traveling to next destination
+          let nextPortEntry = null;
+          for (let i = 0; i < itineraryEntries.length; i++) {
+            const entry = itineraryEntries[i];
+            if (entry.date > todayISO && entry.label !== "At Sea") {
+              nextPortEntry = entry;
+              break;
+            }
+          }
+
+          return {
+            isAtSea: true,
+            destination: nextPortEntry
+              ? nextPortEntry.label
+              : todayEntry.nextPort || null,
+            port: null,
+            coords: todayEntry.coords,
+          };
+        }
+      }
+
       async function fetchLiveShipPosition() {
         // Fetch both in parallel for speed
         const [cruiseMapperStatus, shipXplorerCoords] = await Promise.all([
@@ -1835,21 +1939,67 @@
             todayEntry?.label
           );
           const live = await fetchLiveShipPosition();
-          if (!live) {
-            console.warn("[UPDATE] No live data received");
+
+          // If scraping failed or returned invalid data, use itinerary as fallback
+          let useItineraryFallback = false;
+          if (!live || (!live.coords && !live.destination && !live.port)) {
+            console.log(
+              "[UPDATE] Scraping failed or returned no data, using itinerary fallback"
+            );
+            useItineraryFallback = true;
+          } else if (live.destination) {
+            // Check if destination looks like HTML artifacts
+            const looksLikeHtml =
+              /^[A-Z0-9\-_]+$/.test(live.destination) &&
+              live.destination.length > 8 &&
+              !/[a-z]/.test(live.destination);
+            const htmlArtifacts =
+              /^(MSRV|CLASS|ID|DATA|SRC|HREF|ALT|TITLE|STYLE|SCRIPT|RYBINSK|RYB|MSRV-RYB)/i;
+
+            if (live.destination.length < 2 || live.destination.length > 50) {
+              console.log(
+                "[UPDATE] Invalid destination length from scraping, using itinerary fallback"
+              );
+              useItineraryFallback = true;
+            } else if (looksLikeHtml || htmlArtifacts.test(live.destination)) {
+              console.log(
+                "[UPDATE] Destination looks like HTML artifact, using itinerary fallback:",
+                live.destination
+              );
+              useItineraryFallback = true;
+            }
+          }
+
+          // Use itinerary fallback if needed
+          const itineraryStatus = getStatusFromItinerary(todayEntry);
+          const finalLive =
+            useItineraryFallback && itineraryStatus
+              ? {
+                  ...itineraryStatus,
+                  summary: "Using itinerary schedule",
+                }
+              : live;
+
+          if (!finalLive) {
+            console.warn(
+              "[UPDATE] No live data and no itinerary fallback available"
+            );
             return;
           }
 
           console.log("[UPDATE] Live data received:", {
-            isAtSea: live.isAtSea,
-            destination: live.destination,
-            port: live.port,
-            coords: live.coords,
+            isAtSea: finalLive.isAtSea,
+            destination: finalLive.destination,
+            port: finalLive.port,
+            coords: finalLive.coords,
+            usingFallback: useItineraryFallback,
           });
 
           const t = translations[currentLanguage];
-          const statusLabel = live.isAtSea ? t.statusAtSea : t.statusDocked;
-          const statusState = live.isAtSea ? "sea" : "docked";
+          const statusLabel = finalLive.isAtSea
+            ? t.statusAtSea
+            : t.statusDocked;
+          const statusState = finalLive.isAtSea ? "sea" : "docked";
           console.log("[UPDATE] Setting status:", statusLabel, statusState);
           setShipStatus(statusLabel, statusState);
 
@@ -1857,7 +2007,7 @@
           let labelText = t.cachedCoordinates;
           let itineraryDestination = null;
 
-          if (live.isAtSea) {
+          if (finalLive.isAtSea) {
             // Find next port from itinerary (as fallback)
             if (todayEntry) {
               const todayDate = new Date();
@@ -1890,11 +2040,14 @@
             }
 
             // Prioritize scraped destination from CruiseMapper, fallback to itinerary
-            if (live.destination) {
-              labelText = t.enRouteTo(live.destination);
+            if (finalLive.destination) {
+              labelText = t.enRouteTo(finalLive.destination);
               console.log(
-                "[UPDATE] Using scraped destination from CruiseMapper:",
-                live.destination
+                "[UPDATE] Using destination:",
+                finalLive.destination,
+                useItineraryFallback
+                  ? "(from itinerary)"
+                  : "(from CruiseMapper)"
               );
             } else if (itineraryDestination) {
               labelText = t.enRouteTo(itineraryDestination);
@@ -1905,24 +2058,24 @@
             } else {
               labelText = t.sailingOcean;
             }
-          } else if (live.port) {
-            labelText = t.dockedAt(live.port);
-          } else if (live.destination) {
-            labelText = live.destination;
+          } else if (finalLive.port) {
+            labelText = t.dockedAt(finalLive.port);
+          } else if (finalLive.destination) {
+            labelText = finalLive.destination;
           }
 
           console.log("[UPDATE] Setting label text:", labelText);
           locationLabelEl.textContent = labelText;
 
-          // Update status even if no coords (VesselFinder might return "en route" without coords)
-          if (live.coords) {
-            const latStr = live.coords.lat.toFixed(4);
-            const lngStr = live.coords.lng.toFixed(4);
+          // Update status even if no coords
+          if (finalLive.coords) {
+            const latStr = finalLive.coords.lat.toFixed(4);
+            const lngStr = finalLive.coords.lng.toFixed(4);
             let detail;
-            if (live.isAtSea) {
+            if (finalLive.isAtSea) {
               // Prioritize scraped destination from CruiseMapper, fallback to itinerary
-              if (live.destination) {
-                detail = t.currentlySailingEnRoute(live.destination);
+              if (finalLive.destination) {
+                detail = t.currentlySailingEnRoute(finalLive.destination);
               } else if (itineraryDestination) {
                 detail = t.currentlySailingEnRoute(itineraryDestination);
               } else if (todayEntry && todayEntry.nextPort) {
@@ -1930,8 +2083,8 @@
               } else {
                 detail = t.currentlySailing;
               }
-            } else if (live.port) {
-              detail = t.currentlyAlongside(live.port);
+            } else if (finalLive.port) {
+              detail = t.currentlyAlongside(finalLive.port);
             } else {
               detail = t.latestCoordinates;
             }
@@ -1939,11 +2092,11 @@
             console.log("[UPDATE] Setting detail:", detail);
             locationStatusEl.textContent = `${t.liveUpdate}${detail} (Lat: ${latStr}, Lon: ${lngStr}).`;
             setMapToEntry(
-              { coords: live.coords, zoom: live.isAtSea ? 6 : 8 },
+              { coords: finalLive.coords, zoom: finalLive.isAtSea ? 6 : 8 },
               { animate: true }
             );
             persistLastKnown({
-              coords: live.coords,
+              coords: finalLive.coords,
               label: labelText,
               descriptor: locationStatusEl.textContent,
               status: statusLabel,
@@ -1952,14 +2105,15 @@
               "[UPDATE] ✅ Update complete. Status:",
               statusLabel,
               "Label:",
-              labelText
+              labelText,
+              useItineraryFallback ? "(using itinerary fallback)" : ""
             );
-          } else if (live.isAtSea) {
+          } else if (finalLive.isAtSea) {
             // We have "en route" status but no coordinates - still show the status
             let detail;
             // Prioritize scraped destination from CruiseMapper, fallback to itinerary
-            if (live.destination) {
-              detail = t.currentlySailingEnRoute(live.destination);
+            if (finalLive.destination) {
+              detail = t.currentlySailingEnRoute(finalLive.destination);
             } else if (itineraryDestination) {
               detail = t.currentlySailingEnRoute(itineraryDestination);
             } else if (todayEntry && todayEntry.nextPort) {
@@ -1969,9 +2123,22 @@
             }
             locationStatusEl.textContent = `${t.liveUpdate}${detail}`;
             console.log("[UPDATE] ✅ Status updated (no coords):", statusLabel);
-          } else if (live.summary) {
-            locationStatusEl.textContent = `${t.liveUpdate}${live.summary}`;
+          } else if (finalLive.summary) {
+            locationStatusEl.textContent = `${t.liveUpdate}${finalLive.summary}`;
             console.log("[UPDATE] Used summary instead of coords");
+          } else if (useItineraryFallback && itineraryStatus) {
+            // Fallback to itinerary status text
+            if (itineraryStatus.isAtSea && itineraryStatus.destination) {
+              locationStatusEl.textContent = `${
+                t.liveUpdate
+              }${t.currentlySailingEnRoute(itineraryStatus.destination)}`;
+            } else if (!itineraryStatus.isAtSea && itineraryStatus.port) {
+              locationStatusEl.textContent = `${
+                t.liveUpdate
+              }${t.currentlyAlongside(itineraryStatus.port)}`;
+            } else {
+              locationStatusEl.textContent = `${t.liveUpdate}${t.trackingUpdate}`;
+            }
           }
         } catch (error) {
           console.error("[UPDATE] Error:", error);
