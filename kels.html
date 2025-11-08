@@ -1828,28 +1828,93 @@
         }
       }
 
+      async function fetchCoordinatesFromCruiseMapper() {
+        try {
+          const response = await fetch(
+            "https://r.jina.ai/https://www.cruisemapper.com/?imo=9731171",
+            { headers: { Accept: "text/plain" } }
+          );
+          if (!response.ok) {
+            console.warn("[CM] Response not OK:", response.status);
+            return null;
+          }
+
+          const text = await response.text();
+
+          // Look for pattern: "coordinates 37.92809 N / 16.3297 E"
+          // Also handle variations like "coordinates 37.92809 N / 16.3297 E en route to Messina"
+          const coordsMatch = text.match(
+            /coordinates\s+([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
+          );
+
+          if (coordsMatch) {
+            let lat = parseFloat(coordsMatch[1]);
+            const latDir = coordsMatch[2].toUpperCase();
+            let lng = parseFloat(coordsMatch[3]);
+            const lngDir = coordsMatch[4].toUpperCase();
+
+            // Apply direction (N/S, E/W)
+            if (latDir === "S") lat = -lat;
+            if (lngDir === "W") lng = -lng;
+
+            if (Number.isFinite(lat) && Number.isFinite(lng)) {
+              console.log("[CM] ✅ Coordinates extracted:", lat, lng);
+              return { lat, lng };
+            }
+          }
+
+          return null;
+        } catch (error) {
+          console.warn("[CM] Error fetching from CruiseMapper:", error);
+          return null;
+        }
+      }
+
       async function fetchLiveShipPosition() {
         // Fetch both in parallel for speed
-        const [cruiseMapperStatus, shipXplorerCoords] = await Promise.all([
-          // Quick check: Just detect "en route" from CruiseMapper
+        const [cruiseMapperData, shipXplorerCoords] = await Promise.all([
+          // Get coordinates and destination from CruiseMapper IMO page
           (async () => {
             try {
               const response = await fetch(
-                "https://r.jina.ai/https://www.cruisemapper.com/ships/Seabourn-Encore-1094",
+                "https://r.jina.ai/https://www.cruisemapper.com/?imo=9731171",
                 { headers: { Accept: "text/plain" } }
               );
               if (!response.ok) return null;
               const text = await response.text();
-              // Try to find "en route to" followed by a place name
-              // Look for patterns like "en route to Messina" or "en route to Naples"
-              // We want to match text that looks like a place name, not HTML attributes
 
-              // First, try to find "en route to" in a more natural context
-              // Look for it followed by letters/spaces/hyphens, but stop at HTML tags or punctuation
+              const result = {
+                coords: null,
+                destination: null,
+                isAtSea: false,
+              };
+
+              // Extract coordinates: "coordinates 37.92809 N / 16.3297 E"
+              const coordsMatch = text.match(
+                /coordinates\s+([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
+              );
+
+              if (coordsMatch) {
+                let lat = parseFloat(coordsMatch[1]);
+                const latDir = coordsMatch[2].toUpperCase();
+                let lng = parseFloat(coordsMatch[3]);
+                const lngDir = coordsMatch[4].toUpperCase();
+
+                // Apply direction (N/S, E/W)
+                if (latDir === "S") lat = -lat;
+                if (lngDir === "W") lng = -lng;
+
+                if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                  result.coords = { lat, lng };
+                  console.log("[CM] ✅ Coordinates extracted:", lat, lng);
+                }
+              }
+
+              // Extract destination: "en route to Messina" (often appears after coordinates)
               const patterns = [
-                // Pattern 1: More restrictive - proper capitalization (e.g., "Messina", "New York")
+                // Pattern 1: More restrictive - proper capitalization
                 /en route to\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+[A-Z][a-z]+)?)(?:\s*[.,;!?\n]|<|$)/,
-                // Pattern 2: Less restrictive but still reasonable (allows some variations)
+                // Pattern 2: Less restrictive but still reasonable
                 /en route to\s+([A-Za-z][a-z]+(?:\s+[A-Za-z][a-z]+)*)(?:\s*[.,;!?\n]|<|$)/i,
               ];
 
@@ -1860,17 +1925,14 @@
                   let destination = routeMatch[1].trim();
 
                   // Filter out HTML-like patterns
-                  // All caps with hyphens/underscores that are long = likely HTML class/ID
                   const looksLikeHtml =
                     /^[A-Z0-9\-_]+$/.test(destination) &&
                     destination.length > 8 &&
                     !/[a-z]/.test(destination);
 
-                  // Filter out common HTML artifacts and technical terms
                   const htmlArtifacts =
                     /^(MSRV|CLASS|ID|DATA|SRC|HREF|ALT|TITLE|STYLE|SCRIPT|RYBINSK|RYB|MSRV-RYB)/i;
 
-                  // Filter out patterns that are clearly not place names
                   const invalidPatterns = /^[0-9]+$|^[A-Z]{2,}-[A-Z]{2,}/;
 
                   if (
@@ -1879,53 +1941,53 @@
                     invalidPatterns.test(destination)
                   ) {
                     console.log(
-                      "[FETCH] Filtered out invalid pattern:",
+                      "[CM] Filtered out invalid pattern:",
                       destination
                     );
                     routeMatch = null;
                     continue;
                   }
 
-                  // Additional validation: place names should be reasonable
                   if (destination.length < 2 || destination.length > 50) {
                     console.log(
-                      "[FETCH] Invalid destination length:",
+                      "[CM] Invalid destination length:",
                       destination
                     );
                     routeMatch = null;
                     continue;
                   }
 
-                  // If we got here, this looks like a valid destination
                   break;
                 }
               }
 
               if (routeMatch) {
-                const destination = routeMatch[1].trim();
+                result.destination = routeMatch[1].trim();
+                result.isAtSea = true;
                 console.log(
-                  "[FETCH] ✅ 'en route' detected from CruiseMapper, destination:",
-                  destination
+                  "[CM] ✅ 'en route' detected, destination:",
+                  result.destination
                 );
-                return { isAtSea: true, destination: destination };
               }
-              return { isAtSea: false };
+
+              return result;
             } catch (error) {
-              console.warn("[FETCH] CruiseMapper error:", error);
+              console.warn("[CM] CruiseMapper error:", error);
               return null;
             }
           })(),
-          // Get coordinates from ShipXplorer
+          // Get coordinates from ShipXplorer as backup
           fetchCoordinatesFromShipXplorer(),
         ]);
 
-        // Use results
-        const coords = shipXplorerCoords;
-        const isAtSea = cruiseMapperStatus?.isAtSea || false;
+        // Prioritize CruiseMapper coordinates, fallback to ShipXplorer
+        const coords = cruiseMapperData?.coords || shipXplorerCoords;
+        const isAtSea = cruiseMapperData?.isAtSea || false;
+        const destination = cruiseMapperData?.destination || null;
 
         return {
           coords,
-          destination: cruiseMapperStatus?.destination || null,
+          destination,
           port: null,
           isAtSea,
           summary: "Live position update",
