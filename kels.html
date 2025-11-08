@@ -1736,16 +1736,67 @@
               );
               if (!response.ok) return null;
               const text = await response.text();
-              // Try multiple patterns to catch different formats
-              let routeMatch = text.match(
-                /en route to\s+([^.,;\n<]+?)(?:\s*[.,;\n<]|$)/i
-              );
-              if (!routeMatch) {
-                // Fallback: match any word characters and spaces after "en route to"
-                routeMatch = text.match(
-                  /en route to\s+([A-Za-z\s]+?)(?:\s*[.,;\n<]|$)/i
-                );
+              // Try to find "en route to" followed by a place name
+              // Look for patterns like "en route to Messina" or "en route to Naples"
+              // We want to match text that looks like a place name, not HTML attributes
+
+              // First, try to find "en route to" in a more natural context
+              // Look for it followed by letters/spaces/hyphens, but stop at HTML tags or punctuation
+              const patterns = [
+                // Pattern 1: More restrictive - proper capitalization (e.g., "Messina", "New York")
+                /en route to\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+[A-Z][a-z]+)?)(?:\s*[.,;!?\n]|<|$)/,
+                // Pattern 2: Less restrictive but still reasonable (allows some variations)
+                /en route to\s+([A-Za-z][a-z]+(?:\s+[A-Za-z][a-z]+)*)(?:\s*[.,;!?\n]|<|$)/i,
+              ];
+
+              let routeMatch = null;
+              for (const pattern of patterns) {
+                routeMatch = text.match(pattern);
+                if (routeMatch) {
+                  let destination = routeMatch[1].trim();
+
+                  // Filter out HTML-like patterns
+                  // All caps with hyphens/underscores that are long = likely HTML class/ID
+                  const looksLikeHtml =
+                    /^[A-Z0-9\-_]+$/.test(destination) &&
+                    destination.length > 8 &&
+                    !/[a-z]/.test(destination);
+
+                  // Filter out common HTML artifacts and technical terms
+                  const htmlArtifacts =
+                    /^(MSRV|CLASS|ID|DATA|SRC|HREF|ALT|TITLE|STYLE|SCRIPT|RYBINSK|RYB|MSRV-RYB)/i;
+
+                  // Filter out patterns that are clearly not place names
+                  const invalidPatterns = /^[0-9]+$|^[A-Z]{2,}-[A-Z]{2,}/;
+
+                  if (
+                    looksLikeHtml ||
+                    htmlArtifacts.test(destination) ||
+                    invalidPatterns.test(destination)
+                  ) {
+                    console.log(
+                      "[FETCH] Filtered out invalid pattern:",
+                      destination
+                    );
+                    routeMatch = null;
+                    continue;
+                  }
+
+                  // Additional validation: place names should be reasonable
+                  if (destination.length < 2 || destination.length > 50) {
+                    console.log(
+                      "[FETCH] Invalid destination length:",
+                      destination
+                    );
+                    routeMatch = null;
+                    continue;
+                  }
+
+                  // If we got here, this looks like a valid destination
+                  break;
+                }
               }
+
               if (routeMatch) {
                 const destination = routeMatch[1].trim();
                 console.log(
