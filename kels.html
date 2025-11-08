@@ -313,6 +313,32 @@
         box-shadow: 0 0 22px rgba(239, 68, 68, 0.65);
       }
 
+      .language-toggle {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 1000;
+        background: var(--surface);
+        border: 1px solid rgba(255, 255, 255, 0.58);
+        border-radius: 999px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--accent);
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(27, 37, 68, 0.15);
+        backdrop-filter: blur(26px) saturate(140%);
+        transition: all 0.3s ease;
+        font-family: "Manrope", "SF Pro Display", "Helvetica Neue", Arial,
+          sans-serif;
+      }
+
+      .language-toggle:hover {
+        background: var(--accent-soft);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(27, 37, 68, 0.2);
+      }
+
       @media (max-width: 600px) {
         body {
           padding: 2rem 1rem;
@@ -331,10 +357,24 @@
         .status p {
           font-size: 1.05rem;
         }
+
+        .language-toggle {
+          top: 1rem;
+          right: 1rem;
+          padding: 0.4rem 0.85rem;
+          font-size: 0.85rem;
+        }
       }
     </style>
   </head>
   <body>
+    <button
+      id="language-toggle"
+      class="language-toggle"
+      aria-label="Switch language"
+    >
+      Dansk
+    </button>
     <div id="christmas-banner" class="christmas-banner" hidden>
       Merry Christmas!
     </div>
@@ -384,6 +424,280 @@
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script>
+      // Translation system
+      const translations = {
+        en: {
+          pageTitle: "Where in the world is Kels?",
+          christmasBanner: "Merry Christmas!",
+          birthdayTitle: "HAPPY BIRTHDAY KELS!",
+          birthdayLead: "Today's forecast: a perfect day at sea",
+          countdownLoading: "Loading days until Kels is home...",
+          countdownDays: (days) => `${days} days until Kels is home! 🏡`,
+          statusLoading: "Loading status...",
+          statusAtSea: "Somewhere at sea",
+          statusDocked: "Docked",
+          statusUnknown: "Status unknown",
+          locationLoading: "Loading Kels' current adventure...",
+          tomorrowLoading: "Loading tomorrow's plan...",
+          tomorrowPrefix: "Tomorrow: ",
+          tomorrowAtSea: "At sea",
+          tomorrowAtSeaBetween: (prev, next) =>
+            `At sea between ${prev} and ${next}`,
+          itineraryUnavailable: "Itinerary unavailable",
+          couldNotDetermine:
+            "We could not determine the current itinerary position.",
+          trackingUpdate: "Tracking the latest voyage update.",
+          liveUpdate: "Live update: ",
+          currentlySailing: "Currently sailing the open ocean.",
+          currentlySailingToward: (dest) => `Currently sailing toward ${dest}.`,
+          currentlySailingEnRoute: (dest) =>
+            `Currently sailing en route to ${dest}.`,
+          currentlyAlongside: (port) => `Currently alongside ${port}.`,
+          latestCoordinates: "Latest live coordinates received.",
+          enRouteTo: (dest) => `En route to ${dest}`,
+          sailingOcean: "Sailing the open ocean",
+          dockedAt: (port) => `Docked at ${port}`,
+          sailingBetween: (prev, next) =>
+            `Sailing between ${prev} and ${next}.`,
+          sailingOnward: (prev) => `Sailing onward from ${prev}.`,
+          approaching: (next) => `Approaching ${next}.`,
+          dockedNear: (label) => `Docked near ${label}.`,
+          transitingCanal: "Transiting the Panama Canal.",
+          crossingDateLine: "Crossing the International Date Line.",
+          showingCached: "Showing cached location.",
+          cachedCoordinates: "Cached coordinates",
+          mapAriaLabel: "Map showing Kels' current location",
+        },
+        da: {
+          pageTitle: "Hvor i verden er Kels?",
+          christmasBanner: "Glædelig jul!",
+          birthdayTitle: "TILLYKKE MED FØDSELSDAGEN KELS!",
+          birthdayLead: "Dagens vejrudsigt: en perfekt dag til søs",
+          countdownLoading: "Indlæser dage indtil Kels er hjemme...",
+          countdownDays: (days) => `${days} dage indtil Kels er hjemme! 🏡`,
+          statusLoading: "Indlæser status...",
+          statusAtSea: "Et sted til søs",
+          statusDocked: "Fortøjet",
+          statusUnknown: "Status ukendt",
+          locationLoading: "Indlæser Kels' nuværende eventyr...",
+          tomorrowLoading: "Indlæser i morgen plan...",
+          tomorrowPrefix: "I morgen: ",
+          tomorrowAtSea: "Til søs",
+          tomorrowAtSeaBetween: (prev, next) =>
+            `Til søs mellem ${prev} og ${next}`,
+          itineraryUnavailable: "Rejseplan utilgængelig",
+          couldNotDetermine:
+            "Vi kunne ikke bestemme den nuværende rejseplan position.",
+          trackingUpdate: "Sporer den seneste rejseopdatering.",
+          liveUpdate: "Live opdatering: ",
+          currentlySailing: "Sejler i øjeblikket på det åbne hav.",
+          currentlySailingToward: (dest) => `Sejler i øjeblikket mod ${dest}.`,
+          currentlySailingEnRoute: (dest) =>
+            `Sejler i øjeblikket på vej til ${dest}.`,
+          currentlyAlongside: (port) => `I øjeblikket ved siden af ${port}.`,
+          latestCoordinates: "Seneste live koordinater modtaget.",
+          enRouteTo: (dest) => `På vej til ${dest}`,
+          sailingOcean: "Sejler på det åbne hav",
+          dockedAt: (port) => `Fortøjet ved ${port}`,
+          sailingBetween: (prev, next) => `Sejler mellem ${prev} og ${next}.`,
+          sailingOnward: (prev) => `Sejler videre fra ${prev}.`,
+          approaching: (next) => `Nærmer sig ${next}.`,
+          dockedNear: (label) => `Fortøjet nær ${label}.`,
+          transitingCanal: "Passerer Panamakanalen.",
+          crossingDateLine: "Krydser datolinjen.",
+          showingCached: "Viser cached placering.",
+          cachedCoordinates: "Cachede koordinater",
+          mapAriaLabel: "Kort der viser Kels' nuværende placering",
+        },
+      };
+
+      let currentLanguage = "en";
+      const languageToggle = document.getElementById("language-toggle");
+
+      function translatePage(lang) {
+        currentLanguage = lang;
+        const t = translations[lang];
+
+        // Update button text
+        languageToggle.textContent = lang === "en" ? "Dansk" : "English";
+
+        // Update page title
+        const titleEl = document.querySelector("header h1");
+        if (titleEl) titleEl.textContent = t.pageTitle;
+
+        // Update Christmas banner
+        if (christmasBanner && !christmasBanner.hasAttribute("hidden")) {
+          christmasBanner.textContent = t.christmasBanner;
+        }
+
+        // Update birthday content
+        const birthdayTitleEl = document.querySelector("#birthday-shell h1");
+        const birthdayLeadEl = document.querySelector(
+          "#birthday-shell .birthday-lead"
+        );
+        if (birthdayTitleEl) birthdayTitleEl.textContent = t.birthdayTitle;
+        if (birthdayLeadEl) birthdayLeadEl.textContent = t.birthdayLead;
+
+        // Update countdown banner
+        if (countdownBanner) {
+          const currentText = countdownBanner.textContent;
+          if (currentText.includes("Loading")) {
+            countdownBanner.textContent = t.countdownLoading;
+          } else {
+            const daysMatch = currentText.match(/(\d+)/);
+            if (daysMatch) {
+              countdownBanner.textContent = t.countdownDays(
+                parseInt(daysMatch[1])
+              );
+            }
+          }
+        }
+
+        // Update status badge
+        const shipStatusEl = document.getElementById("ship-status");
+        if (shipStatusEl) {
+          const currentStatus = shipStatusEl.textContent;
+          if (currentStatus.includes("Loading")) {
+            shipStatusEl.textContent = t.statusLoading;
+          } else if (currentStatus.toLowerCase().includes("sea")) {
+            shipStatusEl.textContent = t.statusAtSea;
+          } else if (currentStatus.toLowerCase().includes("dock")) {
+            shipStatusEl.textContent = t.statusDocked;
+          } else {
+            shipStatusEl.textContent = t.statusUnknown;
+          }
+        }
+
+        // Update location status
+        const locationStatusEl = document.getElementById("location-status");
+        if (locationStatusEl) {
+          const currentText = locationStatusEl.textContent;
+          if (currentText.includes("Loading")) {
+            locationStatusEl.textContent = t.locationLoading;
+          } else {
+            // Try to translate common patterns
+            let translated = currentText;
+            if (currentText.includes("Sailing between")) {
+              const match = currentText.match(
+                /Sailing between (.+?) and (.+?)\./
+              );
+              if (match) {
+                translated = t.sailingBetween(match[1], match[2]);
+              }
+            } else if (currentText.includes("Sailing onward")) {
+              const match = currentText.match(/Sailing onward from (.+?)\./);
+              if (match) {
+                translated = t.sailingOnward(match[1]);
+              }
+            } else if (currentText.includes("Approaching")) {
+              const match = currentText.match(/Approaching (.+?)\./);
+              if (match) {
+                translated = t.approaching(match[1]);
+              }
+            } else if (currentText.includes("Docked near")) {
+              const match = currentText.match(/Docked near (.+?)\./);
+              if (match) {
+                translated = t.dockedNear(match[1]);
+              }
+            } else if (currentText.includes("Transiting the Panama Canal")) {
+              translated = t.transitingCanal;
+            } else if (
+              currentText.includes("Crossing the International Date Line")
+            ) {
+              translated = t.crossingDateLine;
+            } else if (currentText.includes("sailing the open ocean")) {
+              translated = t.currentlySailing;
+            } else if (currentText.includes("Currently sailing toward")) {
+              const match = currentText.match(
+                /Currently sailing toward (.+?)\./
+              );
+              if (match) {
+                translated = t.currentlySailingToward(match[1]);
+              }
+            } else if (currentText.includes("Currently sailing en route")) {
+              const match = currentText.match(
+                /Currently sailing en route to (.+?)\./
+              );
+              if (match) {
+                translated = t.currentlySailingEnRoute(match[1]);
+              }
+            } else if (currentText.includes("Currently alongside")) {
+              const match = currentText.match(/Currently alongside (.+?)\./);
+              if (match) {
+                translated = t.currentlyAlongside(match[1]);
+              }
+            } else if (currentText.includes("Latest live coordinates")) {
+              translated = t.latestCoordinates;
+            } else if (currentText.includes("Showing cached")) {
+              translated = t.showingCached;
+            } else if (currentText.includes("Live update:")) {
+              const afterPrefix = currentText.replace(/^Live update: /, "");
+              translated = t.liveUpdate + afterPrefix;
+            }
+            locationStatusEl.textContent = translated;
+          }
+        }
+
+        // Update location label
+        const locationLabelEl = document.getElementById("location-label");
+        if (locationLabelEl) {
+          const currentText = locationLabelEl.textContent;
+          if (currentText) {
+            let translated = currentText;
+            if (currentText.includes("En route to")) {
+              const match = currentText.match(/En route to (.+)/);
+              if (match) {
+                translated = t.enRouteTo(match[1]);
+              }
+            } else if (currentText.includes("Sailing the open ocean")) {
+              translated = t.sailingOcean;
+            } else if (currentText.includes("Docked at")) {
+              const match = currentText.match(/Docked at (.+)/);
+              if (match) {
+                translated = t.dockedAt(match[1]);
+              }
+            }
+            locationLabelEl.textContent = translated;
+          }
+        }
+
+        // Update tomorrow status
+        const tomorrowStatusEl = document.getElementById("tomorrow-status");
+        if (tomorrowStatusEl) {
+          const currentText = tomorrowStatusEl.textContent;
+          if (currentText.includes("Loading")) {
+            tomorrowStatusEl.textContent = t.tomorrowLoading;
+          } else if (currentText.startsWith("Tomorrow: ")) {
+            const afterPrefix = currentText.replace(/^Tomorrow: /, "");
+            if (afterPrefix.includes("At sea between")) {
+              const match = afterPrefix.match(/At sea between (.+?) and (.+)/);
+              if (match) {
+                tomorrowStatusEl.textContent =
+                  t.tomorrowPrefix + t.tomorrowAtSeaBetween(match[1], match[2]);
+              }
+            } else if (afterPrefix === "At sea") {
+              tomorrowStatusEl.textContent = t.tomorrowPrefix + t.tomorrowAtSea;
+            } else if (afterPrefix.includes("Itinerary unavailable")) {
+              tomorrowStatusEl.textContent =
+                t.tomorrowPrefix + t.itineraryUnavailable;
+            } else {
+              tomorrowStatusEl.textContent = t.tomorrowPrefix + afterPrefix;
+            }
+          }
+        }
+
+        // Update map aria label
+        const mapEl = document.getElementById("map");
+        if (mapEl) {
+          mapEl.setAttribute("aria-label", t.mapAriaLabel);
+        }
+      }
+
+      languageToggle.addEventListener("click", () => {
+        const newLang = currentLanguage === "en" ? "da" : "en";
+        translatePage(newLang);
+      });
+
       const countdownBanner = document.getElementById("countdown-banner");
       const mainShell = document.querySelector("main.shell");
       const birthdayShell = document.getElementById("birthday-shell");
@@ -610,7 +924,8 @@
         );
         const diff = targetDate - today;
         const daysRemaining = diff > 0 ? Math.ceil(diff / MS_PER_DAY) : 0;
-        countdownBanner.textContent = `${daysRemaining} days until Kels is home! 🏡`;
+        const t = translations[currentLanguage];
+        countdownBanner.textContent = t.countdownDays(daysRemaining);
       }
 
       updateCountdown();
@@ -972,21 +1287,26 @@
       }
 
       function deriveStatusFromLabel(label) {
-        if (!label) return "Status unknown";
+        if (!label) {
+          const t = translations[currentLanguage];
+          return t.statusUnknown;
+        }
         const normalized = label.toLowerCase();
+        const t = translations[currentLanguage];
         if (
           normalized.includes("sea") ||
           normalized.includes("transit") ||
           normalized.includes("cross")
         ) {
-          return "Somewhere at sea";
+          return t.statusAtSea;
         }
-        return "Docked";
+        return t.statusDocked;
       }
 
       function determineStatusFromEntry(entry) {
+        const t = translations[currentLanguage];
         if (!entry) {
-          return { label: "Status unknown", state: "unknown" };
+          return { label: t.statusUnknown, state: "unknown" };
         }
         const statusText = entry.status || deriveStatusFromLabel(entry.label);
         return { label: statusText, state: resolveStatusState(statusText) };
@@ -1003,7 +1323,8 @@
         let status = deriveStatusFromLabel(entry.label);
 
         if (entry.label === "At Sea") {
-          displayLabel = "At sea";
+          const t = translations[currentLanguage];
+          displayLabel = t.tomorrowAtSea;
           const previous = findNeighborWithCoords(entry.index, -1);
           const next = findNeighborWithCoords(entry.index, 1);
           previousPort = previous ? previous.entry.label : null;
@@ -1011,13 +1332,16 @@
 
           if (!descriptor) {
             if (previous && next) {
-              descriptor = `Sailing between ${previous.entry.label} and ${next.entry.label}.`;
+              descriptor = t.sailingBetween(
+                previous.entry.label,
+                next.entry.label
+              );
             } else if (previous) {
-              descriptor = `Sailing onward from ${previous.entry.label}.`;
+              descriptor = t.sailingOnward(previous.entry.label);
             } else if (next) {
-              descriptor = `Approaching ${next.entry.label}.`;
+              descriptor = t.approaching(next.entry.label);
             } else {
-              descriptor = "Kels is currently sailing the open ocean.";
+              descriptor = t.currentlySailing;
             }
           }
 
@@ -1025,12 +1349,16 @@
             if (previous && next) {
               const totalSpan = next.entry.index - previous.entry.index;
               const relative = entry.index - previous.entry.index;
-              const t = totalSpan > 0 ? relative / totalSpan : 0;
+              const ratio = totalSpan > 0 ? relative / totalSpan : 0;
               coords = {
                 lat:
                   previous.coords.lat +
-                  (next.coords.lat - previous.coords.lat) * t,
-                lng: interpolateLng(previous.coords.lng, next.coords.lng, t),
+                  (next.coords.lat - previous.coords.lat) * ratio,
+                lng: interpolateLng(
+                  previous.coords.lng,
+                  next.coords.lng,
+                  ratio
+                ),
               };
             } else if (previous) {
               coords = { ...previous.coords };
@@ -1039,7 +1367,8 @@
             }
           }
         } else if (!descriptor) {
-          descriptor = `Docked near ${displayLabel}.`;
+          const t = translations[currentLanguage];
+          descriptor = t.dockedNear(displayLabel);
         }
 
         const zoom =
@@ -1079,15 +1408,16 @@
       }
 
       function buildStatusText(entry) {
+        const t = translations[currentLanguage];
         if (!entry) {
-          return "We could not determine the current itinerary position.";
+          return t.couldNotDetermine;
         }
         if (entry.coords) {
           const latStr = entry.coords.lat.toFixed(4);
           const lngStr = entry.coords.lng.toFixed(4);
           return `${entry.descriptor} (Lat: ${latStr}, Lon: ${lngStr})`;
         }
-        return entry.descriptor || "Tracking the latest voyage update.";
+        return entry.descriptor || t.trackingUpdate;
       }
 
       function persistLastKnown(entry) {
@@ -1146,19 +1476,23 @@
       }
 
       function formatTomorrowStatus() {
+        const t = translations[currentLanguage];
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         const entry = getEntryForDate(tomorrow);
         if (!entry) {
-          return "Tomorrow: Itinerary unavailable";
+          return t.tomorrowPrefix + t.itineraryUnavailable;
         }
         if (entry.rawLabel === "At Sea") {
           if (entry.previousPort && entry.nextPort) {
-            return `Tomorrow: At sea between ${entry.previousPort} and ${entry.nextPort}`;
+            return (
+              t.tomorrowPrefix +
+              t.tomorrowAtSeaBetween(entry.previousPort, entry.nextPort)
+            );
           }
-          return "Tomorrow: At sea";
+          return t.tomorrowPrefix + t.tomorrowAtSea;
         }
-        return `Tomorrow: ${entry.label}`;
+        return t.tomorrowPrefix + entry.label;
       }
 
       async function fetchCoordinatesFromShipXplorer() {
@@ -1270,13 +1604,14 @@
             coords: live.coords,
           });
 
-          const statusLabel = live.isAtSea ? "Somewhere at sea" : "Docked";
+          const t = translations[currentLanguage];
+          const statusLabel = live.isAtSea ? t.statusAtSea : t.statusDocked;
           const statusState = live.isAtSea ? "sea" : "docked";
           console.log("[UPDATE] Setting status:", statusLabel, statusState);
           setShipStatus(statusLabel, statusState);
 
           // If at sea, use itinerary to find the next port destination
-          let labelText = "Live coordinates";
+          let labelText = t.cachedCoordinates;
           let itineraryDestination = null;
 
           if (live.isAtSea) {
@@ -1313,12 +1648,12 @@
 
             // Always use itinerary destination if available, ignore scraped destination
             if (itineraryDestination) {
-              labelText = `En route to ${itineraryDestination}`;
+              labelText = t.enRouteTo(itineraryDestination);
             } else {
-              labelText = "Sailing the open ocean";
+              labelText = t.sailingOcean;
             }
           } else if (live.port) {
-            labelText = `Docked at ${live.port}`;
+            labelText = t.dockedAt(live.port);
           } else if (live.destination) {
             labelText = live.destination;
           }
@@ -1334,20 +1669,20 @@
             if (live.isAtSea) {
               // Use itinerary destination instead of scraped destination
               if (itineraryDestination) {
-                detail = `Currently sailing en route to ${itineraryDestination}.`;
+                detail = t.currentlySailingEnRoute(itineraryDestination);
               } else if (todayEntry && todayEntry.nextPort) {
-                detail = `Currently sailing toward ${todayEntry.nextPort}.`;
+                detail = t.currentlySailingToward(todayEntry.nextPort);
               } else {
-                detail = "Currently sailing the open ocean.";
+                detail = t.currentlySailing;
               }
             } else if (live.port) {
-              detail = `Currently alongside ${live.port}.`;
+              detail = t.currentlyAlongside(live.port);
             } else {
-              detail = "Latest live coordinates received.";
+              detail = t.latestCoordinates;
             }
 
             console.log("[UPDATE] Setting detail:", detail);
-            locationStatusEl.textContent = `Live update: ${detail} (Lat: ${latStr}, Lon: ${lngStr}).`;
+            locationStatusEl.textContent = `${t.liveUpdate}${detail} (Lat: ${latStr}, Lon: ${lngStr}).`;
             setMapToEntry(
               { coords: live.coords, zoom: live.isAtSea ? 6 : 8 },
               { animate: true }
@@ -1369,16 +1704,16 @@
             let detail;
             // Use itinerary destination instead of scraped destination
             if (itineraryDestination) {
-              detail = `Currently sailing en route to ${itineraryDestination}.`;
+              detail = t.currentlySailingEnRoute(itineraryDestination);
             } else if (todayEntry && todayEntry.nextPort) {
-              detail = `Currently sailing toward ${todayEntry.nextPort}.`;
+              detail = t.currentlySailingToward(todayEntry.nextPort);
             } else {
-              detail = "Currently sailing the open ocean.";
+              detail = t.currentlySailing;
             }
-            locationStatusEl.textContent = `Live update: ${detail}`;
+            locationStatusEl.textContent = `${t.liveUpdate}${detail}`;
             console.log("[UPDATE] ✅ Status updated (no coords):", statusLabel);
           } else if (live.summary) {
-            locationStatusEl.textContent = `Live update: ${live.summary}`;
+            locationStatusEl.textContent = `${t.liveUpdate}${live.summary}`;
             console.log("[UPDATE] Used summary instead of coords");
           }
         } catch (error) {
@@ -1405,10 +1740,10 @@
         );
         console.log("[INIT] cached:", cached?.label);
 
-        let statusText =
-          "We could not determine the current itinerary position.";
-        let labelText = "Status unknown";
-        let statusInfo = { label: "Status unknown", state: "unknown" };
+        const t = translations[currentLanguage];
+        let statusText = t.couldNotDetermine;
+        let labelText = t.statusUnknown;
+        let statusInfo = { label: t.statusUnknown, state: "unknown" };
 
         if (todayEntry) {
           labelText = todayEntry.label;
@@ -1427,7 +1762,7 @@
               zoom: todayEntry.zoom,
             });
             statusText = `${
-              todayEntry.descriptor || "Showing cached location."
+              todayEntry.descriptor || t.showingCached
             } (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
             if (cached.status) {
               statusInfo = {
@@ -1443,9 +1778,9 @@
             coords: { lat: cached.lat, lng: cached.lng },
             zoom: 5,
           });
-          labelText = cached.label || "Cached coordinates";
+          labelText = cached.label || t.cachedCoordinates;
           statusText = `${
-            cached.descriptor || "Showing cached location."
+            cached.descriptor || t.showingCached
           } (Lat: ${cached.lat.toFixed(4)}, Lon: ${cached.lng.toFixed(4)})`;
           if (cached.status) {
             statusInfo = {
