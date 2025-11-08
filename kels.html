@@ -382,6 +382,7 @@
       <div class="birthday-content">
         <h1>HAPPY BIRTHDAY KELS!</h1>
         <p class="birthday-lead">Today’s forecast: a perfect day at sea</p>
+        ca
       </div>
     </section>
     <div class="countdown-banner" id="countdown-banner">
@@ -1557,10 +1558,23 @@
               );
               if (!response.ok) return null;
               const text = await response.text();
-              const routeMatch = text.match(/en route to\s*([^.,;\n<]+)/i);
+              // Try multiple patterns to catch different formats
+              let routeMatch = text.match(
+                /en route to\s+([^.,;\n<]+?)(?:\s*[.,;\n<]|$)/i
+              );
+              if (!routeMatch) {
+                // Fallback: match any word characters and spaces after "en route to"
+                routeMatch = text.match(
+                  /en route to\s+([A-Za-z\s]+?)(?:\s*[.,;\n<]|$)/i
+                );
+              }
               if (routeMatch) {
-                console.log("[FETCH] ✅ 'en route' detected from CruiseMapper");
-                return { isAtSea: true, destination: routeMatch[1].trim() };
+                const destination = routeMatch[1].trim();
+                console.log(
+                  "[FETCH] ✅ 'en route' detected from CruiseMapper, destination:",
+                  destination
+                );
+                return { isAtSea: true, destination: destination };
               }
               return { isAtSea: false };
             } catch (error) {
@@ -1615,7 +1629,7 @@
           let itineraryDestination = null;
 
           if (live.isAtSea) {
-            // Find next port from itinerary
+            // Find next port from itinerary (as fallback)
             if (todayEntry) {
               const todayDate = new Date();
               const todayISO = getLocalISO(todayDate);
@@ -1646,9 +1660,19 @@
               }
             }
 
-            // Always use itinerary destination if available, ignore scraped destination
-            if (itineraryDestination) {
+            // Prioritize scraped destination from CruiseMapper, fallback to itinerary
+            if (live.destination) {
+              labelText = t.enRouteTo(live.destination);
+              console.log(
+                "[UPDATE] Using scraped destination from CruiseMapper:",
+                live.destination
+              );
+            } else if (itineraryDestination) {
               labelText = t.enRouteTo(itineraryDestination);
+              console.log(
+                "[UPDATE] Using itinerary destination as fallback:",
+                itineraryDestination
+              );
             } else {
               labelText = t.sailingOcean;
             }
@@ -1667,8 +1691,10 @@
             const lngStr = live.coords.lng.toFixed(4);
             let detail;
             if (live.isAtSea) {
-              // Use itinerary destination instead of scraped destination
-              if (itineraryDestination) {
+              // Prioritize scraped destination from CruiseMapper, fallback to itinerary
+              if (live.destination) {
+                detail = t.currentlySailingEnRoute(live.destination);
+              } else if (itineraryDestination) {
                 detail = t.currentlySailingEnRoute(itineraryDestination);
               } else if (todayEntry && todayEntry.nextPort) {
                 detail = t.currentlySailingToward(todayEntry.nextPort);
@@ -1702,8 +1728,10 @@
           } else if (live.isAtSea) {
             // We have "en route" status but no coordinates - still show the status
             let detail;
-            // Use itinerary destination instead of scraped destination
-            if (itineraryDestination) {
+            // Prioritize scraped destination from CruiseMapper, fallback to itinerary
+            if (live.destination) {
+              detail = t.currentlySailingEnRoute(live.destination);
+            } else if (itineraryDestination) {
               detail = t.currentlySailingEnRoute(itineraryDestination);
             } else if (todayEntry && todayEntry.nextPort) {
               detail = t.currentlySailingToward(todayEntry.nextPort);
