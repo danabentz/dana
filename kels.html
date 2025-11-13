@@ -283,6 +283,153 @@
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
       }
 
+      .weather-section {
+        background: var(--accent-soft);
+        border-radius: 22px;
+        padding: 1.75rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 24px rgba(27, 37, 68, 0.1);
+      }
+
+      .weather-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .weather-icon {
+        font-size: 1.75rem;
+        line-height: 1;
+      }
+
+      .weather-section h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: -0.01em;
+      }
+
+      .weather-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .weather-main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .weather-temp {
+        display: flex;
+        align-items: baseline;
+        gap: 0.25rem;
+      }
+
+      .weather-current {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1;
+      }
+
+      .weather-unit {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text);
+        opacity: 0.7;
+      }
+
+      .weather-high-low {
+        display: flex;
+        gap: 1rem;
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .weather-high-low span {
+        padding: 0.4rem 0.9rem;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        backdrop-filter: blur(8px);
+      }
+
+      .weather-conditions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        font-size: 1rem;
+        color: var(--text);
+      }
+
+      .weather-condition-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      .weather-condition-badge.rain {
+        background: rgba(59, 130, 246, 0.15);
+        color: #2563eb;
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+
+      .weather-condition-badge.snow {
+        background: rgba(147, 197, 253, 0.2);
+        color: #1e40af;
+        border-color: rgba(147, 197, 253, 0.3);
+      }
+
+      .weather-condition-badge.wind {
+        background: rgba(251, 191, 36, 0.15);
+        color: #d97706;
+        border-color: rgba(251, 191, 36, 0.3);
+      }
+
+      #weather-loading {
+        color: var(--text);
+        opacity: 0.7;
+        font-style: italic;
+      }
+
+      @media (max-width: 600px) {
+        .weather-section {
+          padding: 1.5rem 1.5rem;
+        }
+
+        .weather-current {
+          font-size: 2.5rem;
+        }
+
+        .weather-unit {
+          font-size: 1.25rem;
+        }
+
+        .weather-high-low {
+          font-size: 1rem;
+        }
+
+        .weather-section h2 {
+          font-size: 1.2rem;
+        }
+      }
+
       footer {
         display: flex;
         justify-content: center;
@@ -413,6 +560,28 @@
         aria-label="Map showing Kels' current location"
       ></div>
 
+      <section class="weather-section" id="weather-section" aria-live="polite">
+        <div class="weather-header">
+          <span class="weather-icon">🌤️</span>
+          <h2 id="weather-title">Weather at Ship Location</h2>
+        </div>
+        <div class="weather-content">
+          <div class="weather-main">
+            <div class="weather-temp">
+              <span id="weather-current" class="weather-current">--</span>
+              <span class="weather-unit">°F</span>
+            </div>
+            <div class="weather-high-low">
+              <span id="weather-high">H: --</span>
+              <span id="weather-low">L: --</span>
+            </div>
+          </div>
+          <div class="weather-conditions" id="weather-conditions">
+            <span id="weather-loading">Loading weather...</span>
+          </div>
+        </div>
+      </section>
+
       <footer>
         <span>🏊‍♀️</span>
         <span id="tomorrow-status">Loading tomorrow's plan...</span>
@@ -469,6 +638,13 @@
           showingCached: "Showing cached location.",
           cachedCoordinates: "Cached coordinates",
           mapAriaLabel: "Map showing Kels' current location",
+          weatherTitle: "Weather at Ship Location",
+          weatherLoading: "Loading weather...",
+          weatherError: "Unable to load weather",
+          rain: "Rain",
+          snow: "Snow",
+          wind: "Windy",
+          noConditions: "Clear conditions",
         },
         da: {
           pageTitle: "Hvor i verden er Kels?",
@@ -510,6 +686,13 @@
           showingCached: "Viser cached placering.",
           cachedCoordinates: "Cachede koordinater",
           mapAriaLabel: "Kort der viser Kels' nuværende placering",
+          weatherTitle: "Vejr ved skibets placering",
+          weatherLoading: "Indlæser vejr...",
+          weatherError: "Kunne ikke indlæse vejr",
+          rain: "Regn",
+          snow: "Sne",
+          wind: "Blæsende",
+          noConditions: "Klart vejr",
         },
       };
 
@@ -870,6 +1053,15 @@
         if (mapEl) {
           mapEl.setAttribute("aria-label", t.mapAriaLabel);
         }
+
+        // Update weather title
+        const weatherTitleEl = document.getElementById("weather-title");
+        if (weatherTitleEl) {
+          weatherTitleEl.textContent = t.weatherTitle;
+        }
+
+        // Update weather display if data exists
+        updateWeatherDisplay();
       }
 
       languageToggle.addEventListener("click", () => {
@@ -2170,6 +2362,8 @@
               labelText,
               useItineraryFallback ? "(using itinerary fallback)" : ""
             );
+            // Update weather with new coordinates
+            updateWeather(finalLive.coords);
           } else if (finalLive.isAtSea) {
             // We have "en route" status but no coordinates - still show the status
             let detail;
@@ -2208,6 +2402,204 @@
         }
       }
 
+      // Weather data storage
+      let currentWeatherData = null;
+
+      // Convert Fahrenheit to Celsius
+      function fahrenheitToCelsius(f) {
+        return Math.round(((f - 32) * 5) / 9);
+      }
+
+      // Convert Celsius to Fahrenheit
+      function celsiusToFahrenheit(c) {
+        return Math.round((c * 9) / 5 + 32);
+      }
+
+      // Format temperature based on current language
+      function formatTemperature(tempF) {
+        if (currentLanguage === "da") {
+          return fahrenheitToCelsius(tempF);
+        }
+        return Math.round(tempF);
+      }
+
+      // Get temperature unit based on current language
+      function getTemperatureUnit() {
+        return currentLanguage === "da" ? "°C" : "°F";
+      }
+
+      // Fetch weather data from Open-Meteo API (free, no API key required)
+      async function fetchWeatherData(lat, lng) {
+        if (!lat || !lng || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+          console.warn("[WEATHER] Invalid coordinates:", lat, lng);
+          return null;
+        }
+
+        try {
+          // Open-Meteo API - free, no API key required
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto`;
+
+          const response = await fetch(url);
+          if (!response.ok) {
+            console.warn("[WEATHER] Response not OK:", response.status);
+            return null;
+          }
+
+          const data = await response.json();
+
+          if (!data.current || !data.daily) {
+            console.warn("[WEATHER] Invalid data structure");
+            return null;
+          }
+
+          const weatherData = {
+            current: data.current.temperature_2m,
+            high: data.daily.temperature_2m_max[0],
+            low: data.daily.temperature_2m_min[0],
+            precipitation: data.current.precipitation,
+            windSpeed: data.current.wind_speed_10m,
+            weatherCode: data.current.weather_code,
+            dailyPrecipitation: data.daily.precipitation_sum[0],
+            dailyWeatherCode: data.daily.weather_code[0],
+          };
+
+          console.log("[WEATHER] ✅ Weather data fetched:", weatherData);
+          return weatherData;
+        } catch (error) {
+          console.warn("[WEATHER] Error fetching weather:", error);
+          return null;
+        }
+      }
+
+      // Determine weather conditions from weather data
+      function getWeatherConditions(weatherData) {
+        if (!weatherData) return [];
+
+        const conditions = [];
+        const t = translations[currentLanguage];
+
+        // Check for rain (precipitation > 0.01 inches or weather code indicates rain)
+        const hasRain =
+          (weatherData.precipitation > 0.01 ||
+            weatherData.dailyPrecipitation > 0.01 ||
+            (weatherData.weatherCode >= 51 && weatherData.weatherCode <= 67) ||
+            (weatherData.dailyWeatherCode >= 51 &&
+              weatherData.dailyWeatherCode <= 67)) &&
+          weatherData.weatherCode !== 71 &&
+          weatherData.weatherCode !== 73 &&
+          weatherData.weatherCode !== 75 &&
+          weatherData.dailyWeatherCode !== 71 &&
+          weatherData.dailyWeatherCode !== 73 &&
+          weatherData.dailyWeatherCode !== 75;
+
+        // Check for snow (weather code 71, 73, 75, 77, 85, 86)
+        const hasSnow =
+          weatherData.weatherCode >= 71 && weatherData.weatherCode <= 86;
+
+        // Check for wind (wind speed > 15 mph)
+        const hasWind = weatherData.windSpeed > 15;
+
+        if (hasRain) {
+          conditions.push({ type: "rain", label: t.rain });
+        }
+        if (hasSnow) {
+          conditions.push({ type: "snow", label: t.snow });
+        }
+        if (hasWind) {
+          conditions.push({ type: "wind", label: t.wind });
+        }
+
+        return conditions;
+      }
+
+      // Update weather display
+      function updateWeatherDisplay() {
+        if (!currentWeatherData) return;
+
+        const weatherCurrentEl = document.getElementById("weather-current");
+        const weatherHighEl = document.getElementById("weather-high");
+        const weatherLowEl = document.getElementById("weather-low");
+        const weatherUnitEl = document.querySelector(".weather-unit");
+        const weatherConditionsEl =
+          document.getElementById("weather-conditions");
+        const weatherLoadingEl = document.getElementById("weather-loading");
+
+        if (weatherCurrentEl) {
+          weatherCurrentEl.textContent = formatTemperature(
+            currentWeatherData.current
+          );
+        }
+
+        if (weatherHighEl) {
+          const high = formatTemperature(currentWeatherData.high);
+          weatherHighEl.textContent = `H: ${high}°`;
+        }
+
+        if (weatherLowEl) {
+          const low = formatTemperature(currentWeatherData.low);
+          weatherLowEl.textContent = `L: ${low}°`;
+        }
+
+        if (weatherUnitEl) {
+          weatherUnitEl.textContent = getTemperatureUnit();
+        }
+
+        if (weatherConditionsEl && weatherLoadingEl) {
+          const conditions = getWeatherConditions(currentWeatherData);
+          weatherLoadingEl.style.display = "none";
+
+          // Clear existing condition badges
+          weatherConditionsEl.innerHTML = "";
+
+          if (conditions.length > 0) {
+            conditions.forEach((condition) => {
+              const badge = document.createElement("span");
+              badge.className = `weather-condition-badge ${condition.type}`;
+              badge.textContent = condition.label;
+              weatherConditionsEl.appendChild(badge);
+            });
+          } else {
+            const t = translations[currentLanguage];
+            const clearBadge = document.createElement("span");
+            clearBadge.className = "weather-condition-badge";
+            clearBadge.textContent = t.noConditions;
+            weatherConditionsEl.appendChild(clearBadge);
+          }
+        }
+      }
+
+      // Update weather when coordinates change
+      async function updateWeather(coords) {
+        if (!coords || !coords.lat || !coords.lng) {
+          const weatherConditionsEl =
+            document.getElementById("weather-conditions");
+          const weatherLoadingEl = document.getElementById("weather-loading");
+          if (weatherConditionsEl && weatherLoadingEl) {
+            weatherLoadingEl.textContent =
+              translations[currentLanguage].weatherError;
+          }
+          return;
+        }
+
+        const weatherLoadingEl = document.getElementById("weather-loading");
+        if (weatherLoadingEl) {
+          weatherLoadingEl.textContent =
+            translations[currentLanguage].weatherLoading;
+          weatherLoadingEl.style.display = "inline";
+        }
+
+        const weatherData = await fetchWeatherData(coords.lat, coords.lng);
+        if (weatherData) {
+          currentWeatherData = weatherData;
+          updateWeatherDisplay();
+        } else {
+          const t = translations[currentLanguage];
+          if (weatherLoadingEl) {
+            weatherLoadingEl.textContent = t.weatherError;
+          }
+        }
+      }
+
       function init() {
         if (isBirthday) {
           console.log(
@@ -2242,6 +2634,7 @@
             setMapToEntry(todayEntry, { animate: true });
             statusText = buildStatusText(todayEntry);
             persistLastKnown(todayEntry);
+            updateWeather(todayEntry.coords);
           } else if (cached) {
             setMapToEntry({
               coords: { lat: cached.lat, lng: cached.lng },
@@ -2256,6 +2649,7 @@
                 state: resolveStatusState(cached.status),
               };
             }
+            updateWeather({ lat: cached.lat, lng: cached.lng });
           } else {
             statusText = todayEntry.descriptor || statusText;
           }
@@ -2274,6 +2668,7 @@
               state: resolveStatusState(cached.status),
             };
           }
+          updateWeather({ lat: cached.lat, lng: cached.lng });
         }
 
         console.log(
