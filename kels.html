@@ -201,6 +201,177 @@
         color: #14532d;
       }
 
+      .timeline {
+        display: grid;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.94),
+          rgba(255, 255, 255, 0.86)
+        );
+        border: 1px solid rgba(41, 53, 86, 0.06);
+        border-radius: 22px;
+        box-shadow: 0 18px 48px rgba(27, 37, 68, 0.16);
+      }
+
+      .timeline-header h2 {
+        margin: 0 0 0.25rem;
+        font-size: 1.4rem;
+      }
+
+      .timeline-header p {
+        margin: 0;
+        color: #4f5363;
+        font-size: 0.95rem;
+      }
+
+      .timeline-layout {
+        display: grid;
+        gap: 1.4rem;
+      }
+
+      .timeline-group {
+        display: grid;
+        gap: 0.6rem;
+      }
+
+      .timeline-group-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .timeline-group-title {
+        margin: 0;
+        font-size: 1.1rem;
+        letter-spacing: -0.01em;
+      }
+
+      .timeline-group-subtitle {
+        margin: 0;
+        color: #4f5363;
+        font-size: 0.95rem;
+      }
+
+      .timeline-toggle {
+        align-self: flex-start;
+        background: white;
+        color: var(--accent);
+        border: 1px solid rgba(90, 63, 212, 0.2);
+        border-radius: 12px;
+        padding: 0.35rem 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(90, 63, 212, 0.12);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .timeline-toggle:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px rgba(90, 63, 212, 0.18);
+      }
+
+      .timeline-toggle[hidden] {
+        display: none;
+      }
+
+      .timeline-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .timeline-item {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.9rem;
+        padding: 0.9rem 1rem;
+        border-radius: 16px;
+        background: rgba(90, 63, 212, 0.04);
+        border: 1px solid rgba(90, 63, 212, 0.08);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .timeline-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(27, 37, 68, 0.14);
+      }
+
+      .timeline-item.completed {
+        opacity: 0.85;
+      }
+
+      .timeline-item.current {
+        border-color: rgba(26, 198, 129, 0.6);
+        box-shadow: 0 14px 32px rgba(26, 198, 129, 0.18);
+      }
+
+      .timeline-marker {
+        width: 14px;
+        height: 14px;
+        margin-top: 0.4rem;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 6px rgba(90, 63, 212, 0.12);
+      }
+
+      .timeline-item.completed .timeline-marker {
+        background: #1f7d52;
+        box-shadow: 0 0 0 6px rgba(31, 125, 82, 0.14);
+      }
+
+      .timeline-item.current .timeline-marker {
+        background: #1ac681;
+        box-shadow: 0 0 0 6px rgba(26, 198, 129, 0.16);
+      }
+
+      .timeline-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .timeline-date {
+        font-size: 0.95rem;
+        color: #4f5363;
+        margin-bottom: 0.25rem;
+      }
+
+      .timeline-label {
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-bottom: 0.2rem;
+      }
+
+      .timeline-meta {
+        margin: 0;
+        color: #61667a;
+        font-size: 0.92rem;
+      }
+
+      .timeline-actions {
+        margin-top: 0.45rem;
+      }
+
+      .timeline-link {
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.45rem 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 12px 26px rgba(90, 63, 212, 0.26);
+      }
+
+      .timeline-link:hover {
+        background: #4a30b2;
+      }
+
       .shell.birthday-visible header h1 {
         color: #6d2967;
       }
@@ -292,6 +463,121 @@
         gap: 1.25rem;
         border: 1px solid rgba(255, 255, 255, 0.4);
         box-shadow: 0 8px 24px rgba(27, 37, 68, 0.1);
+      }
+
+      .forecast-section {
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 18px;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 26px rgba(27, 37, 68, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+
+      .forecast-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .forecast-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .forecast-port {
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .forecast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+      }
+
+      .forecast-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .forecast-day {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text);
+      }
+
+      .forecast-temps {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        font-weight: 600;
+      }
+
+      .forecast-condition {
+        font-size: 0.95rem;
+        color: rgba(21, 32, 51, 0.75);
+      .time-section {
+        background: rgba(255, 255, 255, 0.75);
+        border-radius: 18px;
+        padding: 1.4rem 1.75rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 26px rgba(27, 37, 68, 0.12);
+      }
+
+      .time-header {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        flex: 1;
+      }
+
+      .time-icon {
+        font-size: 1.5rem;
+      }
+
+      .time-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .time-section h2 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .time-description {
+        margin: 0;
+        font-size: 0.98rem;
+        color: rgba(21, 32, 51, 0.76);
+      }
+
+      .time-clock {
+        font-weight: 800;
+        font-size: 1.75rem;
+        letter-spacing: 0.04em;
+        background: rgba(90, 63, 212, 0.1);
+        color: var(--accent);
+        padding: 0.6rem 0.9rem;
+        border-radius: 14px;
+        box-shadow: inset 0 0 0 1px rgba(90, 63, 212, 0.2);
       }
 
       .weather-header {
@@ -658,6 +944,19 @@
         <strong id="location-label"></strong>
       </section>
 
+      <section class="time-section" aria-live="polite">
+        <div class="time-header">
+          <span class="time-icon" aria-hidden="true">⏰</span>
+          <div class="time-text">
+            <h2 id="time-title">Ship's local time</h2>
+            <p id="time-description" class="time-description">
+              Loading ship's local time...
+            </p>
+          </div>
+        </div>
+        <div id="time-clock" class="time-clock">--:--</div>
+      </section>
+
       <div
         id="map"
         role="img"
@@ -708,6 +1007,74 @@
           </div>
           <div class="weather-conditions" id="weather-conditions">
             <span id="weather-loading">Loading weather...</span>
+          </div>
+          <div class="forecast-section" id="forecast-section">
+            <div class="forecast-header">
+              <h3 id="forecast-title" class="forecast-title">
+                Next Port Forecast (24–48h)
+              </h3>
+              <span id="forecast-port" class="forecast-port"></span>
+            </div>
+            <div id="forecast-grid" class="forecast-grid">
+              <span id="forecast-loading">Loading forecast...</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="timeline" aria-live="polite">
+        <div class="timeline-header">
+          <h2 id="timeline-title">Track so far</h2>
+          <p id="timeline-subtitle">
+            Every port call and at-sea day with quick links back to the map.
+          </p>
+        </div>
+        <div class="timeline-layout">
+          <div class="timeline-group" aria-live="polite">
+            <div class="timeline-group-header">
+              <div>
+                <h3 id="timeline-past-title" class="timeline-group-title">
+                  Recent stops
+                </h3>
+                <p
+                  id="timeline-past-subtitle"
+                  class="timeline-group-subtitle"
+                >
+                  Latest 5 places visited
+                </p>
+              </div>
+              <button
+                id="timeline-past-toggle"
+                class="timeline-toggle"
+                type="button"
+              >
+                See more
+              </button>
+            </div>
+            <ol id="timeline-past-list" class="timeline-list"></ol>
+          </div>
+          <div class="timeline-group" aria-live="polite">
+            <div class="timeline-group-header">
+              <div>
+                <h3 id="timeline-upcoming-title" class="timeline-group-title">
+                  Upcoming stops
+                </h3>
+                <p
+                  id="timeline-upcoming-subtitle"
+                  class="timeline-group-subtitle"
+                >
+                  Next 5 destinations
+                </p>
+              </div>
+              <button
+                id="timeline-upcoming-toggle"
+                class="timeline-toggle"
+                type="button"
+              >
+                See more
+              </button>
+            </div>
+            <ol id="timeline-upcoming-list" class="timeline-list"></ol>
           </div>
         </div>
       </section>
@@ -777,10 +1144,33 @@
           weatherTitle: "Weather at Ship Location",
           weatherLoading: "Loading weather...",
           weatherError: "Unable to load weather",
+          forecastTitle: "Next Port Forecast (24–48h)",
+          forecastLoading: "Loading forecast...",
+          forecastUnavailable: "Forecast unavailable",
+          forecastNoPort: "No upcoming port",
+          forecastDayLabel: (offset) =>
+            offset === 1 ? "Next 24h" : "Next 48h",
+          forecastFor: (port) => `Next stop: ${port}`,
           rain: "Rain",
           snow: "Snow",
           wind: "Windy",
           noConditions: "Clear conditions",
+          timelineTitle: "Track so far",
+          timelineSubtitle:
+            "Every port call and at-sea day with quick links back to the map.",
+          timelineViewOnMap: "View on map",
+          timelineSeeMore: "See more",
+          timelineSeeLess: "See less",
+          timelinePastTitle: "Recent stops",
+          timelinePastSubtitle: "Latest 5 places visited",
+          timelineUpcomingTitle: "Upcoming stops",
+          timelineUpcomingSubtitle: "Next 5 destinations",
+          timelineReplay: "Recenter the map on this stop",
+          timeTitle: "Ship's local time",
+          timeLoading: "Loading ship's local time...",
+          timeSubtitle: (timezone) => `Based on ship position (${timezone})`,
+          timeSubtitleOffset: (offset) =>
+            `Based on ship position (UTC${offset || "?"})`,
         },
         da: {
           pageTitle: "Hvor i verden er Kels?",
@@ -831,10 +1221,33 @@
           weatherTitle: "Vejr ved skibets placering",
           weatherLoading: "Indlæser vejr...",
           weatherError: "Kunne ikke indlæse vejr",
+          forecastTitle: "Vejrudsigt for næste havn (24–48t)",
+          forecastLoading: "Indlæser vejrudsigt...",
+          forecastUnavailable: "Ingen vejrudsigt",
+          forecastNoPort: "Ingen kommende havn",
+          forecastDayLabel: (offset) =>
+            offset === 1 ? "Næste 24t" : "Næste 48t",
+          forecastFor: (port) => `Næste stop: ${port}`,
           rain: "Regn",
           snow: "Sne",
           wind: "Blæsende",
           noConditions: "Klart vejr",
+          timelineTitle: "Spor indtil nu",
+          timelineSubtitle:
+            "Hver havneanløb og dag til søs med hurtige links tilbage til kortet.",
+          timelineViewOnMap: "Se på kort",
+          timelineSeeMore: "Se mere",
+          timelineSeeLess: "Se mindre",
+          timelinePastTitle: "Seneste stop",
+          timelinePastSubtitle: "De seneste 5 steder besøgt",
+          timelineUpcomingTitle: "Kommende stop",
+          timelineUpcomingSubtitle: "De næste 5 destinationer",
+          timelineReplay: "Centrér kortet på dette stop",
+          timeTitle: "Skibets lokale tid",
+          timeLoading: "Indlæser skibets lokale tid...",
+          timeSubtitle: (timezone) => `Baseret på skibets position (${timezone})`,
+          timeSubtitleOffset: (offset) =>
+            `Baseret på skibets position (UTC${offset || "?"})`,
         },
       };
 
@@ -1210,6 +1623,10 @@
           mapEl.setAttribute("aria-label", t.mapAriaLabel);
         }
 
+        // Update time section
+        updateTimeLabels();
+        startLocalTimeClock();
+
         // Update weather title
         const weatherTitleEl = document.getElementById("weather-title");
         if (weatherTitleEl) {
@@ -1223,9 +1640,11 @@
         };
 
         renderDestinationSpotlight(translatedSpotlightData);
+        renderTimeline();
 
         // Update weather display if data exists
         updateWeatherDisplay();
+        renderForecast();
       }
 
       languageToggle.addEventListener("click", () => {
@@ -1829,6 +2248,31 @@
         if (isAtSea) return t.destinationHeadingNext;
         return t.destinationHeadingCurrent;
       }
+      const timelinePastListEl = document.getElementById("timeline-past-list");
+      const timelineUpcomingListEl = document.getElementById(
+        "timeline-upcoming-list"
+      );
+      const timelinePastToggleEl = document.getElementById(
+        "timeline-past-toggle"
+      );
+      const timelineUpcomingToggleEl = document.getElementById(
+        "timeline-upcoming-toggle"
+      );
+      const timelineTitleEl = document.getElementById("timeline-title");
+      const timelineSubtitleEl = document.getElementById("timeline-subtitle");
+      const timelinePastTitleEl = document.getElementById("timeline-past-title");
+      const timelineUpcomingTitleEl = document.getElementById(
+        "timeline-upcoming-title"
+      );
+      const timelinePastSubtitleEl = document.getElementById(
+        "timeline-past-subtitle"
+      );
+      const timelineUpcomingSubtitleEl = document.getElementById(
+        "timeline-upcoming-subtitle"
+      );
+
+      let timelinePastExpanded = false;
+      let timelineUpcomingExpanded = false;
 
       function resolveStatusState(text) {
         if (!text) return "unknown";
@@ -2142,6 +2586,7 @@
               storedAt: Date.now(),
             })
           );
+          cacheTileForCoords(entry.coords, entry.zoom ?? 6);
         } catch (error) {
           console.warn("Unable to persist last known position", error);
         }
@@ -2181,6 +2626,183 @@
         } else {
           map.setView(view, targetZoom);
         }
+      }
+
+      function formatTimelineDate(dateStr) {
+        const date = new Date(`${dateStr}T12:00:00`);
+        const locale = currentLanguage === "da" ? "da-DK" : undefined;
+        return {
+          dateLabel: date.toLocaleDateString(locale, {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          }),
+          timeLabel: date.toLocaleTimeString(locale, {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+      }
+
+      function focusTimelineEntry(dateStr) {
+        const entry = itineraryByDate.get(dateStr);
+        if (!entry) return;
+        const data = buildEntryData(entry);
+        const t = translations[currentLanguage];
+        const statusInfo = determineStatusFromEntry(entry);
+
+        locationLabelEl.textContent = data.label;
+        locationStatusEl.textContent = `${t.trackingUpdate} ${
+          data.descriptor || data.label
+        }`;
+        setShipStatus(statusInfo.label, statusInfo.state);
+
+        if (data.coords) {
+          setMapToEntry(data, { animate: true });
+        }
+      }
+
+      function renderTimelineList(entries, listEl, { limit, expanded }) {
+        if (!listEl) return;
+        const t = translations[currentLanguage];
+        const todayISO = getLocalISO(new Date());
+        listEl.innerHTML = "";
+
+        const slice = expanded ? entries : entries.slice(0, limit);
+
+        slice.forEach((entry) => {
+          const data = buildEntryData(entry);
+          const { dateLabel, timeLabel } = formatTimelineDate(entry.date);
+          const state =
+            entry.date < todayISO
+              ? "completed"
+              : entry.date === todayISO
+              ? "current"
+              : "upcoming";
+
+          const item = document.createElement("li");
+          item.className = `timeline-item ${state}`;
+
+          const details = document.createElement("div");
+          details.className = "timeline-details";
+
+          const dateEl = document.createElement("div");
+          dateEl.className = "timeline-date";
+          dateEl.textContent = `${dateLabel} • ${timeLabel}`;
+
+          const labelEl = document.createElement("div");
+          labelEl.className = "timeline-label";
+          labelEl.textContent = data.label;
+
+          const metaEl = document.createElement("p");
+          metaEl.className = "timeline-meta";
+          metaEl.textContent = data.descriptor || t.trackingUpdate;
+
+          details.appendChild(dateEl);
+          details.appendChild(labelEl);
+          details.appendChild(metaEl);
+
+          if (data.coords) {
+            const actions = document.createElement("div");
+            actions.className = "timeline-actions";
+            const button = document.createElement("button");
+            button.className = "timeline-link";
+            button.type = "button";
+            button.dataset.date = entry.date;
+            button.title = t.timelineReplay;
+            button.textContent = t.timelineViewOnMap;
+            actions.appendChild(button);
+            details.appendChild(actions);
+          }
+
+          const marker = document.createElement("div");
+          marker.className = "timeline-marker";
+          marker.setAttribute("aria-hidden", "true");
+
+          item.appendChild(marker);
+          item.appendChild(details);
+          listEl.appendChild(item);
+        });
+      }
+
+      function updateTimelineToggle(button, expanded, hasOverflow) {
+        if (!button) return;
+        if (!hasOverflow) {
+          button.hidden = true;
+          return;
+        }
+        const t = translations[currentLanguage];
+        button.hidden = false;
+        button.textContent = expanded ? t.timelineSeeLess : t.timelineSeeMore;
+      }
+
+      function renderTimeline() {
+        const t = translations[currentLanguage];
+        const todayISO = getLocalISO(new Date());
+
+        if (timelineTitleEl) timelineTitleEl.textContent = t.timelineTitle;
+        if (timelineSubtitleEl) timelineSubtitleEl.textContent = t.timelineSubtitle;
+        if (timelinePastTitleEl) timelinePastTitleEl.textContent = t.timelinePastTitle;
+        if (timelineUpcomingTitleEl)
+          timelineUpcomingTitleEl.textContent = t.timelineUpcomingTitle;
+        if (timelinePastSubtitleEl)
+          timelinePastSubtitleEl.textContent = t.timelinePastSubtitle;
+        if (timelineUpcomingSubtitleEl)
+          timelineUpcomingSubtitleEl.textContent = t.timelineUpcomingSubtitle;
+
+        const pastEntries = itineraryEntries.filter((entry) => entry.date <= todayISO);
+        const upcomingEntries = itineraryEntries.filter(
+          (entry) => entry.date > todayISO
+        );
+
+        const orderedPast = [...pastEntries].reverse();
+
+        renderTimelineList(orderedPast, timelinePastListEl, {
+          limit: 5,
+          expanded: timelinePastExpanded,
+        });
+
+        renderTimelineList(upcomingEntries, timelineUpcomingListEl, {
+          limit: 5,
+          expanded: timelineUpcomingExpanded,
+        });
+
+        updateTimelineToggle(
+          timelinePastToggleEl,
+          timelinePastExpanded,
+          orderedPast.length > 5
+        );
+        updateTimelineToggle(
+          timelineUpcomingToggleEl,
+          timelineUpcomingExpanded,
+          upcomingEntries.length > 5
+        );
+      }
+
+      function bindTimelineClicks(listEl) {
+        if (!listEl) return;
+        listEl.addEventListener("click", (event) => {
+          const button = event.target.closest(".timeline-link");
+          if (!button) return;
+          focusTimelineEntry(button.dataset.date);
+        });
+      }
+
+      bindTimelineClicks(timelinePastListEl);
+      bindTimelineClicks(timelineUpcomingListEl);
+
+      if (timelinePastToggleEl) {
+        timelinePastToggleEl.addEventListener("click", () => {
+          timelinePastExpanded = !timelinePastExpanded;
+          renderTimeline();
+        });
+      }
+
+      if (timelineUpcomingToggleEl) {
+        timelineUpcomingToggleEl.addEventListener("click", () => {
+          timelineUpcomingExpanded = !timelineUpcomingExpanded;
+          renderTimeline();
+        });
       }
 
       function formatTomorrowStatus() {
@@ -2598,6 +3220,8 @@
           let labelText = t.cachedCoordinates;
           let itineraryDestination = null;
 
+          let forecastLabel = null;
+
           if (finalLive.isAtSea) {
             // Find next port from itinerary (as fallback)
             if (todayEntry) {
@@ -2621,12 +3245,14 @@
                   "[UPDATE] Found next port from itinerary:",
                   itineraryDestination
                 );
+                forecastLabel = itineraryDestination;
               } else if (todayEntry.nextPort) {
                 itineraryDestination = todayEntry.nextPort;
                 console.log(
                   "[UPDATE] Using todayEntry.nextPort:",
                   itineraryDestination
                 );
+                forecastLabel = itineraryDestination;
               }
             }
 
@@ -2640,20 +3266,32 @@
                   ? "(from itinerary)"
                   : "(from CruiseMapper)"
               );
+              forecastLabel = finalLive.destination;
             } else if (itineraryDestination) {
               labelText = t.enRouteTo(itineraryDestination);
               console.log(
                 "[UPDATE] Using itinerary destination as fallback:",
                 itineraryDestination
               );
+              forecastLabel = itineraryDestination;
             } else {
               labelText = t.sailingOcean;
             }
-          } else if (finalLive.port) {
-            labelText = t.dockedAt(finalLive.port);
-          } else if (finalLive.destination) {
-            labelText = finalLive.destination;
-          }
+        } else if (finalLive.port) {
+          labelText = t.dockedAt(finalLive.port);
+          forecastLabel = resolveNextPortLabel(
+            finalLive,
+            itineraryDestination,
+            todayEntry
+          );
+        } else if (finalLive.destination) {
+          labelText = finalLive.destination;
+          forecastLabel = resolveNextPortLabel(
+            finalLive,
+            itineraryDestination,
+            todayEntry
+          );
+        }
 
           console.log("[UPDATE] Setting label text:", labelText);
           locationLabelEl.textContent = labelText;
@@ -2701,6 +3339,10 @@
             );
             // Update weather with new coordinates
             updateWeather(finalLive.coords);
+            const resolvedForecastLabel =
+              forecastLabel ||
+              resolveNextPortLabel(finalLive, itineraryDestination, todayEntry);
+            updateNextPortForecast(resolvedForecastLabel);
           } else if (finalLive.isAtSea) {
             // We have "en route" status but no coordinates - still show the status
             let detail;
@@ -2716,6 +3358,10 @@
             }
             locationStatusEl.textContent = `${t.liveUpdate}${detail}`;
             console.log("[UPDATE] ✅ Status updated (no coords):", statusLabel);
+            const resolvedForecastLabel =
+              forecastLabel ||
+              resolveNextPortLabel(finalLive, itineraryDestination, todayEntry);
+            updateNextPortForecast(resolvedForecastLabel);
           } else if (finalLive.summary) {
             locationStatusEl.textContent = `${t.liveUpdate}${finalLive.summary}`;
             console.log("[UPDATE] Used summary instead of coords");
@@ -2763,6 +3409,89 @@
 
       // Weather data storage
       let currentWeatherData = null;
+      let nextPortForecastData = null;
+      let nextPortLabel = null;
+      let currentTimeZone = null;
+      let currentUtcOffsetSeconds = null;
+      let timeIntervalId = null;
+
+      function formatUtcOffset(offsetSeconds) {
+        if (!Number.isFinite(offsetSeconds)) return null;
+        const hours = offsetSeconds / 3600;
+        const rounded = Math.round(hours * 10) / 10;
+        return `${hours >= 0 ? "+" : ""}${rounded}`;
+      }
+
+      function updateTimeLabels() {
+        const t = translations[currentLanguage];
+        const timeTitleEl = document.getElementById("time-title");
+        const timeDescriptionEl = document.getElementById("time-description");
+
+        if (timeTitleEl) {
+          timeTitleEl.textContent = t.timeTitle;
+        }
+
+        if (timeDescriptionEl) {
+          if (currentTimeZone) {
+            timeDescriptionEl.textContent = t.timeSubtitle(currentTimeZone);
+          } else if (currentUtcOffsetSeconds !== null) {
+            timeDescriptionEl.textContent = t.timeSubtitleOffset(
+              formatUtcOffset(currentUtcOffsetSeconds)
+            );
+          } else {
+            timeDescriptionEl.textContent = t.timeLoading;
+          }
+        }
+      }
+
+      function startLocalTimeClock() {
+        const clockEl = document.getElementById("time-clock");
+        if (!clockEl) return;
+
+        if (timeIntervalId) {
+          clearInterval(timeIntervalId);
+          timeIntervalId = null;
+        }
+
+        updateTimeLabels();
+
+        if (!currentTimeZone && currentUtcOffsetSeconds === null) {
+          clockEl.textContent = "--:--";
+          return;
+        }
+
+        const render = () => {
+          const now = new Date();
+          let dateToFormat = now;
+          const locale = currentLanguage === "da" ? "da-DK" : "en-US";
+          const options = {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: currentLanguage === "en",
+          };
+
+          if (currentTimeZone) {
+            options.timeZone = currentTimeZone;
+          } else if (currentUtcOffsetSeconds !== null) {
+            dateToFormat = new Date(now.getTime() + currentUtcOffsetSeconds * 1000);
+          }
+
+          clockEl.textContent = new Intl.DateTimeFormat(locale, options).format(
+            dateToFormat
+          );
+        };
+
+        render();
+        timeIntervalId = setInterval(render, 30000);
+      }
+
+      function updateTimeSectionTimezone(timezone, offsetSeconds) {
+        currentTimeZone = timezone || null;
+        currentUtcOffsetSeconds = Number.isFinite(offsetSeconds)
+          ? offsetSeconds
+          : null;
+        startLocalTimeClock();
+      }
 
       // Convert Fahrenheit to Celsius
       function fahrenheitToCelsius(f) {
@@ -2785,6 +3514,20 @@
       // Get temperature unit based on current language
       function getTemperatureUnit() {
         return currentLanguage === "da" ? "°C" : "°F";
+      }
+
+      function formatForecastDayLabel(dateString, offset) {
+        const t = translations[currentLanguage];
+        const formatter = new Intl.DateTimeFormat(currentLanguage === "da" ? "da-DK" : "en-US", {
+          weekday: "short",
+        });
+        try {
+          const date = new Date(dateString);
+          return `${formatter.format(date)} · ${t.forecastDayLabel(offset)}`;
+        } catch (error) {
+          console.warn("[FORECAST] Could not format date", dateString, error);
+          return t.forecastDayLabel(offset);
+        }
       }
 
       // Fetch weather data from Open-Meteo API (free, no API key required)
@@ -2820,12 +3563,60 @@
             weatherCode: data.current.weather_code,
             dailyPrecipitation: data.daily.precipitation_sum[0],
             dailyWeatherCode: data.daily.weather_code[0],
+            timezone: data.timezone,
+            utcOffsetSeconds: data.utc_offset_seconds,
           };
 
           console.log("[WEATHER] ✅ Weather data fetched:", weatherData);
           return weatherData;
         } catch (error) {
           console.warn("[WEATHER] Error fetching weather:", error);
+          return null;
+        }
+      }
+
+      async function fetchNextPortForecast(lat, lng) {
+        if (!lat || !lng || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+          console.warn("[FORECAST] Invalid coordinates:", lat, lng);
+          return null;
+        }
+
+        try {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum&temperature_unit=fahrenheit&timezone=auto`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            console.warn("[FORECAST] Response not OK:", response.status);
+            return null;
+          }
+
+          const data = await response.json();
+          if (!data.daily || !data.daily.time) {
+            console.warn("[FORECAST] Invalid data structure");
+            return null;
+          }
+
+          const entries = [];
+          for (let i = 1; i <= 2; i++) {
+            if (
+              data.daily.time[i] !== undefined &&
+              data.daily.temperature_2m_max[i] !== undefined &&
+              data.daily.temperature_2m_min[i] !== undefined
+            ) {
+              entries.push({
+                date: data.daily.time[i],
+                high: data.daily.temperature_2m_max[i],
+                low: data.daily.temperature_2m_min[i],
+                weatherCode: data.daily.weather_code[i],
+                precipitation: data.daily.precipitation_sum
+                  ? data.daily.precipitation_sum[i]
+                  : 0,
+              });
+            }
+          }
+
+          return entries;
+        } catch (error) {
+          console.warn("[FORECAST] Error fetching forecast:", error);
           return null;
         }
       }
@@ -2869,6 +3660,17 @@
         }
 
         return conditions;
+      }
+
+      function describeForecastCondition(code, precipitation = 0) {
+        const t = translations[currentLanguage];
+        const hasSnow = code >= 71 && code <= 86;
+        const hasRain =
+          !hasSnow &&
+          (precipitation > 0.01 || (code >= 51 && code <= 67));
+        if (hasSnow) return t.snow;
+        if (hasRain) return t.rain;
+        return t.noConditions;
       }
 
       // Update weather display
@@ -2927,6 +3729,90 @@
         }
       }
 
+      function renderForecast() {
+        const grid = document.getElementById("forecast-grid");
+        const loadingEl = document.getElementById("forecast-loading");
+        const titleEl = document.getElementById("forecast-title");
+        const portEl = document.getElementById("forecast-port");
+        const t = translations[currentLanguage];
+
+        if (titleEl) titleEl.textContent = t.forecastTitle;
+
+        if (!grid || !loadingEl || !portEl) return;
+
+        if (!nextPortLabel) {
+          loadingEl.textContent = t.forecastNoPort;
+          grid.innerHTML = "";
+          grid.appendChild(loadingEl);
+          portEl.textContent = "";
+          return;
+        }
+
+        portEl.textContent = t.forecastFor(nextPortLabel);
+
+        if (!nextPortForecastData || nextPortForecastData.length === 0) {
+          loadingEl.textContent = t.forecastUnavailable;
+          grid.innerHTML = "";
+          grid.appendChild(loadingEl);
+          return;
+        }
+
+        grid.innerHTML = "";
+        nextPortForecastData.forEach((entry, index) => {
+          const card = document.createElement("div");
+          card.className = "forecast-card";
+
+          const day = document.createElement("div");
+          day.className = "forecast-day";
+          day.textContent = formatForecastDayLabel(entry.date, index + 1);
+
+          const temps = document.createElement("div");
+          temps.className = "forecast-temps";
+          temps.textContent = `${formatTemperature(entry.high)}° / ${formatTemperature(
+            entry.low
+          )}° ${getTemperatureUnit()}`;
+
+          const condition = document.createElement("div");
+          condition.className = "forecast-condition";
+          condition.textContent = describeForecastCondition(
+            entry.weatherCode,
+            entry.precipitation
+          );
+
+          card.appendChild(day);
+          card.appendChild(temps);
+          card.appendChild(condition);
+          grid.appendChild(card);
+        });
+      function persistWeatherCache(coords, weatherData) {
+        if (!coords || !weatherData) return;
+        try {
+          localStorage.setItem(
+            "kels-weather-cache",
+            JSON.stringify({ coords, weatherData, storedAt: Date.now() })
+          );
+        } catch (error) {
+          console.warn("[WEATHER] Unable to cache weather", error);
+        }
+      }
+
+      function readCachedWeather(coords) {
+        try {
+          const cached = localStorage.getItem("kels-weather-cache");
+          if (!cached) return null;
+          const parsed = JSON.parse(cached);
+          if (!parsed.coords || !parsed.weatherData) return null;
+          const latMatch = Math.abs(parsed.coords.lat - coords.lat) < 0.5;
+          const lngMatch = Math.abs(parsed.coords.lng - coords.lng) < 0.5;
+          if (latMatch && lngMatch) {
+            return parsed.weatherData;
+          }
+        } catch (error) {
+          console.warn("[WEATHER] Unable to read cached weather", error);
+        }
+        return null;
+      }
+
       // Update weather when coordinates change
       async function updateWeather(coords) {
         if (!coords || !coords.lat || !coords.lng) {
@@ -2950,13 +3836,163 @@
         const weatherData = await fetchWeatherData(coords.lat, coords.lng);
         if (weatherData) {
           currentWeatherData = weatherData;
+          persistWeatherCache(coords, weatherData);
+          updateTimeSectionTimezone(
+            weatherData.timezone,
+            weatherData.utcOffsetSeconds
+          );
           updateWeatherDisplay();
         } else {
+          const cachedWeather = readCachedWeather(coords);
           const t = translations[currentLanguage];
-          if (weatherLoadingEl) {
-            weatherLoadingEl.textContent = t.weatherError;
+          if (cachedWeather) {
+            currentWeatherData = cachedWeather;
+            updateWeatherDisplay();
+            if (weatherLoadingEl) {
+              weatherLoadingEl.textContent = `${t.showingCached} ${t.cachedCoordinates.toLowerCase()}`;
+            }
+          } else {
+            if (weatherLoadingEl) {
+              weatherLoadingEl.textContent = t.weatherError;
+            }
           }
         }
+      }
+
+      function latLngToTile(lat, lng, zoom) {
+        const latRad = (lat * Math.PI) / 180;
+        const n = 2 ** zoom;
+        const x = Math.floor(((lng + 180) / 360) * n);
+        const y = Math.floor(
+          ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) /
+            2) *
+            n
+        );
+        return { x, y, z: zoom };
+      }
+
+      function buildTileUrl(tile, retina = false) {
+        const r = retina ? "@2x" : "";
+        return `https://a.basemaps.cartocdn.com/light_all/${tile.z}/${tile.x}/${tile.y}${r}.png`;
+      }
+
+      async function cacheTileForCoords(coords, zoom = 6) {
+        if (!coords) return;
+        try {
+          const tileCoords = latLngToTile(coords.lat, coords.lng, zoom);
+          const retina = window.devicePixelRatio > 1;
+          const tileUrl = buildTileUrl(tileCoords, retina);
+          const response = await fetch(tileUrl, { mode: "cors" });
+          if (!response.ok) return;
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            try {
+              localStorage.setItem(
+                "kels-tile-cache",
+                JSON.stringify({
+                  dataUrl: reader.result,
+                  tileCoords,
+                  retina,
+                  storedAt: Date.now(),
+                })
+              );
+            } catch (error) {
+              console.warn("[MAP] Unable to cache tile", error);
+            }
+          };
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.warn("[MAP] Failed to cache map tile", error);
+        }
+      }
+
+      function readCachedTile() {
+        try {
+          const cached = localStorage.getItem("kels-tile-cache");
+          if (!cached) return null;
+          const parsed = JSON.parse(cached);
+          if (parsed?.dataUrl && parsed?.tileCoords) {
+            return parsed;
+          }
+        } catch (error) {
+          console.warn("[MAP] Unable to read cached tile", error);
+        }
+        return null;
+      }
+
+      function applyCachedTileOverlay(cachedTile) {
+        const container = map.getContainer();
+        if (!container) return;
+        if (cachedTile?.dataUrl) {
+          container.style.backgroundImage = `url(${cachedTile.dataUrl})`;
+          container.style.backgroundSize = "cover";
+          container.style.backgroundPosition = "center";
+        } else {
+          container.style.backgroundImage = "";
+        }
+      }
+
+      function findPortCoords(label) {
+        if (!label) return null;
+        const info = locationReference[label];
+        if (info && hasCoords(info)) {
+          return { lat: info.lat, lng: info.lng };
+        }
+        const matchingEntry = itineraryEntries.find((entry) => entry.label === label);
+        if (matchingEntry) {
+          const ref = locationReference[matchingEntry.label];
+          if (ref && hasCoords(ref)) {
+            return { lat: ref.lat, lng: ref.lng };
+          }
+        }
+        return null;
+      }
+
+      async function updateNextPortForecast(portLabel) {
+        const grid = document.getElementById("forecast-grid");
+        const loadingEl = document.getElementById("forecast-loading");
+        const t = translations[currentLanguage];
+
+        nextPortLabel = portLabel || null;
+        nextPortForecastData = null;
+
+        if (loadingEl) {
+          loadingEl.textContent = portLabel
+            ? t.forecastLoading
+            : t.forecastNoPort;
+        }
+
+        if (!portLabel || !grid || !loadingEl) {
+          renderForecast();
+          return;
+        }
+
+        const coords = findPortCoords(portLabel);
+        if (!coords) {
+          loadingEl.textContent = t.forecastUnavailable;
+          renderForecast();
+          return;
+        }
+
+        const forecast = await fetchNextPortForecast(coords.lat, coords.lng);
+        if (forecast) {
+          nextPortForecastData = forecast;
+        }
+
+        renderForecast();
+      }
+
+      function resolveNextPortLabel(finalLive, itineraryDestination, todayEntry) {
+        if (finalLive && finalLive.destination) return finalLive.destination;
+        if (itineraryDestination) return itineraryDestination;
+        if (todayEntry && todayEntry.nextPort) return todayEntry.nextPort;
+
+        const todayISO = getLocalISO(new Date());
+        const upcomingEntry = itineraryEntries.find(
+          (entry) => entry.date > todayISO && entry.label !== "At Sea"
+        );
+        return upcomingEntry ? upcomingEntry.label : null;
       }
 
       function init() {
@@ -2969,6 +4005,7 @@
         }
         const todayEntry = getEntryForDate(new Date());
         const cached = readCachedLocation();
+        const cachedTile = readCachedTile();
 
         console.log(
           "[INIT] todayEntry:",
@@ -2994,6 +4031,13 @@
             statusText = buildStatusText(todayEntry);
             persistLastKnown(todayEntry);
             updateWeather(todayEntry.coords);
+            const resolvedForecastLabel = resolveNextPortLabel(
+              null,
+              null,
+              todayEntry
+            );
+            updateNextPortForecast(resolvedForecastLabel);
+            applyCachedTileOverlay(null);
           } else if (cached) {
             setMapToEntry({
               coords: { lat: cached.lat, lng: cached.lng },
@@ -3009,6 +4053,13 @@
               };
             }
             updateWeather({ lat: cached.lat, lng: cached.lng });
+            const resolvedForecastLabel = resolveNextPortLabel(
+              null,
+              null,
+              todayEntry
+            );
+            updateNextPortForecast(resolvedForecastLabel);
+            applyCachedTileOverlay(cachedTile);
           } else {
             statusText = todayEntry.descriptor || statusText;
           }
@@ -3028,6 +4079,7 @@
             };
           }
           updateWeather({ lat: cached.lat, lng: cached.lng });
+          applyCachedTileOverlay(cachedTile);
         }
 
         console.log(
@@ -3040,6 +4092,7 @@
         locationLabelEl.textContent = labelText;
         setShipStatus(statusInfo.label, statusInfo.state);
         tomorrowStatusEl.textContent = formatTomorrowStatus();
+        renderTimeline();
 
         renderDestinationSpotlight({
           name:
