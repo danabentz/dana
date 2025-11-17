@@ -294,6 +294,71 @@
         box-shadow: 0 8px 24px rgba(27, 37, 68, 0.1);
       }
 
+      .forecast-section {
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 18px;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 26px rgba(27, 37, 68, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+
+      .forecast-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .forecast-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .forecast-port {
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .forecast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
+      }
+
+      .forecast-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .forecast-day {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text);
+      }
+
+      .forecast-temps {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        font-weight: 600;
+      }
+
+      .forecast-condition {
+        font-size: 0.95rem;
+        color: rgba(21, 32, 51, 0.75);
+      }
+
       .weather-header {
         display: flex;
         align-items: center;
@@ -579,6 +644,17 @@
           <div class="weather-conditions" id="weather-conditions">
             <span id="weather-loading">Loading weather...</span>
           </div>
+          <div class="forecast-section" id="forecast-section">
+            <div class="forecast-header">
+              <h3 id="forecast-title" class="forecast-title">
+                Next Port Forecast (24–48h)
+              </h3>
+              <span id="forecast-port" class="forecast-port"></span>
+            </div>
+            <div id="forecast-grid" class="forecast-grid">
+              <span id="forecast-loading">Loading forecast...</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -641,6 +717,13 @@
           weatherTitle: "Weather at Ship Location",
           weatherLoading: "Loading weather...",
           weatherError: "Unable to load weather",
+          forecastTitle: "Next Port Forecast (24–48h)",
+          forecastLoading: "Loading forecast...",
+          forecastUnavailable: "Forecast unavailable",
+          forecastNoPort: "No upcoming port",
+          forecastDayLabel: (offset) =>
+            offset === 1 ? "Next 24h" : "Next 48h",
+          forecastFor: (port) => `Next stop: ${port}`,
           rain: "Rain",
           snow: "Snow",
           wind: "Windy",
@@ -689,6 +772,13 @@
           weatherTitle: "Vejr ved skibets placering",
           weatherLoading: "Indlæser vejr...",
           weatherError: "Kunne ikke indlæse vejr",
+          forecastTitle: "Vejrudsigt for næste havn (24–48t)",
+          forecastLoading: "Indlæser vejrudsigt...",
+          forecastUnavailable: "Ingen vejrudsigt",
+          forecastNoPort: "Ingen kommende havn",
+          forecastDayLabel: (offset) =>
+            offset === 1 ? "Næste 24t" : "Næste 48t",
+          forecastFor: (port) => `Næste stop: ${port}`,
           rain: "Regn",
           snow: "Sne",
           wind: "Blæsende",
@@ -1062,6 +1152,7 @@
 
         // Update weather display if data exists
         updateWeatherDisplay();
+        renderForecast();
       }
 
       languageToggle.addEventListener("click", () => {
@@ -2261,6 +2352,8 @@
           let labelText = t.cachedCoordinates;
           let itineraryDestination = null;
 
+          let forecastLabel = null;
+
           if (finalLive.isAtSea) {
             // Find next port from itinerary (as fallback)
             if (todayEntry) {
@@ -2284,12 +2377,14 @@
                   "[UPDATE] Found next port from itinerary:",
                   itineraryDestination
                 );
+                forecastLabel = itineraryDestination;
               } else if (todayEntry.nextPort) {
                 itineraryDestination = todayEntry.nextPort;
                 console.log(
                   "[UPDATE] Using todayEntry.nextPort:",
                   itineraryDestination
                 );
+                forecastLabel = itineraryDestination;
               }
             }
 
@@ -2303,20 +2398,32 @@
                   ? "(from itinerary)"
                   : "(from CruiseMapper)"
               );
+              forecastLabel = finalLive.destination;
             } else if (itineraryDestination) {
               labelText = t.enRouteTo(itineraryDestination);
               console.log(
                 "[UPDATE] Using itinerary destination as fallback:",
                 itineraryDestination
               );
+              forecastLabel = itineraryDestination;
             } else {
               labelText = t.sailingOcean;
             }
-          } else if (finalLive.port) {
-            labelText = t.dockedAt(finalLive.port);
-          } else if (finalLive.destination) {
-            labelText = finalLive.destination;
-          }
+        } else if (finalLive.port) {
+          labelText = t.dockedAt(finalLive.port);
+          forecastLabel = resolveNextPortLabel(
+            finalLive,
+            itineraryDestination,
+            todayEntry
+          );
+        } else if (finalLive.destination) {
+          labelText = finalLive.destination;
+          forecastLabel = resolveNextPortLabel(
+            finalLive,
+            itineraryDestination,
+            todayEntry
+          );
+        }
 
           console.log("[UPDATE] Setting label text:", labelText);
           locationLabelEl.textContent = labelText;
@@ -2364,6 +2471,10 @@
             );
             // Update weather with new coordinates
             updateWeather(finalLive.coords);
+            const resolvedForecastLabel =
+              forecastLabel ||
+              resolveNextPortLabel(finalLive, itineraryDestination, todayEntry);
+            updateNextPortForecast(resolvedForecastLabel);
           } else if (finalLive.isAtSea) {
             // We have "en route" status but no coordinates - still show the status
             let detail;
@@ -2379,6 +2490,10 @@
             }
             locationStatusEl.textContent = `${t.liveUpdate}${detail}`;
             console.log("[UPDATE] ✅ Status updated (no coords):", statusLabel);
+            const resolvedForecastLabel =
+              forecastLabel ||
+              resolveNextPortLabel(finalLive, itineraryDestination, todayEntry);
+            updateNextPortForecast(resolvedForecastLabel);
           } else if (finalLive.summary) {
             locationStatusEl.textContent = `${t.liveUpdate}${finalLive.summary}`;
             console.log("[UPDATE] Used summary instead of coords");
@@ -2404,6 +2519,8 @@
 
       // Weather data storage
       let currentWeatherData = null;
+      let nextPortForecastData = null;
+      let nextPortLabel = null;
 
       // Convert Fahrenheit to Celsius
       function fahrenheitToCelsius(f) {
@@ -2426,6 +2543,20 @@
       // Get temperature unit based on current language
       function getTemperatureUnit() {
         return currentLanguage === "da" ? "°C" : "°F";
+      }
+
+      function formatForecastDayLabel(dateString, offset) {
+        const t = translations[currentLanguage];
+        const formatter = new Intl.DateTimeFormat(currentLanguage === "da" ? "da-DK" : "en-US", {
+          weekday: "short",
+        });
+        try {
+          const date = new Date(dateString);
+          return `${formatter.format(date)} · ${t.forecastDayLabel(offset)}`;
+        } catch (error) {
+          console.warn("[FORECAST] Could not format date", dateString, error);
+          return t.forecastDayLabel(offset);
+        }
       }
 
       // Fetch weather data from Open-Meteo API (free, no API key required)
@@ -2471,6 +2602,52 @@
         }
       }
 
+      async function fetchNextPortForecast(lat, lng) {
+        if (!lat || !lng || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+          console.warn("[FORECAST] Invalid coordinates:", lat, lng);
+          return null;
+        }
+
+        try {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum&temperature_unit=fahrenheit&timezone=auto`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            console.warn("[FORECAST] Response not OK:", response.status);
+            return null;
+          }
+
+          const data = await response.json();
+          if (!data.daily || !data.daily.time) {
+            console.warn("[FORECAST] Invalid data structure");
+            return null;
+          }
+
+          const entries = [];
+          for (let i = 1; i <= 2; i++) {
+            if (
+              data.daily.time[i] !== undefined &&
+              data.daily.temperature_2m_max[i] !== undefined &&
+              data.daily.temperature_2m_min[i] !== undefined
+            ) {
+              entries.push({
+                date: data.daily.time[i],
+                high: data.daily.temperature_2m_max[i],
+                low: data.daily.temperature_2m_min[i],
+                weatherCode: data.daily.weather_code[i],
+                precipitation: data.daily.precipitation_sum
+                  ? data.daily.precipitation_sum[i]
+                  : 0,
+              });
+            }
+          }
+
+          return entries;
+        } catch (error) {
+          console.warn("[FORECAST] Error fetching forecast:", error);
+          return null;
+        }
+      }
+
       // Determine weather conditions from weather data
       function getWeatherConditions(weatherData) {
         if (!weatherData) return [];
@@ -2510,6 +2687,17 @@
         }
 
         return conditions;
+      }
+
+      function describeForecastCondition(code, precipitation = 0) {
+        const t = translations[currentLanguage];
+        const hasSnow = code >= 71 && code <= 86;
+        const hasRain =
+          !hasSnow &&
+          (precipitation > 0.01 || (code >= 51 && code <= 67));
+        if (hasSnow) return t.snow;
+        if (hasRain) return t.rain;
+        return t.noConditions;
       }
 
       // Update weather display
@@ -2568,6 +2756,63 @@
         }
       }
 
+      function renderForecast() {
+        const grid = document.getElementById("forecast-grid");
+        const loadingEl = document.getElementById("forecast-loading");
+        const titleEl = document.getElementById("forecast-title");
+        const portEl = document.getElementById("forecast-port");
+        const t = translations[currentLanguage];
+
+        if (titleEl) titleEl.textContent = t.forecastTitle;
+
+        if (!grid || !loadingEl || !portEl) return;
+
+        if (!nextPortLabel) {
+          loadingEl.textContent = t.forecastNoPort;
+          grid.innerHTML = "";
+          grid.appendChild(loadingEl);
+          portEl.textContent = "";
+          return;
+        }
+
+        portEl.textContent = t.forecastFor(nextPortLabel);
+
+        if (!nextPortForecastData || nextPortForecastData.length === 0) {
+          loadingEl.textContent = t.forecastUnavailable;
+          grid.innerHTML = "";
+          grid.appendChild(loadingEl);
+          return;
+        }
+
+        grid.innerHTML = "";
+        nextPortForecastData.forEach((entry, index) => {
+          const card = document.createElement("div");
+          card.className = "forecast-card";
+
+          const day = document.createElement("div");
+          day.className = "forecast-day";
+          day.textContent = formatForecastDayLabel(entry.date, index + 1);
+
+          const temps = document.createElement("div");
+          temps.className = "forecast-temps";
+          temps.textContent = `${formatTemperature(entry.high)}° / ${formatTemperature(
+            entry.low
+          )}° ${getTemperatureUnit()}`;
+
+          const condition = document.createElement("div");
+          condition.className = "forecast-condition";
+          condition.textContent = describeForecastCondition(
+            entry.weatherCode,
+            entry.precipitation
+          );
+
+          card.appendChild(day);
+          card.appendChild(temps);
+          card.appendChild(condition);
+          grid.appendChild(card);
+        });
+      }
+
       // Update weather when coordinates change
       async function updateWeather(coords) {
         if (!coords || !coords.lat || !coords.lng) {
@@ -2598,6 +2843,68 @@
             weatherLoadingEl.textContent = t.weatherError;
           }
         }
+      }
+
+      function findPortCoords(label) {
+        if (!label) return null;
+        const info = locationReference[label];
+        if (info && hasCoords(info)) {
+          return { lat: info.lat, lng: info.lng };
+        }
+        const matchingEntry = itineraryEntries.find((entry) => entry.label === label);
+        if (matchingEntry) {
+          const ref = locationReference[matchingEntry.label];
+          if (ref && hasCoords(ref)) {
+            return { lat: ref.lat, lng: ref.lng };
+          }
+        }
+        return null;
+      }
+
+      async function updateNextPortForecast(portLabel) {
+        const grid = document.getElementById("forecast-grid");
+        const loadingEl = document.getElementById("forecast-loading");
+        const t = translations[currentLanguage];
+
+        nextPortLabel = portLabel || null;
+        nextPortForecastData = null;
+
+        if (loadingEl) {
+          loadingEl.textContent = portLabel
+            ? t.forecastLoading
+            : t.forecastNoPort;
+        }
+
+        if (!portLabel || !grid || !loadingEl) {
+          renderForecast();
+          return;
+        }
+
+        const coords = findPortCoords(portLabel);
+        if (!coords) {
+          loadingEl.textContent = t.forecastUnavailable;
+          renderForecast();
+          return;
+        }
+
+        const forecast = await fetchNextPortForecast(coords.lat, coords.lng);
+        if (forecast) {
+          nextPortForecastData = forecast;
+        }
+
+        renderForecast();
+      }
+
+      function resolveNextPortLabel(finalLive, itineraryDestination, todayEntry) {
+        if (finalLive && finalLive.destination) return finalLive.destination;
+        if (itineraryDestination) return itineraryDestination;
+        if (todayEntry && todayEntry.nextPort) return todayEntry.nextPort;
+
+        const todayISO = getLocalISO(new Date());
+        const upcomingEntry = itineraryEntries.find(
+          (entry) => entry.date > todayISO && entry.label !== "At Sea"
+        );
+        return upcomingEntry ? upcomingEntry.label : null;
       }
 
       function init() {
@@ -2635,6 +2942,12 @@
             statusText = buildStatusText(todayEntry);
             persistLastKnown(todayEntry);
             updateWeather(todayEntry.coords);
+            const resolvedForecastLabel = resolveNextPortLabel(
+              null,
+              null,
+              todayEntry
+            );
+            updateNextPortForecast(resolvedForecastLabel);
           } else if (cached) {
             setMapToEntry({
               coords: { lat: cached.lat, lng: cached.lng },
@@ -2650,6 +2963,12 @@
               };
             }
             updateWeather({ lat: cached.lat, lng: cached.lng });
+            const resolvedForecastLabel = resolveNextPortLabel(
+              null,
+              null,
+              todayEntry
+            );
+            updateNextPortForecast(resolvedForecastLabel);
           } else {
             statusText = todayEntry.descriptor || statusText;
           }
