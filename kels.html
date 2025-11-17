@@ -465,6 +465,58 @@
         box-shadow: 0 8px 24px rgba(27, 37, 68, 0.1);
       }
 
+      .time-section {
+        background: rgba(255, 255, 255, 0.75);
+        border-radius: 18px;
+        padding: 1.4rem 1.75rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 26px rgba(27, 37, 68, 0.12);
+      }
+
+      .time-header {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        flex: 1;
+      }
+
+      .time-icon {
+        font-size: 1.5rem;
+      }
+
+      .time-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .time-section h2 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .time-description {
+        margin: 0;
+        font-size: 0.98rem;
+        color: rgba(21, 32, 51, 0.76);
+      }
+
+      .time-clock {
+        font-weight: 800;
+        font-size: 1.75rem;
+        letter-spacing: 0.04em;
+        background: rgba(90, 63, 212, 0.1);
+        color: var(--accent);
+        padding: 0.6rem 0.9rem;
+        border-radius: 14px;
+        box-shadow: inset 0 0 0 1px rgba(90, 63, 212, 0.2);
+      }
+
       .weather-header {
         display: flex;
         align-items: center;
@@ -725,6 +777,19 @@
         <strong id="location-label"></strong>
       </section>
 
+      <section class="time-section" aria-live="polite">
+        <div class="time-header">
+          <span class="time-icon" aria-hidden="true">⏰</span>
+          <div class="time-text">
+            <h2 id="time-title">Ship's local time</h2>
+            <p id="time-description" class="time-description">
+              Loading ship's local time...
+            </p>
+          </div>
+        </div>
+        <div id="time-clock" class="time-clock">--:--</div>
+      </section>
+
       <div
         id="map"
         role="img"
@@ -884,6 +949,11 @@
           timelineUpcomingTitle: "Upcoming stops",
           timelineUpcomingSubtitle: "Next 5 destinations",
           timelineReplay: "Recenter the map on this stop",
+          timeTitle: "Ship's local time",
+          timeLoading: "Loading ship's local time...",
+          timeSubtitle: (timezone) => `Based on ship position (${timezone})`,
+          timeSubtitleOffset: (offset) =>
+            `Based on ship position (UTC${offset || "?"})`,
         },
         da: {
           pageTitle: "Hvor i verden er Kels?",
@@ -943,6 +1013,11 @@
           timelineUpcomingTitle: "Kommende stop",
           timelineUpcomingSubtitle: "De næste 5 destinationer",
           timelineReplay: "Centrér kortet på dette stop",
+          timeTitle: "Skibets lokale tid",
+          timeLoading: "Indlæser skibets lokale tid...",
+          timeSubtitle: (timezone) => `Baseret på skibets position (${timezone})`,
+          timeSubtitleOffset: (offset) =>
+            `Baseret på skibets position (UTC${offset || "?"})`,
         },
       };
 
@@ -1303,6 +1378,10 @@
         if (mapEl) {
           mapEl.setAttribute("aria-label", t.mapAriaLabel);
         }
+
+        // Update time section
+        updateTimeLabels();
+        startLocalTimeClock();
 
         // Update weather title
         const weatherTitleEl = document.getElementById("weather-title");
@@ -2082,6 +2161,7 @@
               storedAt: Date.now(),
             })
           );
+          cacheTileForCoords(entry.coords, entry.zoom ?? 6);
         } catch (error) {
           console.warn("Unable to persist last known position", error);
         }
@@ -2858,6 +2938,87 @@
 
       // Weather data storage
       let currentWeatherData = null;
+      let currentTimeZone = null;
+      let currentUtcOffsetSeconds = null;
+      let timeIntervalId = null;
+
+      function formatUtcOffset(offsetSeconds) {
+        if (!Number.isFinite(offsetSeconds)) return null;
+        const hours = offsetSeconds / 3600;
+        const rounded = Math.round(hours * 10) / 10;
+        return `${hours >= 0 ? "+" : ""}${rounded}`;
+      }
+
+      function updateTimeLabels() {
+        const t = translations[currentLanguage];
+        const timeTitleEl = document.getElementById("time-title");
+        const timeDescriptionEl = document.getElementById("time-description");
+
+        if (timeTitleEl) {
+          timeTitleEl.textContent = t.timeTitle;
+        }
+
+        if (timeDescriptionEl) {
+          if (currentTimeZone) {
+            timeDescriptionEl.textContent = t.timeSubtitle(currentTimeZone);
+          } else if (currentUtcOffsetSeconds !== null) {
+            timeDescriptionEl.textContent = t.timeSubtitleOffset(
+              formatUtcOffset(currentUtcOffsetSeconds)
+            );
+          } else {
+            timeDescriptionEl.textContent = t.timeLoading;
+          }
+        }
+      }
+
+      function startLocalTimeClock() {
+        const clockEl = document.getElementById("time-clock");
+        if (!clockEl) return;
+
+        if (timeIntervalId) {
+          clearInterval(timeIntervalId);
+          timeIntervalId = null;
+        }
+
+        updateTimeLabels();
+
+        if (!currentTimeZone && currentUtcOffsetSeconds === null) {
+          clockEl.textContent = "--:--";
+          return;
+        }
+
+        const render = () => {
+          const now = new Date();
+          let dateToFormat = now;
+          const locale = currentLanguage === "da" ? "da-DK" : "en-US";
+          const options = {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: currentLanguage === "en",
+          };
+
+          if (currentTimeZone) {
+            options.timeZone = currentTimeZone;
+          } else if (currentUtcOffsetSeconds !== null) {
+            dateToFormat = new Date(now.getTime() + currentUtcOffsetSeconds * 1000);
+          }
+
+          clockEl.textContent = new Intl.DateTimeFormat(locale, options).format(
+            dateToFormat
+          );
+        };
+
+        render();
+        timeIntervalId = setInterval(render, 30000);
+      }
+
+      function updateTimeSectionTimezone(timezone, offsetSeconds) {
+        currentTimeZone = timezone || null;
+        currentUtcOffsetSeconds = Number.isFinite(offsetSeconds)
+          ? offsetSeconds
+          : null;
+        startLocalTimeClock();
+      }
 
       // Convert Fahrenheit to Celsius
       function fahrenheitToCelsius(f) {
@@ -2915,6 +3076,8 @@
             weatherCode: data.current.weather_code,
             dailyPrecipitation: data.daily.precipitation_sum[0],
             dailyWeatherCode: data.daily.weather_code[0],
+            timezone: data.timezone,
+            utcOffsetSeconds: data.utc_offset_seconds,
           };
 
           console.log("[WEATHER] ✅ Weather data fetched:", weatherData);
@@ -3022,6 +3185,35 @@
         }
       }
 
+      function persistWeatherCache(coords, weatherData) {
+        if (!coords || !weatherData) return;
+        try {
+          localStorage.setItem(
+            "kels-weather-cache",
+            JSON.stringify({ coords, weatherData, storedAt: Date.now() })
+          );
+        } catch (error) {
+          console.warn("[WEATHER] Unable to cache weather", error);
+        }
+      }
+
+      function readCachedWeather(coords) {
+        try {
+          const cached = localStorage.getItem("kels-weather-cache");
+          if (!cached) return null;
+          const parsed = JSON.parse(cached);
+          if (!parsed.coords || !parsed.weatherData) return null;
+          const latMatch = Math.abs(parsed.coords.lat - coords.lat) < 0.5;
+          const lngMatch = Math.abs(parsed.coords.lng - coords.lng) < 0.5;
+          if (latMatch && lngMatch) {
+            return parsed.weatherData;
+          }
+        } catch (error) {
+          console.warn("[WEATHER] Unable to read cached weather", error);
+        }
+        return null;
+      }
+
       // Update weather when coordinates change
       async function updateWeather(coords) {
         if (!coords || !coords.lat || !coords.lng) {
@@ -3045,12 +3237,100 @@
         const weatherData = await fetchWeatherData(coords.lat, coords.lng);
         if (weatherData) {
           currentWeatherData = weatherData;
+          persistWeatherCache(coords, weatherData);
+          updateTimeSectionTimezone(
+            weatherData.timezone,
+            weatherData.utcOffsetSeconds
+          );
           updateWeatherDisplay();
         } else {
+          const cachedWeather = readCachedWeather(coords);
           const t = translations[currentLanguage];
-          if (weatherLoadingEl) {
-            weatherLoadingEl.textContent = t.weatherError;
+          if (cachedWeather) {
+            currentWeatherData = cachedWeather;
+            updateWeatherDisplay();
+            if (weatherLoadingEl) {
+              weatherLoadingEl.textContent = `${t.showingCached} ${t.cachedCoordinates.toLowerCase()}`;
+            }
+          } else {
+            if (weatherLoadingEl) {
+              weatherLoadingEl.textContent = t.weatherError;
+            }
           }
+        }
+      }
+
+      function latLngToTile(lat, lng, zoom) {
+        const latRad = (lat * Math.PI) / 180;
+        const n = 2 ** zoom;
+        const x = Math.floor(((lng + 180) / 360) * n);
+        const y = Math.floor(
+          ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) /
+            2) *
+            n
+        );
+        return { x, y, z: zoom };
+      }
+
+      function buildTileUrl(tile, retina = false) {
+        const r = retina ? "@2x" : "";
+        return `https://a.basemaps.cartocdn.com/light_all/${tile.z}/${tile.x}/${tile.y}${r}.png`;
+      }
+
+      async function cacheTileForCoords(coords, zoom = 6) {
+        if (!coords) return;
+        try {
+          const tileCoords = latLngToTile(coords.lat, coords.lng, zoom);
+          const retina = window.devicePixelRatio > 1;
+          const tileUrl = buildTileUrl(tileCoords, retina);
+          const response = await fetch(tileUrl, { mode: "cors" });
+          if (!response.ok) return;
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            try {
+              localStorage.setItem(
+                "kels-tile-cache",
+                JSON.stringify({
+                  dataUrl: reader.result,
+                  tileCoords,
+                  retina,
+                  storedAt: Date.now(),
+                })
+              );
+            } catch (error) {
+              console.warn("[MAP] Unable to cache tile", error);
+            }
+          };
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.warn("[MAP] Failed to cache map tile", error);
+        }
+      }
+
+      function readCachedTile() {
+        try {
+          const cached = localStorage.getItem("kels-tile-cache");
+          if (!cached) return null;
+          const parsed = JSON.parse(cached);
+          if (parsed?.dataUrl && parsed?.tileCoords) {
+            return parsed;
+          }
+        } catch (error) {
+          console.warn("[MAP] Unable to read cached tile", error);
+        }
+        return null;
+      }
+
+      function applyCachedTileOverlay(cachedTile) {
+        const container = map.getContainer();
+        if (!container) return;
+        if (cachedTile?.dataUrl) {
+          container.style.backgroundImage = `url(${cachedTile.dataUrl})`;
+          container.style.backgroundSize = "cover";
+          container.style.backgroundPosition = "center";
+        } else {
+          container.style.backgroundImage = "";
         }
       }
 
@@ -3064,6 +3344,7 @@
         }
         const todayEntry = getEntryForDate(new Date());
         const cached = readCachedLocation();
+        const cachedTile = readCachedTile();
 
         console.log(
           "[INIT] todayEntry:",
@@ -3089,6 +3370,7 @@
             statusText = buildStatusText(todayEntry);
             persistLastKnown(todayEntry);
             updateWeather(todayEntry.coords);
+            applyCachedTileOverlay(null);
           } else if (cached) {
             setMapToEntry({
               coords: { lat: cached.lat, lng: cached.lng },
@@ -3104,6 +3386,7 @@
               };
             }
             updateWeather({ lat: cached.lat, lng: cached.lng });
+            applyCachedTileOverlay(cachedTile);
           } else {
             statusText = todayEntry.descriptor || statusText;
           }
@@ -3123,6 +3406,7 @@
             };
           }
           updateWeather({ lat: cached.lat, lng: cached.lng });
+          applyCachedTileOverlay(cachedTile);
         }
 
         console.log(
