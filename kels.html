@@ -1884,6 +1884,7 @@
               storedAt: Date.now(),
             })
           );
+          cacheTileForCoords(entry.coords, entry.zoom ?? 6);
         } catch (error) {
           console.warn("Unable to persist last known position", error);
         }
@@ -2730,6 +2731,35 @@
         }
       }
 
+      function persistWeatherCache(coords, weatherData) {
+        if (!coords || !weatherData) return;
+        try {
+          localStorage.setItem(
+            "kels-weather-cache",
+            JSON.stringify({ coords, weatherData, storedAt: Date.now() })
+          );
+        } catch (error) {
+          console.warn("[WEATHER] Unable to cache weather", error);
+        }
+      }
+
+      function readCachedWeather(coords) {
+        try {
+          const cached = localStorage.getItem("kels-weather-cache");
+          if (!cached) return null;
+          const parsed = JSON.parse(cached);
+          if (!parsed.coords || !parsed.weatherData) return null;
+          const latMatch = Math.abs(parsed.coords.lat - coords.lat) < 0.5;
+          const lngMatch = Math.abs(parsed.coords.lng - coords.lng) < 0.5;
+          if (latMatch && lngMatch) {
+            return parsed.weatherData;
+          }
+        } catch (error) {
+          console.warn("[WEATHER] Unable to read cached weather", error);
+        }
+        return null;
+      }
+
       // Update weather when coordinates change
       async function updateWeather(coords) {
         if (!coords || !coords.lat || !coords.lng) {
@@ -2753,16 +2783,100 @@
         const weatherData = await fetchWeatherData(coords.lat, coords.lng);
         if (weatherData) {
           currentWeatherData = weatherData;
+          persistWeatherCache(coords, weatherData);
           updateTimeSectionTimezone(
             weatherData.timezone,
             weatherData.utcOffsetSeconds
           );
           updateWeatherDisplay();
         } else {
+          const cachedWeather = readCachedWeather(coords);
           const t = translations[currentLanguage];
-          if (weatherLoadingEl) {
-            weatherLoadingEl.textContent = t.weatherError;
+          if (cachedWeather) {
+            currentWeatherData = cachedWeather;
+            updateWeatherDisplay();
+            if (weatherLoadingEl) {
+              weatherLoadingEl.textContent = `${t.showingCached} ${t.cachedCoordinates.toLowerCase()}`;
+            }
+          } else {
+            if (weatherLoadingEl) {
+              weatherLoadingEl.textContent = t.weatherError;
+            }
           }
+        }
+      }
+
+      function latLngToTile(lat, lng, zoom) {
+        const latRad = (lat * Math.PI) / 180;
+        const n = 2 ** zoom;
+        const x = Math.floor(((lng + 180) / 360) * n);
+        const y = Math.floor(
+          ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) /
+            2) *
+            n
+        );
+        return { x, y, z: zoom };
+      }
+
+      function buildTileUrl(tile, retina = false) {
+        const r = retina ? "@2x" : "";
+        return `https://a.basemaps.cartocdn.com/light_all/${tile.z}/${tile.x}/${tile.y}${r}.png`;
+      }
+
+      async function cacheTileForCoords(coords, zoom = 6) {
+        if (!coords) return;
+        try {
+          const tileCoords = latLngToTile(coords.lat, coords.lng, zoom);
+          const retina = window.devicePixelRatio > 1;
+          const tileUrl = buildTileUrl(tileCoords, retina);
+          const response = await fetch(tileUrl, { mode: "cors" });
+          if (!response.ok) return;
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            try {
+              localStorage.setItem(
+                "kels-tile-cache",
+                JSON.stringify({
+                  dataUrl: reader.result,
+                  tileCoords,
+                  retina,
+                  storedAt: Date.now(),
+                })
+              );
+            } catch (error) {
+              console.warn("[MAP] Unable to cache tile", error);
+            }
+          };
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.warn("[MAP] Failed to cache map tile", error);
+        }
+      }
+
+      function readCachedTile() {
+        try {
+          const cached = localStorage.getItem("kels-tile-cache");
+          if (!cached) return null;
+          const parsed = JSON.parse(cached);
+          if (parsed?.dataUrl && parsed?.tileCoords) {
+            return parsed;
+          }
+        } catch (error) {
+          console.warn("[MAP] Unable to read cached tile", error);
+        }
+        return null;
+      }
+
+      function applyCachedTileOverlay(cachedTile) {
+        const container = map.getContainer();
+        if (!container) return;
+        if (cachedTile?.dataUrl) {
+          container.style.backgroundImage = `url(${cachedTile.dataUrl})`;
+          container.style.backgroundSize = "cover";
+          container.style.backgroundPosition = "center";
+        } else {
+          container.style.backgroundImage = "";
         }
       }
 
@@ -2776,6 +2890,7 @@
         }
         const todayEntry = getEntryForDate(new Date());
         const cached = readCachedLocation();
+        const cachedTile = readCachedTile();
 
         console.log(
           "[INIT] todayEntry:",
@@ -2801,6 +2916,7 @@
             statusText = buildStatusText(todayEntry);
             persistLastKnown(todayEntry);
             updateWeather(todayEntry.coords);
+            applyCachedTileOverlay(null);
           } else if (cached) {
             setMapToEntry({
               coords: { lat: cached.lat, lng: cached.lng },
@@ -2816,6 +2932,7 @@
               };
             }
             updateWeather({ lat: cached.lat, lng: cached.lng });
+            applyCachedTileOverlay(cachedTile);
           } else {
             statusText = todayEntry.descriptor || statusText;
           }
@@ -2835,6 +2952,7 @@
             };
           }
           updateWeather({ lat: cached.lat, lng: cached.lng });
+          applyCachedTileOverlay(cachedTile);
         }
 
         console.log(
