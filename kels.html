@@ -460,6 +460,102 @@
         box-shadow: 0 0 22px rgba(239, 68, 68, 0.65);
       }
 
+      .destination-spotlight {
+        width: min(900px, 100%);
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 26px;
+        padding: clamp(1.75rem, 3vw, 2.2rem);
+        box-shadow: 0 16px 46px rgba(27, 37, 68, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(18px) saturate(130%);
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      body.christmas-mode .destination-spotlight {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(15, 118, 110, 0.2);
+      }
+
+      .destination-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .destination-copy h2 {
+        margin: 0 0 0.35rem;
+        font-size: clamp(1.5rem, 3vw, 1.9rem);
+      }
+
+      .destination-copy {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .destination-eyebrow {
+        margin: 0;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.95rem;
+      }
+
+      .destination-why {
+        margin: 0;
+        font-size: 1.05rem;
+        color: #3b4251;
+      }
+
+      .destination-pill {
+        align-self: flex-start;
+        padding: 0.6rem 1.1rem;
+        background: var(--accent-soft);
+        color: var(--accent);
+        border-radius: 999px;
+        font-weight: 700;
+        box-shadow: 0 10px 24px rgba(90, 63, 212, 0.2);
+      }
+
+      .destination-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.8rem;
+      }
+
+      .destination-photo {
+        position: relative;
+        border-radius: 18px;
+        overflow: hidden;
+        min-height: 140px;
+        background: rgba(0, 0, 0, 0.05);
+        box-shadow: 0 14px 32px rgba(27, 37, 68, 0.18);
+      }
+
+      .destination-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.25s ease;
+      }
+
+      .destination-photo:hover img {
+        transform: scale(1.03);
+      }
+
+      .gallery-placeholder {
+        padding: 1rem 1.25rem;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 14px;
+        border: 1px dashed rgba(27, 37, 68, 0.2);
+        color: rgba(27, 37, 68, 0.7);
+        text-align: center;
+        font-weight: 600;
+      }
+
       .language-toggle {
         position: fixed;
         top: 1.5rem;
@@ -504,6 +600,14 @@
 
         .status p {
           font-size: 1.05rem;
+        }
+
+        .destination-header {
+          flex-direction: column;
+        }
+
+        .destination-pill {
+          justify-self: flex-start;
         }
 
         .language-toggle {
@@ -560,6 +664,32 @@
         aria-label="Map showing Kels' current location"
       ></div>
 
+      <section
+        class="destination-spotlight"
+        id="destination-spotlight"
+        aria-live="polite"
+      >
+        <div class="destination-header">
+          <div class="destination-copy">
+            <p class="destination-eyebrow" id="destination-eyebrow">
+              Current destination
+            </p>
+            <h2 id="destination-name">Loading destination...</h2>
+            <p class="destination-why" id="destination-why">
+              Pulling itinerary highlights...
+            </p>
+          </div>
+          <div class="destination-pill" id="destination-pill">
+            Why it's cool
+          </div>
+        </div>
+        <div class="destination-gallery" id="destination-gallery">
+          <div class="gallery-placeholder" id="destination-gallery-loading">
+            Loading city photos...
+          </div>
+        </div>
+      </section>
+
       <section class="weather-section" id="weather-section" aria-live="polite">
         <div class="weather-header">
           <span class="weather-icon">🌤️</span>
@@ -615,6 +745,12 @@
           tomorrowAtSeaBetween: (prev, next) =>
             `At sea between ${prev} and ${next}`,
           itineraryUnavailable: "Itinerary unavailable",
+          destinationHeadingCurrent: "Current destination",
+          destinationHeadingNext: "Next destination",
+          destinationWhyLabel: "Why it's cool",
+          destinationLoading: "Pulling itinerary highlights...",
+          destinationGalleryLoading: "Loading city photos...",
+          destinationFallback: "Somewhere along the route",
           couldNotDetermine:
             "We could not determine the current itinerary position.",
           trackingUpdate: "Tracking the latest voyage update.",
@@ -664,6 +800,12 @@
           tomorrowAtSeaBetween: (prev, next) =>
             `Til søs mellem ${prev} og ${next}`,
           itineraryUnavailable: "Rejseplan utilgængelig",
+          destinationHeadingCurrent: "Aktuel destination",
+          destinationHeadingNext: "Næste destination",
+          destinationWhyLabel: "Derfor er det fedt",
+          destinationLoading: "Finder rejsens højdepunkt...",
+          destinationGalleryLoading: "Henter bybilleder...",
+          destinationFallback: "Et sted på ruten",
           couldNotDetermine:
             "Vi kunne ikke bestemme den nuværende rejseplan position.",
           trackingUpdate: "Sporer den seneste rejseopdatering.",
@@ -741,6 +883,20 @@
               );
             }
           }
+        }
+
+        if (destinationEyebrowEl) {
+          const isAtSea = shipStatusEl?.dataset.state === "sea";
+          destinationEyebrowEl.textContent = resolveDestinationHeading(
+            isAtSea,
+            t
+          );
+        }
+        if (destinationPillEl) {
+          destinationPillEl.textContent = t.destinationWhyLabel;
+        }
+        if (destinationGalleryLoadingEl) {
+          destinationGalleryLoadingEl.textContent = t.destinationGalleryLoading;
         }
 
         // Update status badge
@@ -1059,6 +1215,14 @@
         if (weatherTitleEl) {
           weatherTitleEl.textContent = t.weatherTitle;
         }
+
+        const translatedSpotlightData = {
+          ...lastSpotlightData,
+          isAtSea:
+            lastSpotlightData?.isAtSea ?? shipStatusEl?.dataset.state === "sea",
+        };
+
+        renderDestinationSpotlight(translatedSpotlightData);
 
         // Update weather display if data exists
         updateWeatherDisplay();
@@ -1554,6 +1718,49 @@
         "Yokohama, Japan": { lat: 35.4437, lng: 139.638 },
       };
 
+      const destinationImages = {
+        "Piraeus (Athens), Greece": [
+          "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "Lisbon, Portugal": [
+          "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1499996860823-5214fcc65f8f?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1494537469065-46c401903024?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "Honolulu, HI": [
+          "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1502786129293-79981df4e689?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "Tokyo, Japan": [
+          "https://images.unsplash.com/photo-1505064192943-112d6c0b4313?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "Hong Kong": [
+          "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1472457897821-70d3819a0e24?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "Singapore": [
+          "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1496128858413-b36217c2ce36?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "Miami, FL": [
+          "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1200&q=80",
+        ],
+        "At Sea": [
+          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+        ],
+      };
+
       const itineraryEntries = Object.entries(staticItinerary)
         .map(([date, label]) => ({ date, label }))
         .sort((a, b) => a.date.localeCompare(b.date));
@@ -1600,6 +1807,28 @@
       const locationLabelEl = document.getElementById("location-label");
       const tomorrowStatusEl = document.getElementById("tomorrow-status");
       const shipStatusEl = document.getElementById("ship-status");
+      const destinationSpotlightEl = document.getElementById(
+        "destination-spotlight"
+      );
+      const destinationNameEl = document.getElementById("destination-name");
+      const destinationWhyEl = document.getElementById("destination-why");
+      const destinationEyebrowEl = document.getElementById(
+        "destination-eyebrow"
+      );
+      const destinationPillEl = document.getElementById("destination-pill");
+      const destinationGalleryEl = document.getElementById(
+        "destination-gallery"
+      );
+      const destinationGalleryLoadingEl = document.getElementById(
+        "destination-gallery-loading"
+      );
+
+      let lastSpotlightData = null;
+
+      function resolveDestinationHeading(isAtSea, t) {
+        if (isAtSea) return t.destinationHeadingNext;
+        return t.destinationHeadingCurrent;
+      }
 
       function resolveStatusState(text) {
         if (!text) return "unknown";
@@ -1627,6 +1856,114 @@
 
       function hasCoords(info) {
         return info && Number.isFinite(info.lat) && Number.isFinite(info.lng);
+      }
+
+      function getImagesForDestination(name) {
+        if (name && destinationImages[name]) {
+          return destinationImages[name];
+        }
+        const query = encodeURIComponent(name || "ocean");
+        return [1, 2, 3].map(
+          (sig) =>
+            `https://source.unsplash.com/featured/720x480/?${query}&sig=${sig}`
+        );
+      }
+
+      function resolveSpotlightName({ todayEntry, liveData, itineraryDestination }) {
+        if (liveData?.port && liveData.port !== "At Sea") {
+          return liveData.port;
+        }
+        if (liveData?.destination) {
+          return liveData.destination;
+        }
+        if (itineraryDestination) {
+          return itineraryDestination;
+        }
+        if (todayEntry) {
+          if (todayEntry.rawLabel === "At Sea") {
+            return todayEntry.nextPort || todayEntry.previousPort || todayEntry.label;
+          }
+          return todayEntry.label;
+        }
+        return null;
+      }
+
+      function resolveSpotlightDescriptor({ name, entry, fallback }) {
+        const t = translations[currentLanguage];
+        if (fallback) return fallback;
+        if (name && locationReference[name]?.descriptor) {
+          return locationReference[name].descriptor;
+        }
+        if (entry?.descriptor) return entry.descriptor;
+        if (entry?.rawLabel === "At Sea") {
+          if (entry.previousPort && entry.nextPort) {
+            return t.sailingBetween(entry.previousPort, entry.nextPort);
+          }
+          if (entry.nextPort) {
+            return t.approaching(entry.nextPort);
+          }
+        }
+        return t.destinationLoading;
+      }
+
+      function renderDestinationSpotlight(data = {}) {
+        const t = translations[currentLanguage];
+        if (!destinationSpotlightEl) return;
+
+        const isAtSea =
+          data.isAtSea ?? shipStatusEl?.dataset.state === "sea" ?? false;
+        lastSpotlightData = { ...data, isAtSea };
+
+        if (destinationEyebrowEl) {
+          destinationEyebrowEl.textContent = resolveDestinationHeading(
+            isAtSea,
+            t
+          );
+        }
+        if (destinationPillEl) {
+          destinationPillEl.textContent = t.destinationWhyLabel;
+        }
+
+        const resolvedName =
+          data.name || data.entry?.label || data.entry?.rawLabel || t.destinationFallback;
+        if (destinationNameEl) {
+          destinationNameEl.textContent = resolvedName;
+        }
+
+        const descriptor = resolveSpotlightDescriptor({
+          name: resolvedName,
+          entry: data.entry,
+          fallback: data.descriptor,
+        });
+
+        if (destinationWhyEl) {
+          destinationWhyEl.textContent = descriptor;
+        }
+
+        if (destinationGalleryEl) {
+          destinationGalleryEl.innerHTML = "";
+          const images = getImagesForDestination(resolvedName);
+          if (!images || images.length === 0) {
+            const placeholder = document.createElement("div");
+            placeholder.className = "gallery-placeholder";
+            placeholder.textContent = t.destinationGalleryLoading;
+            destinationGalleryEl.appendChild(placeholder);
+          } else {
+            images.slice(0, 3).forEach((url, index) => {
+              const tile = document.createElement("div");
+              tile.className = "destination-photo";
+              const img = document.createElement("img");
+              img.src = url;
+              img.alt = `${resolvedName} photo ${index + 1}`;
+              tile.appendChild(img);
+              destinationGalleryEl.appendChild(tile);
+            });
+          }
+        }
+
+        if (destinationGalleryLoadingEl) {
+          destinationGalleryLoadingEl.textContent = t.destinationGalleryLoading;
+        }
       }
 
       function interpolateLng(start, end, t) {
@@ -2396,6 +2733,28 @@
               locationStatusEl.textContent = `${t.liveUpdate}${t.trackingUpdate}`;
             }
           }
+
+          const spotlightName = resolveSpotlightName({
+            todayEntry,
+            liveData: finalLive,
+            itineraryDestination,
+          });
+
+          const spotlightDescriptor = resolveSpotlightDescriptor({
+            name: spotlightName,
+            entry: todayEntry,
+            fallback:
+              (spotlightName && locationReference[spotlightName]?.descriptor) ||
+              todayEntry?.descriptor ||
+              locationStatusEl.textContent,
+          });
+
+          renderDestinationSpotlight({
+            name: spotlightName,
+            descriptor: spotlightDescriptor,
+            entry: todayEntry,
+            isAtSea: finalLive.isAtSea,
+          });
         } catch (error) {
           console.error("[UPDATE] Error:", error);
           console.warn("Unable to fetch live ship data", error);
@@ -2681,6 +3040,16 @@
         locationLabelEl.textContent = labelText;
         setShipStatus(statusInfo.label, statusInfo.state);
         tomorrowStatusEl.textContent = formatTomorrowStatus();
+
+        renderDestinationSpotlight({
+          name:
+            todayEntry?.rawLabel === "At Sea"
+              ? todayEntry?.nextPort || todayEntry?.label
+              : todayEntry?.label || cached?.label || labelText,
+          descriptor: todayEntry?.descriptor || statusText,
+          entry: todayEntry,
+          isAtSea: statusInfo.state === "sea",
+        });
 
         console.log("[INIT] Calling updateLivePosition...");
         updateLivePosition(todayEntry);
