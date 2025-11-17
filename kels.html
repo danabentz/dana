@@ -132,6 +132,7 @@
       .shell {
         width: min(900px, 100%);
         background: var(--surface);
+        background-color: #ffffff;
         border-radius: 30px;
         box-shadow: 0 26px 70px rgba(27, 37, 68, 0.22);
         backdrop-filter: blur(26px) saturate(140%);
@@ -749,6 +750,7 @@
       .destination-spotlight {
         width: min(900px, 100%);
         background: rgba(255, 255, 255, 0.8);
+        background-color: #ffffff;
         border-radius: 26px;
         padding: clamp(1.75rem, 3vw, 2.2rem);
         box-shadow: 0 16px 46px rgba(27, 37, 68, 0.18);
@@ -847,8 +849,8 @@
         top: 1.5rem;
         right: 1.5rem;
         z-index: 1000;
-        background: var(--surface);
-        border: 1px solid rgba(255, 255, 255, 0.58);
+        background: #fff;
+        border: 1px solid rgba(90, 63, 212, 0.2);
         border-radius: 999px;
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
@@ -1116,7 +1118,7 @@
           destinationHeadingNext: "Next destination",
           destinationWhyLabel: "Why it's cool",
           destinationLoading: "Pulling itinerary highlights...",
-          destinationGalleryLoading: "Loading city photos...",
+          destinationGalleryLoading: "City photos are taking a break for now.",
           destinationFallback: "Somewhere along the route",
           couldNotDetermine:
             "We could not determine the current itinerary position.",
@@ -1194,7 +1196,7 @@
           destinationHeadingNext: "Næste destination",
           destinationWhyLabel: "Derfor er det fedt",
           destinationLoading: "Finder rejsens højdepunkt...",
-          destinationGalleryLoading: "Henter bybilleder...",
+          destinationGalleryLoading: "Bybilleder er sat på pause lige nu.",
           destinationFallback: "Et sted på ruten",
           couldNotDetermine:
             "Vi kunne ikke bestemme den nuværende rejseplan position.",
@@ -2303,14 +2305,8 @@
       }
 
       function getImagesForDestination(name) {
-        if (name && destinationImages[name]) {
-          return destinationImages[name];
-        }
-        const query = encodeURIComponent(name || "ocean");
-        return [1, 2, 3].map(
-          (sig) =>
-            `https://source.unsplash.com/featured/720x480/?${query}&sig=${sig}`
-        );
+        // Images are temporarily disabled to avoid broken tiles on the page.
+        return [];
       }
 
       function resolveSpotlightName({ todayEntry, liveData, itineraryDestination }) {
