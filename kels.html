@@ -201,6 +201,177 @@
         color: #14532d;
       }
 
+      .timeline {
+        display: grid;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.94),
+          rgba(255, 255, 255, 0.86)
+        );
+        border: 1px solid rgba(41, 53, 86, 0.06);
+        border-radius: 22px;
+        box-shadow: 0 18px 48px rgba(27, 37, 68, 0.16);
+      }
+
+      .timeline-header h2 {
+        margin: 0 0 0.25rem;
+        font-size: 1.4rem;
+      }
+
+      .timeline-header p {
+        margin: 0;
+        color: #4f5363;
+        font-size: 0.95rem;
+      }
+
+      .timeline-layout {
+        display: grid;
+        gap: 1.4rem;
+      }
+
+      .timeline-group {
+        display: grid;
+        gap: 0.6rem;
+      }
+
+      .timeline-group-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .timeline-group-title {
+        margin: 0;
+        font-size: 1.1rem;
+        letter-spacing: -0.01em;
+      }
+
+      .timeline-group-subtitle {
+        margin: 0;
+        color: #4f5363;
+        font-size: 0.95rem;
+      }
+
+      .timeline-toggle {
+        align-self: flex-start;
+        background: white;
+        color: var(--accent);
+        border: 1px solid rgba(90, 63, 212, 0.2);
+        border-radius: 12px;
+        padding: 0.35rem 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(90, 63, 212, 0.12);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .timeline-toggle:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px rgba(90, 63, 212, 0.18);
+      }
+
+      .timeline-toggle[hidden] {
+        display: none;
+      }
+
+      .timeline-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.9rem;
+      }
+
+      .timeline-item {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.9rem;
+        padding: 0.9rem 1rem;
+        border-radius: 16px;
+        background: rgba(90, 63, 212, 0.04);
+        border: 1px solid rgba(90, 63, 212, 0.08);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .timeline-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(27, 37, 68, 0.14);
+      }
+
+      .timeline-item.completed {
+        opacity: 0.85;
+      }
+
+      .timeline-item.current {
+        border-color: rgba(26, 198, 129, 0.6);
+        box-shadow: 0 14px 32px rgba(26, 198, 129, 0.18);
+      }
+
+      .timeline-marker {
+        width: 14px;
+        height: 14px;
+        margin-top: 0.4rem;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 6px rgba(90, 63, 212, 0.12);
+      }
+
+      .timeline-item.completed .timeline-marker {
+        background: #1f7d52;
+        box-shadow: 0 0 0 6px rgba(31, 125, 82, 0.14);
+      }
+
+      .timeline-item.current .timeline-marker {
+        background: #1ac681;
+        box-shadow: 0 0 0 6px rgba(26, 198, 129, 0.16);
+      }
+
+      .timeline-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .timeline-date {
+        font-size: 0.95rem;
+        color: #4f5363;
+        margin-bottom: 0.25rem;
+      }
+
+      .timeline-label {
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-bottom: 0.2rem;
+      }
+
+      .timeline-meta {
+        margin: 0;
+        color: #61667a;
+        font-size: 0.92rem;
+      }
+
+      .timeline-actions {
+        margin-top: 0.45rem;
+      }
+
+      .timeline-link {
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.45rem 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 12px 26px rgba(90, 63, 212, 0.26);
+      }
+
+      .timeline-link:hover {
+        background: #4a30b2;
+      }
+
       .shell.birthday-visible header h1 {
         color: #6d2967;
       }
@@ -582,6 +753,63 @@
         </div>
       </section>
 
+      <section class="timeline" aria-live="polite">
+        <div class="timeline-header">
+          <h2 id="timeline-title">Track so far</h2>
+          <p id="timeline-subtitle">
+            Every port call and at-sea day with quick links back to the map.
+          </p>
+        </div>
+        <div class="timeline-layout">
+          <div class="timeline-group" aria-live="polite">
+            <div class="timeline-group-header">
+              <div>
+                <h3 id="timeline-past-title" class="timeline-group-title">
+                  Recent stops
+                </h3>
+                <p
+                  id="timeline-past-subtitle"
+                  class="timeline-group-subtitle"
+                >
+                  Latest 5 places visited
+                </p>
+              </div>
+              <button
+                id="timeline-past-toggle"
+                class="timeline-toggle"
+                type="button"
+              >
+                See more
+              </button>
+            </div>
+            <ol id="timeline-past-list" class="timeline-list"></ol>
+          </div>
+          <div class="timeline-group" aria-live="polite">
+            <div class="timeline-group-header">
+              <div>
+                <h3 id="timeline-upcoming-title" class="timeline-group-title">
+                  Upcoming stops
+                </h3>
+                <p
+                  id="timeline-upcoming-subtitle"
+                  class="timeline-group-subtitle"
+                >
+                  Next 5 destinations
+                </p>
+              </div>
+              <button
+                id="timeline-upcoming-toggle"
+                class="timeline-toggle"
+                type="button"
+              >
+                See more
+              </button>
+            </div>
+            <ol id="timeline-upcoming-list" class="timeline-list"></ol>
+          </div>
+        </div>
+      </section>
+
       <footer>
         <span>🏊‍♀️</span>
         <span id="tomorrow-status">Loading tomorrow's plan...</span>
@@ -645,6 +873,17 @@
           snow: "Snow",
           wind: "Windy",
           noConditions: "Clear conditions",
+          timelineTitle: "Track so far",
+          timelineSubtitle:
+            "Every port call and at-sea day with quick links back to the map.",
+          timelineViewOnMap: "View on map",
+          timelineSeeMore: "See more",
+          timelineSeeLess: "See less",
+          timelinePastTitle: "Recent stops",
+          timelinePastSubtitle: "Latest 5 places visited",
+          timelineUpcomingTitle: "Upcoming stops",
+          timelineUpcomingSubtitle: "Next 5 destinations",
+          timelineReplay: "Recenter the map on this stop",
         },
         da: {
           pageTitle: "Hvor i verden er Kels?",
@@ -693,6 +932,17 @@
           snow: "Sne",
           wind: "Blæsende",
           noConditions: "Klart vejr",
+          timelineTitle: "Spor indtil nu",
+          timelineSubtitle:
+            "Hver havneanløb og dag til søs med hurtige links tilbage til kortet.",
+          timelineViewOnMap: "Se på kort",
+          timelineSeeMore: "Se mere",
+          timelineSeeLess: "Se mindre",
+          timelinePastTitle: "Seneste stop",
+          timelinePastSubtitle: "De seneste 5 steder besøgt",
+          timelineUpcomingTitle: "Kommende stop",
+          timelineUpcomingSubtitle: "De næste 5 destinationer",
+          timelineReplay: "Centrér kortet på dette stop",
         },
       };
 
@@ -1059,6 +1309,8 @@
         if (weatherTitleEl) {
           weatherTitleEl.textContent = t.weatherTitle;
         }
+
+        renderTimeline();
 
         // Update weather display if data exists
         updateWeatherDisplay();
@@ -1600,6 +1852,31 @@
       const locationLabelEl = document.getElementById("location-label");
       const tomorrowStatusEl = document.getElementById("tomorrow-status");
       const shipStatusEl = document.getElementById("ship-status");
+      const timelinePastListEl = document.getElementById("timeline-past-list");
+      const timelineUpcomingListEl = document.getElementById(
+        "timeline-upcoming-list"
+      );
+      const timelinePastToggleEl = document.getElementById(
+        "timeline-past-toggle"
+      );
+      const timelineUpcomingToggleEl = document.getElementById(
+        "timeline-upcoming-toggle"
+      );
+      const timelineTitleEl = document.getElementById("timeline-title");
+      const timelineSubtitleEl = document.getElementById("timeline-subtitle");
+      const timelinePastTitleEl = document.getElementById("timeline-past-title");
+      const timelineUpcomingTitleEl = document.getElementById(
+        "timeline-upcoming-title"
+      );
+      const timelinePastSubtitleEl = document.getElementById(
+        "timeline-past-subtitle"
+      );
+      const timelineUpcomingSubtitleEl = document.getElementById(
+        "timeline-upcoming-subtitle"
+      );
+
+      let timelinePastExpanded = false;
+      let timelineUpcomingExpanded = false;
 
       function resolveStatusState(text) {
         if (!text) return "unknown";
@@ -1844,6 +2121,183 @@
         } else {
           map.setView(view, targetZoom);
         }
+      }
+
+      function formatTimelineDate(dateStr) {
+        const date = new Date(`${dateStr}T12:00:00`);
+        const locale = currentLanguage === "da" ? "da-DK" : undefined;
+        return {
+          dateLabel: date.toLocaleDateString(locale, {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          }),
+          timeLabel: date.toLocaleTimeString(locale, {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+      }
+
+      function focusTimelineEntry(dateStr) {
+        const entry = itineraryByDate.get(dateStr);
+        if (!entry) return;
+        const data = buildEntryData(entry);
+        const t = translations[currentLanguage];
+        const statusInfo = determineStatusFromEntry(entry);
+
+        locationLabelEl.textContent = data.label;
+        locationStatusEl.textContent = `${t.trackingUpdate} ${
+          data.descriptor || data.label
+        }`;
+        setShipStatus(statusInfo.label, statusInfo.state);
+
+        if (data.coords) {
+          setMapToEntry(data, { animate: true });
+        }
+      }
+
+      function renderTimelineList(entries, listEl, { limit, expanded }) {
+        if (!listEl) return;
+        const t = translations[currentLanguage];
+        const todayISO = getLocalISO(new Date());
+        listEl.innerHTML = "";
+
+        const slice = expanded ? entries : entries.slice(0, limit);
+
+        slice.forEach((entry) => {
+          const data = buildEntryData(entry);
+          const { dateLabel, timeLabel } = formatTimelineDate(entry.date);
+          const state =
+            entry.date < todayISO
+              ? "completed"
+              : entry.date === todayISO
+              ? "current"
+              : "upcoming";
+
+          const item = document.createElement("li");
+          item.className = `timeline-item ${state}`;
+
+          const details = document.createElement("div");
+          details.className = "timeline-details";
+
+          const dateEl = document.createElement("div");
+          dateEl.className = "timeline-date";
+          dateEl.textContent = `${dateLabel} • ${timeLabel}`;
+
+          const labelEl = document.createElement("div");
+          labelEl.className = "timeline-label";
+          labelEl.textContent = data.label;
+
+          const metaEl = document.createElement("p");
+          metaEl.className = "timeline-meta";
+          metaEl.textContent = data.descriptor || t.trackingUpdate;
+
+          details.appendChild(dateEl);
+          details.appendChild(labelEl);
+          details.appendChild(metaEl);
+
+          if (data.coords) {
+            const actions = document.createElement("div");
+            actions.className = "timeline-actions";
+            const button = document.createElement("button");
+            button.className = "timeline-link";
+            button.type = "button";
+            button.dataset.date = entry.date;
+            button.title = t.timelineReplay;
+            button.textContent = t.timelineViewOnMap;
+            actions.appendChild(button);
+            details.appendChild(actions);
+          }
+
+          const marker = document.createElement("div");
+          marker.className = "timeline-marker";
+          marker.setAttribute("aria-hidden", "true");
+
+          item.appendChild(marker);
+          item.appendChild(details);
+          listEl.appendChild(item);
+        });
+      }
+
+      function updateTimelineToggle(button, expanded, hasOverflow) {
+        if (!button) return;
+        if (!hasOverflow) {
+          button.hidden = true;
+          return;
+        }
+        const t = translations[currentLanguage];
+        button.hidden = false;
+        button.textContent = expanded ? t.timelineSeeLess : t.timelineSeeMore;
+      }
+
+      function renderTimeline() {
+        const t = translations[currentLanguage];
+        const todayISO = getLocalISO(new Date());
+
+        if (timelineTitleEl) timelineTitleEl.textContent = t.timelineTitle;
+        if (timelineSubtitleEl) timelineSubtitleEl.textContent = t.timelineSubtitle;
+        if (timelinePastTitleEl) timelinePastTitleEl.textContent = t.timelinePastTitle;
+        if (timelineUpcomingTitleEl)
+          timelineUpcomingTitleEl.textContent = t.timelineUpcomingTitle;
+        if (timelinePastSubtitleEl)
+          timelinePastSubtitleEl.textContent = t.timelinePastSubtitle;
+        if (timelineUpcomingSubtitleEl)
+          timelineUpcomingSubtitleEl.textContent = t.timelineUpcomingSubtitle;
+
+        const pastEntries = itineraryEntries.filter((entry) => entry.date <= todayISO);
+        const upcomingEntries = itineraryEntries.filter(
+          (entry) => entry.date > todayISO
+        );
+
+        const orderedPast = [...pastEntries].reverse();
+
+        renderTimelineList(orderedPast, timelinePastListEl, {
+          limit: 5,
+          expanded: timelinePastExpanded,
+        });
+
+        renderTimelineList(upcomingEntries, timelineUpcomingListEl, {
+          limit: 5,
+          expanded: timelineUpcomingExpanded,
+        });
+
+        updateTimelineToggle(
+          timelinePastToggleEl,
+          timelinePastExpanded,
+          orderedPast.length > 5
+        );
+        updateTimelineToggle(
+          timelineUpcomingToggleEl,
+          timelineUpcomingExpanded,
+          upcomingEntries.length > 5
+        );
+      }
+
+      function bindTimelineClicks(listEl) {
+        if (!listEl) return;
+        listEl.addEventListener("click", (event) => {
+          const button = event.target.closest(".timeline-link");
+          if (!button) return;
+          focusTimelineEntry(button.dataset.date);
+        });
+      }
+
+      bindTimelineClicks(timelinePastListEl);
+      bindTimelineClicks(timelineUpcomingListEl);
+
+      if (timelinePastToggleEl) {
+        timelinePastToggleEl.addEventListener("click", () => {
+          timelinePastExpanded = !timelinePastExpanded;
+          renderTimeline();
+        });
+      }
+
+      if (timelineUpcomingToggleEl) {
+        timelineUpcomingToggleEl.addEventListener("click", () => {
+          timelineUpcomingExpanded = !timelineUpcomingExpanded;
+          renderTimeline();
+        });
       }
 
       function formatTomorrowStatus() {
@@ -2681,6 +3135,7 @@
         locationLabelEl.textContent = labelText;
         setShipStatus(statusInfo.label, statusInfo.state);
         tomorrowStatusEl.textContent = formatTomorrowStatus();
+        renderTimeline();
 
         console.log("[INIT] Calling updateLivePosition...");
         updateLivePosition(todayEntry);
