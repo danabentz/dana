@@ -529,15 +529,27 @@
       .forecast-condition {
         font-size: 0.95rem;
         color: rgba(21, 32, 51, 0.75);
-      .time-section {
+      }
+
+      .info-cards {
+        width: min(900px, 100%);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+      }
+
+      .info-card {
         background: rgba(255, 255, 255, 0.75);
         border-radius: 18px;
         padding: 1.4rem 1.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 26px rgba(27, 37, 68, 0.12);
+      }
+
+      .time-section {
         display: flex;
         align-items: center;
         gap: 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        box-shadow: 0 10px 26px rgba(27, 37, 68, 0.12);
       }
 
       .time-header {
@@ -578,7 +590,38 @@
         color: var(--accent);
         padding: 0.6rem 0.9rem;
         border-radius: 14px;
-        box-shadow: inset 0 0 0 1px rgba(90, 63, 212, 0.2);
+        border: 1px solid rgba(90, 63, 212, 0.2);
+      }
+
+      .next-destination {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+      }
+
+      .next-destination-icon {
+        font-size: 1.5rem;
+      }
+
+      .next-destination-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+
+      .next-destination-label {
+        margin: 0;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(21, 32, 51, 0.6);
+        font-weight: 700;
+      }
+
+      .next-destination-status {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
       }
 
       .weather-header {
@@ -946,18 +989,32 @@
         <strong id="location-label"></strong>
       </section>
 
-      <section class="time-section" aria-live="polite">
-        <div class="time-header">
-          <span class="time-icon" aria-hidden="true">⏰</span>
-          <div class="time-text">
-            <h2 id="time-title">Ship's local time</h2>
-            <p id="time-description" class="time-description">
-              Loading ship's local time...
+      <div class="info-cards">
+        <section class="info-card time-section" aria-live="polite">
+          <div class="time-header">
+            <span class="time-icon" aria-hidden="true">⏰</span>
+            <div class="time-text">
+              <h2 id="time-title">Ship's local time</h2>
+              <p id="time-description" class="time-description">
+                Loading ship's local time...
+              </p>
+            </div>
+          </div>
+          <div id="time-clock" class="time-clock">--:--</div>
+        </section>
+
+        <section class="info-card next-destination" aria-live="polite">
+          <span class="next-destination-icon" aria-hidden="true">🧭</span>
+          <div class="next-destination-text">
+            <p id="next-destination-label" class="next-destination-label">
+              Next destination
+            </p>
+            <p id="tomorrow-status" class="next-destination-status">
+              Loading tomorrow's plan...
             </p>
           </div>
-        </div>
-        <div id="time-clock" class="time-clock">--:--</div>
-      </section>
+        </section>
+      </div>
 
       <div
         id="map"
@@ -1080,11 +1137,6 @@
           </div>
         </div>
       </section>
-
-      <footer>
-        <span>🏊‍♀️</span>
-        <span id="tomorrow-status">Loading tomorrow's plan...</span>
-      </footer>
     </main>
 
     <script
@@ -1623,6 +1675,13 @@
         const mapEl = document.getElementById("map");
         if (mapEl) {
           mapEl.setAttribute("aria-label", t.mapAriaLabel);
+        }
+
+        const nextDestinationLabelEl = document.getElementById(
+          "next-destination-label"
+        );
+        if (nextDestinationLabelEl) {
+          nextDestinationLabelEl.textContent = t.destinationHeadingNext;
         }
 
         // Update time section
@@ -2698,7 +2757,7 @@
           details.appendChild(labelEl);
           details.appendChild(metaEl);
 
-          if (data.coords) {
+          if (data.coords && state === "current") {
             const actions = document.createElement("div");
             actions.className = "timeline-actions";
             const button = document.createElement("button");
