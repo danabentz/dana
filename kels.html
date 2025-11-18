@@ -2757,19 +2757,6 @@
           details.appendChild(labelEl);
           details.appendChild(metaEl);
 
-          if (data.coords && state === "current") {
-            const actions = document.createElement("div");
-            actions.className = "timeline-actions";
-            const button = document.createElement("button");
-            button.className = "timeline-link";
-            button.type = "button";
-            button.dataset.date = entry.date;
-            button.title = t.timelineReplay;
-            button.textContent = t.timelineViewOnMap;
-            actions.appendChild(button);
-            details.appendChild(actions);
-          }
-
           const marker = document.createElement("div");
           marker.className = "timeline-marker";
           marker.setAttribute("aria-hidden", "true");
