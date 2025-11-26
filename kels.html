@@ -964,8 +964,7 @@
     <section class="birthday-shell" id="birthday-shell" hidden>
       <div class="birthday-content">
         <h1>HAPPY BIRTHDAY KELS!</h1>
-        <p class="birthday-lead">Today’s forecast: a perfect day at sea</p>
-        ca
+        <p class="birthday-lead">Today's forecast: a perfect day at sea</p>
       </div>
     </section>
     <div class="countdown-banner" id="countdown-banner">
@@ -1095,10 +1094,7 @@
                 <h3 id="timeline-past-title" class="timeline-group-title">
                   Recent stops
                 </h3>
-                <p
-                  id="timeline-past-subtitle"
-                  class="timeline-group-subtitle"
-                >
+                <p id="timeline-past-subtitle" class="timeline-group-subtitle">
                   Latest 5 places visited
                 </p>
               </div>
@@ -1299,7 +1295,8 @@
           timelineReplay: "Centrér kortet på dette stop",
           timeTitle: "Skibets lokale tid",
           timeLoading: "Indlæser skibets lokale tid...",
-          timeSubtitle: (timezone) => `Baseret på skibets position (${timezone})`,
+          timeSubtitle: (timezone) =>
+            `Baseret på skibets position (${timezone})`,
           timeSubtitleOffset: (offset) =>
             `Baseret på skibets position (UTC${offset || "?"})`,
         },
@@ -2224,7 +2221,7 @@
           "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?auto=format&fit=crop&w=1200&q=80",
           "https://images.unsplash.com/photo-1472457897821-70d3819a0e24?auto=format&fit=crop&w=1200&q=80",
         ],
-        "Singapore": [
+        Singapore: [
           "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?auto=format&fit=crop&w=1200&q=80",
           "https://images.unsplash.com/photo-1496128858413-b36217c2ce36?auto=format&fit=crop&w=1200&q=80",
           "https://images.unsplash.com/photo-1505761671935-60b3a7427bad?auto=format&fit=crop&w=1200&q=80",
@@ -2321,7 +2318,9 @@
       );
       const timelineTitleEl = document.getElementById("timeline-title");
       const timelineSubtitleEl = document.getElementById("timeline-subtitle");
-      const timelinePastTitleEl = document.getElementById("timeline-past-title");
+      const timelinePastTitleEl = document.getElementById(
+        "timeline-past-title"
+      );
       const timelineUpcomingTitleEl = document.getElementById(
         "timeline-upcoming-title"
       );
@@ -2368,7 +2367,11 @@
         return [];
       }
 
-      function resolveSpotlightName({ todayEntry, liveData, itineraryDestination }) {
+      function resolveSpotlightName({
+        todayEntry,
+        liveData,
+        itineraryDestination,
+      }) {
         if (liveData?.port && liveData.port !== "At Sea") {
           return liveData.port;
         }
@@ -2380,7 +2383,9 @@
         }
         if (todayEntry) {
           if (todayEntry.rawLabel === "At Sea") {
-            return todayEntry.nextPort || todayEntry.previousPort || todayEntry.label;
+            return (
+              todayEntry.nextPort || todayEntry.previousPort || todayEntry.label
+            );
           }
           return todayEntry.label;
         }
@@ -2424,7 +2429,10 @@
         }
 
         const resolvedName =
-          data.name || data.entry?.label || data.entry?.rawLabel || t.destinationFallback;
+          data.name ||
+          data.entry?.label ||
+          data.entry?.rawLabel ||
+          t.destinationFallback;
         if (destinationNameEl) {
           destinationNameEl.textContent = resolvedName;
         }
@@ -2783,8 +2791,10 @@
         const todayISO = getLocalISO(new Date());
 
         if (timelineTitleEl) timelineTitleEl.textContent = t.timelineTitle;
-        if (timelineSubtitleEl) timelineSubtitleEl.textContent = t.timelineSubtitle;
-        if (timelinePastTitleEl) timelinePastTitleEl.textContent = t.timelinePastTitle;
+        if (timelineSubtitleEl)
+          timelineSubtitleEl.textContent = t.timelineSubtitle;
+        if (timelinePastTitleEl)
+          timelinePastTitleEl.textContent = t.timelinePastTitle;
         if (timelineUpcomingTitleEl)
           timelineUpcomingTitleEl.textContent = t.timelineUpcomingTitle;
         if (timelinePastSubtitleEl)
@@ -2792,7 +2802,9 @@
         if (timelineUpcomingSubtitleEl)
           timelineUpcomingSubtitleEl.textContent = t.timelineUpcomingSubtitle;
 
-        const pastEntries = itineraryEntries.filter((entry) => entry.date <= todayISO);
+        const pastEntries = itineraryEntries.filter(
+          (entry) => entry.date <= todayISO
+        );
         const upcomingEntries = itineraryEntries.filter(
           (entry) => entry.date > todayISO
         );
@@ -3319,21 +3331,21 @@
             } else {
               labelText = t.sailingOcean;
             }
-        } else if (finalLive.port) {
-          labelText = t.dockedAt(finalLive.port);
-          forecastLabel = resolveNextPortLabel(
-            finalLive,
-            itineraryDestination,
-            todayEntry
-          );
-        } else if (finalLive.destination) {
-          labelText = finalLive.destination;
-          forecastLabel = resolveNextPortLabel(
-            finalLive,
-            itineraryDestination,
-            todayEntry
-          );
-        }
+          } else if (finalLive.port) {
+            labelText = t.dockedAt(finalLive.port);
+            forecastLabel = resolveNextPortLabel(
+              finalLive,
+              itineraryDestination,
+              todayEntry
+            );
+          } else if (finalLive.destination) {
+            labelText = finalLive.destination;
+            forecastLabel = resolveNextPortLabel(
+              finalLive,
+              itineraryDestination,
+              todayEntry
+            );
+          }
 
           console.log("[UPDATE] Setting label text:", labelText);
           locationLabelEl.textContent = labelText;
@@ -3515,7 +3527,9 @@
           if (currentTimeZone) {
             options.timeZone = currentTimeZone;
           } else if (currentUtcOffsetSeconds !== null) {
-            dateToFormat = new Date(now.getTime() + currentUtcOffsetSeconds * 1000);
+            dateToFormat = new Date(
+              now.getTime() + currentUtcOffsetSeconds * 1000
+            );
           }
 
           clockEl.textContent = new Intl.DateTimeFormat(locale, options).format(
@@ -3560,9 +3574,12 @@
 
       function formatForecastDayLabel(dateString, offset) {
         const t = translations[currentLanguage];
-        const formatter = new Intl.DateTimeFormat(currentLanguage === "da" ? "da-DK" : "en-US", {
-          weekday: "short",
-        });
+        const formatter = new Intl.DateTimeFormat(
+          currentLanguage === "da" ? "da-DK" : "en-US",
+          {
+            weekday: "short",
+          }
+        );
         try {
           const date = new Date(dateString);
           return `${formatter.format(date)} · ${t.forecastDayLabel(offset)}`;
@@ -3708,8 +3725,7 @@
         const t = translations[currentLanguage];
         const hasSnow = code >= 71 && code <= 86;
         const hasRain =
-          !hasSnow &&
-          (precipitation > 0.01 || (code >= 51 && code <= 67));
+          !hasSnow && (precipitation > 0.01 || (code >= 51 && code <= 67));
         if (hasSnow) return t.snow;
         if (hasRain) return t.rain;
         return t.noConditions;
@@ -3810,9 +3826,9 @@
 
           const temps = document.createElement("div");
           temps.className = "forecast-temps";
-          temps.textContent = `${formatTemperature(entry.high)}° / ${formatTemperature(
-            entry.low
-          )}° ${getTemperatureUnit()}`;
+          temps.textContent = `${formatTemperature(
+            entry.high
+          )}° / ${formatTemperature(entry.low)}° ${getTemperatureUnit()}`;
 
           const condition = document.createElement("div");
           condition.className = "forecast-condition";
@@ -3893,7 +3909,9 @@
             currentWeatherData = cachedWeather;
             updateWeatherDisplay();
             if (weatherLoadingEl) {
-              weatherLoadingEl.textContent = `${t.showingCached} ${t.cachedCoordinates.toLowerCase()}`;
+              weatherLoadingEl.textContent = `${
+                t.showingCached
+              } ${t.cachedCoordinates.toLowerCase()}`;
             }
           } else {
             if (weatherLoadingEl) {
@@ -3983,7 +4001,9 @@
         if (info && hasCoords(info)) {
           return { lat: info.lat, lng: info.lng };
         }
-        const matchingEntry = itineraryEntries.find((entry) => entry.label === label);
+        const matchingEntry = itineraryEntries.find(
+          (entry) => entry.label === label
+        );
         if (matchingEntry) {
           const ref = locationReference[matchingEntry.label];
           if (ref && hasCoords(ref)) {
@@ -4027,7 +4047,11 @@
         renderForecast();
       }
 
-      function resolveNextPortLabel(finalLive, itineraryDestination, todayEntry) {
+      function resolveNextPortLabel(
+        finalLive,
+        itineraryDestination,
+        todayEntry
+      ) {
         if (finalLive && finalLive.destination) return finalLive.destination;
         if (itineraryDestination) return itineraryDestination;
         if (todayEntry && todayEntry.nextPort) return todayEntry.nextPort;
