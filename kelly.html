@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kelly L. Bentz, LPC | Professional Counseling & Sex Therapy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f5f2;
+        --card: #ffffff;
+        --text: #1f242d;
+        --muted: #4f5665;
+        --accent: #8c6ff0;
+        --accent-soft: rgba(140, 111, 240, 0.08);
+        --border: rgba(31, 36, 45, 0.08);
+        --shadow: 0 18px 40px rgba(25, 31, 45, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at 18% 20%, #efe9ff 0%, transparent 28%),
+          radial-gradient(circle at 82% 12%, #fde6d8 0%, transparent 30%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 0 16px 48px;
+      }
+
+      header {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 48px 0 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        width: fit-content;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.2rem, 2vw + 1.8rem, 3rem);
+        letter-spacing: -0.01em;
+      }
+
+      .lead {
+        max-width: 720px;
+        color: var(--muted);
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: grid;
+        gap: 24px;
+      }
+
+      section {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(25, 31, 45, 0.06);
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 1.3rem;
+        letter-spacing: -0.01em;
+      }
+
+      ul {
+        padding-left: 20px;
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .pill-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .pill {
+        padding: 10px 14px;
+        background: var(--accent-soft);
+        border-radius: 999px;
+        color: var(--text);
+        border: 1px solid rgba(140, 111, 240, 0.18);
+        font-weight: 600;
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 18px;
+      }
+
+      @media (max-width: 840px) {
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .contact-card {
+        background: linear-gradient(145deg, #ffffff 0%, #f8f6ff 100%);
+        border: 1px solid rgba(140, 111, 240, 0.18);
+        border-radius: 16px;
+        padding: 16px 18px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .contact-card strong {
+        color: var(--text);
+      }
+
+      .contact-card span,
+      .contact-card a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .contact-card a:hover {
+        color: var(--accent);
+      }
+
+      form {
+        display: grid;
+        gap: 12px;
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      input,
+      textarea {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font: inherit;
+        background: #fbfafc;
+        color: var(--text);
+        transition: border 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: rgba(140, 111, 240, 0.65);
+        box-shadow: 0 0 0 3px rgba(140, 111, 240, 0.18);
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      button {
+        border: none;
+        background: linear-gradient(120deg, #8c6ff0, #6b8cf7);
+        color: white;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+        box-shadow: var(--shadow);
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span class="tag">Kelly L. Bentz, M.A., LPC, CSAT, CST</span>
+      <h1>Modern, compassionate therapy for healing and connection</h1>
+      <p class="lead">
+        Kelly is dedicated to helping you build a healthy, productive, and happier
+        life—whether you want support with unwanted sexual behaviors, betrayal or
+        infidelity trauma, or simply to deepen intimacy and connection in your
+        relationship.
+      </p>
+    </header>
+
+    <main>
+      <section>
+        <div class="two-col">
+          <div class="grid">
+            <h2>Credentials & Licensure</h2>
+            <ul>
+              <li>M.A. in Counseling</li>
+              <li>Licensed Professional Counselor (Oregon, Texas, New York)</li>
+              <li>Certified Sex Addiction Therapist (CSAT)</li>
+              <li>Board Certified Sex Therapist (CST)</li>
+              <li>Betrayal Trauma Specialist</li>
+              <li>Certified Transgender Care Specialist</li>
+              <li>Extensive experience supporting neurodivergent clients</li>
+            </ul>
+          </div>
+          <div class="grid">
+            <h2>Areas of Expertise</h2>
+            <ul class="pill-list">
+              <li class="pill">Sexual addiction</li>
+              <li class="pill">Pornography addiction</li>
+              <li class="pill">Sex therapy</li>
+              <li class="pill">Affair & betrayal recovery</li>
+              <li class="pill">Couples therapy</li>
+              <li class="pill">Sexual desire & function</li>
+              <li class="pill">Partner trauma support</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <h2>About Kelly</h2>
+        <p class="lead" style="max-width: 900px">
+          Kelly works with the full spectrum of sexuality—from recovery from
+          compulsive or compulsively avoidant sexual behaviors to healing from
+          infidelity, rebuilding trust, and revitalizing intimacy. She has helped
+          countless individuals progress through recovery and supported couples in
+          overcoming betrayal while restoring closeness in their relationships.
+        </p>
+        <p class="lead" style="max-width: 900px">
+          A graduate of Western Seminary, Kelly has also served as an adjunct
+          professor teaching Case Conference courses to Master's level students and
+          has held adjunct positions at Multnomah University and Concordia
+          University. She is dedicated to continuous growth in her knowledge and
+          clinical skills so you receive thoughtful, current care.
+        </p>
+        <p class="lead" style="max-width: 900px">
+          Kelly’s priority is to help you discover the freedom and joy that life
+          has to offer. Online therapy services are available when distance or time
+          make in-person sessions challenging.
+        </p>
+      </section>
+
+      <section>
+        <div class="two-col">
+          <div class="grid">
+            <h2>Therapy process</h2>
+            <ul>
+              <li><strong>Consultation:</strong> A phone call to confirm we're a good fit.</li>
+              <li><strong>Intake & first session:</strong> We review your goals and history together.</li>
+              <li>
+                <strong>Ongoing therapy:</strong> Sessions continue for as long as you find value—some
+                clients stay for a focused 3 months, others for many years.
+              </li>
+            </ul>
+          </div>
+          <div class="grid">
+            <h2>How we work together</h2>
+            <p class="lead" style="margin: 0">
+              Sessions are tailored to your pace and needs, with a focus on safety,
+              clarity, and collaborative goals. Kelly blends specialized training in
+              sex therapy, addiction recovery, and betrayal trauma to support both
+              individuals and couples.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact-section">
+        <h2>Connect with Kelly</h2>
+        <div class="contact-grid">
+          <div class="contact-card">
+            <strong>Location</strong>
+            <span>1306 NW Hoyt St #305</span>
+            <span>Portland, OR 97209</span>
+          </div>
+          <div class="contact-card">
+            <strong>Website</strong>
+            <a href="https://bentzcounseling.com" target="_blank" rel="noreferrer"
+              >bentzcounseling.com</a
+            >
+          </div>
+          <div class="contact-card">
+            <strong>Phone</strong>
+            <a href="tel:5038194231">503-819-4231</a>
+          </div>
+          <div class="contact-card">
+            <strong>Email</strong>
+            <a href="mailto:kelly_bentz@yahoo.com">kelly_bentz@yahoo.com</a>
+          </div>
+        </div>
+        <div class="grid" style="margin-top: 18px">
+          <h2>Send a message</h2>
+          <form>
+            <label>
+              Name
+              <input type="text" name="name" placeholder="Your name" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" placeholder="you@example.com" required />
+            </label>
+            <label>
+              How can Kelly help?
+              <textarea name="info" placeholder="Share a bit about what you'd like to work on"></textarea>
+            </label>
+            <button type="submit">Submit</button>
+          </form>
+          <p class="note">
+            Submitting this form will open your email client with your message to Kelly.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Convert the form submission into a mailto link for a simple static flow
+      const form = document.querySelector("form");
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+
+        const name = (data.get("name") || "").toString().trim() || "website visitor";
+        const email = (data.get("email") || "").toString().trim();
+        const info = (data.get("info") || "").toString().trim();
+
+        const subject = encodeURIComponent(`New inquiry from ${name}`);
+        const body = encodeURIComponent(
+          `Name: ${name}\nEmail: ${email}\n\nMessage:\n${info}`
+        );
+
+        window.location.href = `mailto:kelly_bentz@yahoo.com?subject=${subject}&body=${body}`;
+      });
+    </script>
+  </body>
+</html>
