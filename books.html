@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Recommended Books | Kelly L. Bentz, LPC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f5f2;
+        --card: #ffffff;
+        --text: #1f242d;
+        --muted: #4f5665;
+        --accent: #8c6ff0;
+        --accent-soft: rgba(140, 111, 240, 0.08);
+        --border: rgba(31, 36, 45, 0.08);
+        --shadow: 0 18px 40px rgba(25, 31, 45, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: radial-gradient(
+            circle at 18% 20%,
+            #efe9ff 0%,
+            transparent 28%
+          ),
+          radial-gradient(circle at 82% 12%, #fde6d8 0%, transparent 30%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 0 16px 48px;
+      }
+
+      nav {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 20px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .nav-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        text-decoration: none;
+        letter-spacing: -0.01em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .nav-link {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        color: var(--muted);
+        transition: color 0.2s ease, background 0.2s ease;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .nav-link:hover {
+        color: var(--text);
+        background: var(--accent-soft);
+      }
+
+      .nav-link-primary {
+        background: linear-gradient(120deg, #8c6ff0, #6b8cf7);
+        color: white;
+        padding: 10px 20px;
+        box-shadow: 0 4px 12px rgba(140, 111, 240, 0.3);
+      }
+
+      .nav-link-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(140, 111, 240, 0.4);
+        background: linear-gradient(120deg, #7a5ee0, #5b7ce7);
+      }
+
+      @media (max-width: 640px) {
+        nav {
+          flex-wrap: wrap;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
+
+      header {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 48px 0 32px;
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2.5rem, 3vw + 2rem, 3.5rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      .lead {
+        max-width: 720px;
+        margin: 0 auto;
+        color: var(--muted);
+        font-size: 1.1rem;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: grid;
+        gap: 24px;
+      }
+
+      .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+      }
+
+      .book-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(25, 31, 45, 0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .book-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(25, 31, 45, 0.1);
+      }
+
+      .book-title {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+        color: var(--text);
+      }
+
+      .book-author {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+
+      .book-description {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        flex-grow: 1;
+      }
+
+      .book-category {
+        display: inline-block;
+        padding: 4px 10px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        margin-top: 8px;
+        width: fit-content;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="kelly.html" class="nav-brand">Kelly L. Bentz</a>
+      <div class="nav-links">
+        <a href="kelly.html#about" class="nav-link">About</a>
+        <a href="books.html" class="nav-link">Books</a>
+        <a href="kelly.html#contact" class="nav-link nav-link-primary">Contact</a>
+      </div>
+    </nav>
+
+    <header>
+      <h1>Recommended Books</h1>
+      <p class="lead">
+        A curated selection of books I recommend to clients working through
+        addiction recovery, betrayal trauma, relationship healing, and sexual
+        health. These resources offer valuable insights and practical tools for
+        your journey.
+      </p>
+    </header>
+
+    <main>
+      <div class="books-grid">
+        <div class="book-card">
+          <h3 class="book-title">Out of the Shadows</h3>
+          <p class="book-author">Patrick Carnes</p>
+          <p class="book-description">
+            A foundational guide to understanding and recovering from sex
+            addiction. Carnes provides a comprehensive framework for
+            understanding the addiction cycle and pathways to recovery.
+          </p>
+          <span class="book-category">Sex Addiction</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">The Betrayal Bond</h3>
+          <p class="book-author">Patrick Carnes</p>
+          <p class="book-description">
+            Essential reading for partners who have experienced betrayal trauma.
+            Explores the complex psychological bonds that form in traumatic
+            relationships and how to break free.
+          </p>
+          <span class="book-category">Betrayal Trauma</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">Mating in Captivity</h3>
+          <p class="book-author">Esther Perel</p>
+          <p class="book-description">
+            A groundbreaking exploration of desire in long-term relationships.
+            Perel challenges conventional wisdom about intimacy and helps couples
+            navigate the paradox of love and desire.
+          </p>
+          <span class="book-category">Sex Therapy</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">The State of Affairs</h3>
+          <p class="book-author">Esther Perel</p>
+          <p class="book-description">
+            A nuanced look at infidelity that goes beyond judgment to explore
+            what affairs reveal about relationships and how couples can heal
+            and grow after betrayal.
+          </p>
+          <span class="book-category">Infidelity Recovery</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">Come as You Are</h3>
+          <p class="book-author">Emily Nagoski</p>
+          <p class="book-description">
+            A science-based guide to understanding female sexuality and desire.
+            Empowers women to understand their bodies and create fulfilling
+            sexual experiences.
+          </p>
+          <span class="book-category">Sex Therapy</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">Hold Me Tight</h3>
+          <p class="book-author">Sue Johnson</p>
+          <p class="book-description">
+            Based on Emotionally Focused Therapy, this book helps couples
+            understand their attachment needs and create deeper emotional
+            bonds. Essential for rebuilding trust and connection.
+          </p>
+          <span class="book-category">Couples Therapy</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">The Body Keeps the Score</h3>
+          <p class="book-author">Bessel van der Kolk</p>
+          <p class="book-description">
+            A comprehensive guide to understanding trauma and its effects on the
+            body and mind. Essential for anyone healing from betrayal trauma or
+            other traumatic experiences.
+          </p>
+          <span class="book-category">Trauma Recovery</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">Wired for Intimacy</h3>
+          <p class="book-author">William Struthers</p>
+          <p class="book-description">
+            Explores how pornography affects the brain and relationships from a
+            neuroscience perspective. Helpful for understanding the impact of
+            compulsive sexual behaviors.
+          </p>
+          <span class="book-category">Sex Addiction</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">The Seven Principles for Making Marriage Work</h3>
+          <p class="book-author">John Gottman</p>
+          <p class="book-description">
+            Based on decades of research, Gottman provides practical strategies
+            for building stronger relationships. Valuable for couples at any
+            stage of their relationship journey.
+          </p>
+          <span class="book-category">Couples Therapy</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">Healing the Shame That Binds You</h3>
+          <p class="book-author">John Bradshaw</p>
+          <p class="book-description">
+            A powerful exploration of toxic shame and its role in addiction and
+            relationship dysfunction. Provides tools for healing and reclaiming
+            your authentic self.
+          </p>
+          <span class="book-category">Recovery</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">The Porn Trap</h3>
+          <p class="book-author">Wendy & Larry Maltz</p>
+          <p class="book-description">
+            Addresses the impact of pornography on individuals and
+            relationships. Offers practical guidance for both those struggling
+            with compulsive use and their partners.
+          </p>
+          <span class="book-category">Sex Addiction</span>
+        </div>
+
+        <div class="book-card">
+          <h3 class="book-title">Getting the Love You Want</h3>
+          <p class="book-author">Harville Hendrix</p>
+          <p class="book-description">
+            A guide to Imago Relationship Therapy that helps couples understand
+            their relationship patterns and transform conflict into connection.
+            Excellent for couples rebuilding after betrayal.
+          </p>
+          <span class="book-category">Couples Therapy</span>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
+

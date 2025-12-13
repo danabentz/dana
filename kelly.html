@@ -30,12 +30,82 @@
       body {
         margin: 0;
         font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-        background: radial-gradient(circle at 18% 20%, #efe9ff 0%, transparent 28%),
+        background: radial-gradient(
+            circle at 18% 20%,
+            #efe9ff 0%,
+            transparent 28%
+          ),
           radial-gradient(circle at 82% 12%, #fde6d8 0%, transparent 30%),
           var(--bg);
         color: var(--text);
         line-height: 1.6;
         padding: 0 16px 48px;
+      }
+
+      nav {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 20px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .nav-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        text-decoration: none;
+        letter-spacing: -0.01em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .nav-link {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        color: var(--muted);
+        transition: color 0.2s ease, background 0.2s ease;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .nav-link:hover {
+        color: var(--text);
+        background: var(--accent-soft);
+      }
+
+      .nav-link-primary {
+        background: linear-gradient(120deg, #8c6ff0, #6b8cf7);
+        color: white;
+        padding: 10px 20px;
+        box-shadow: 0 4px 12px rgba(140, 111, 240, 0.3);
+      }
+
+      .nav-link-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(140, 111, 240, 0.4);
+        background: linear-gradient(120deg, #7a5ee0, #5b7ce7);
+      }
+
+      @media (max-width: 640px) {
+        nav {
+          flex-wrap: wrap;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: flex-end;
+        }
       }
 
       header {
@@ -47,17 +117,55 @@
         gap: 16px;
       }
 
-      .tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        border-radius: 999px;
-        background: var(--accent-soft);
-        color: var(--accent);
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        width: fit-content;
+      .header-content {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 32px;
+        align-items: start;
+      }
+
+      @media (max-width: 768px) {
+        .header-content {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+      }
+
+      .photo-container {
+        position: relative;
+      }
+
+      .photo {
+        width: 200px;
+        aspect-ratio: 3 / 4;
+        border-radius: 20px;
+        object-fit: cover;
+        object-position: center top;
+        box-shadow: 0 10px 30px rgba(25, 31, 45, 0.12);
+        border: 1px solid var(--border);
+      }
+
+      @media (max-width: 768px) {
+        .photo {
+          width: 160px;
+          justify-self: center;
+        }
+      }
+
+      .name {
+        margin: 0;
+        font-size: clamp(2.5rem, 3vw + 2rem, 3.5rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+
+      .qualifications {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 1.1rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
       }
 
       h1 {
@@ -78,6 +186,18 @@
         margin: 0 auto;
         display: grid;
         gap: 24px;
+      }
+
+      .sections-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+      }
+
+      @media (max-width: 840px) {
+        .sections-row {
+          grid-template-columns: 1fr;
+        }
       }
 
       section {
@@ -227,21 +347,39 @@
       }
     </style>
   </head>
-  <body>
+  <body id="top">
+    <nav>
+      <a href="#top" class="nav-brand">Kelly L. Bentz</a>
+      <div class="nav-links">
+        <a href="#about" class="nav-link">About</a>
+        <a href="books.html" class="nav-link">Books</a>
+        <a href="#contact" class="nav-link nav-link-primary">Contact</a>
+      </div>
+    </nav>
     <header>
-      <span class="tag">Kelly L. Bentz, M.A., LPC, CSAT, CST</span>
-      <h1>Modern, compassionate therapy for healing and connection</h1>
-      <p class="lead">
-        Kelly is dedicated to helping you build a healthy, productive, and happier
-        life—whether you want support with unwanted sexual behaviors, betrayal or
-        infidelity trauma, or simply to deepen intimacy and connection in your
-        relationship.
-      </p>
+      <div class="header-content">
+        <div class="photo-container">
+          <img src="kelly.png" alt="Kelly L. Bentz" class="photo" />
+        </div>
+        <div>
+          <h1 class="name">Kelly L. Bentz</h1>
+          <p class="qualifications">M.A., LPC, CSAT, CST</p>
+          <h2 style="margin-top: 24px; margin-bottom: 0">
+            Compassionate therapy for healing and connection
+          </h2>
+          <p class="lead">
+            Kelly helps individuals and couples create healthier, more connected
+            lives. She provides compassionate support for healing from unwanted
+            sexual behaviors, betrayal or infidelity, and for deepening intimacy
+            and trust in relationships.
+          </p>
+        </div>
+      </div>
     </header>
 
     <main>
-      <section>
-        <div class="two-col">
+      <div class="sections-row">
+        <section>
           <div class="grid">
             <h2>Credentials & Licensure</h2>
             <ul>
@@ -254,6 +392,8 @@
               <li>Extensive experience supporting neurodivergent clients</li>
             </ul>
           </div>
+        </section>
+        <section>
           <div class="grid">
             <h2>Areas of Expertise</h2>
             <ul class="pill-list">
@@ -266,56 +406,66 @@
               <li class="pill">Partner trauma support</li>
             </ul>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <section class="grid">
+      <section id="about" class="grid">
         <h2>About Kelly</h2>
         <p class="lead" style="max-width: 900px">
           Kelly works with the full spectrum of sexuality—from recovery from
           compulsive or compulsively avoidant sexual behaviors to healing from
-          infidelity, rebuilding trust, and revitalizing intimacy. She has helped
-          countless individuals progress through recovery and supported couples in
-          overcoming betrayal while restoring closeness in their relationships.
+          infidelity, rebuilding trust, and revitalizing intimacy. She has
+          helped countless individuals progress through recovery and supported
+          couples in overcoming betrayal while restoring closeness in their
+          relationships.
         </p>
         <p class="lead" style="max-width: 900px">
           A graduate of Western Seminary, Kelly has also served as an adjunct
-          professor teaching Case Conference courses to Master's level students and
-          has held adjunct positions at Multnomah University and Concordia
+          professor teaching Case Conference courses to Master's level students
+          and has held adjunct positions at Multnomah University and Concordia
           University. She is dedicated to continuous growth in her knowledge and
           clinical skills so you receive thoughtful, current care.
         </p>
         <p class="lead" style="max-width: 900px">
           Kelly’s priority is to help you discover the freedom and joy that life
-          has to offer. Online therapy services are available when distance or time
-          make in-person sessions challenging.
+          has to offer. Online therapy services are available when distance or
+          time make in-person sessions challenging.
         </p>
       </section>
 
-      <section>
-        <div class="two-col">
+      <div class="sections-row">
+        <section>
           <div class="grid">
             <h2>Therapy process</h2>
             <ul>
-              <li><strong>Consultation:</strong> A phone call to confirm we're a good fit.</li>
-              <li><strong>Intake & first session:</strong> We review your goals and history together.</li>
               <li>
-                <strong>Ongoing therapy:</strong> Sessions continue for as long as you find value—some
-                clients stay for a focused 3 months, others for many years.
+                <strong>Consultation:</strong> A phone call to confirm we're a
+                good fit.
+              </li>
+              <li>
+                <strong>Intake & first session:</strong> We review your goals
+                and history together.
+              </li>
+              <li>
+                <strong>Ongoing therapy:</strong> Sessions continue for as long
+                as you find value—some clients stay for a focused 3 months,
+                others for many years.
               </li>
             </ul>
           </div>
+        </section>
+        <section>
           <div class="grid">
             <h2>How we work together</h2>
             <p class="lead" style="margin: 0">
-              Sessions are tailored to your pace and needs, with a focus on safety,
-              clarity, and collaborative goals. Kelly blends specialized training in
-              sex therapy, addiction recovery, and betrayal trauma to support both
-              individuals and couples.
+              Sessions are tailored to your pace and needs, with a focus on
+              safety, clarity, and collaborative goals. Kelly blends specialized
+              training in sex therapy, addiction recovery, and betrayal trauma
+              to support both individuals and couples.
             </p>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <section class="contact-section">
         <h2>Connect with Kelly</h2>
@@ -327,7 +477,10 @@
           </div>
           <div class="contact-card">
             <strong>Website</strong>
-            <a href="https://bentzcounseling.com" target="_blank" rel="noreferrer"
+            <a
+              href="https://bentzcounseling.com"
+              target="_blank"
+              rel="noreferrer"
               >bentzcounseling.com</a
             >
           </div>
@@ -340,27 +493,33 @@
             <a href="mailto:kelly_bentz@yahoo.com">kelly_bentz@yahoo.com</a>
           </div>
         </div>
-        <div class="grid" style="margin-top: 18px">
-          <h2>Send a message</h2>
-          <form>
-            <label>
-              Name
-              <input type="text" name="name" placeholder="Your name" required />
-            </label>
-            <label>
-              Email
-              <input type="email" name="email" placeholder="you@example.com" required />
-            </label>
-            <label>
-              How can Kelly help?
-              <textarea name="info" placeholder="Share a bit about what you'd like to work on"></textarea>
-            </label>
-            <button type="submit">Submit</button>
-          </form>
-          <p class="note">
-            Submitting this form will open your email client with your message to Kelly.
-          </p>
-        </div>
+      </section>
+
+      <section id="contact">
+        <h2>Send a message</h2>
+        <form>
+          <label>
+            Name
+            <input type="text" name="name" placeholder="Your name" required />
+          </label>
+          <label>
+            Email
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              required
+            />
+          </label>
+          <label>
+            How can Kelly help?
+            <textarea
+              name="info"
+              placeholder="Share a bit about what you'd like to work on"
+            ></textarea>
+          </label>
+          <button type="submit">Submit</button>
+        </form>
       </section>
     </main>
 
@@ -371,7 +530,8 @@
         event.preventDefault();
         const data = new FormData(form);
 
-        const name = (data.get("name") || "").toString().trim() || "website visitor";
+        const name =
+          (data.get("name") || "").toString().trim() || "website visitor";
         const email = (data.get("email") || "").toString().trim();
         const info = (data.get("info") || "").toString().trim();
 
