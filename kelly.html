@@ -42,6 +42,12 @@
         padding: 0 16px 48px;
       }
 
+      @media (max-width: 640px) {
+        body {
+          padding: 0 12px 32px;
+        }
+      }
+
       nav {
         max-width: 1080px;
         margin: 0 auto;
@@ -99,12 +105,26 @@
 
       @media (max-width: 640px) {
         nav {
-          flex-wrap: wrap;
+          padding: 16px 12px;
+          gap: 12px;
+        }
+
+        .nav-brand {
+          font-size: 1.1rem;
         }
 
         .nav-links {
-          width: 100%;
-          justify-content: flex-end;
+          gap: 6px;
+        }
+
+        .nav-link {
+          padding: 6px 10px;
+          font-size: 0.85rem;
+        }
+
+        .nav-link-primary {
+          padding: 8px 14px;
+          font-size: 0.85rem;
         }
       }
 
@@ -115,6 +135,12 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
+      }
+
+      @media (max-width: 640px) {
+        header {
+          padding: 32px 0 16px;
+        }
       }
 
       .header-content {
@@ -128,6 +154,7 @@
         .header-content {
           grid-template-columns: 1fr;
           gap: 24px;
+          text-align: center;
         }
       }
 
@@ -152,6 +179,12 @@
         }
       }
 
+      @media (max-width: 640px) {
+        .photo {
+          width: 140px;
+        }
+      }
+
       .name {
         margin: 0;
         font-size: clamp(2.5rem, 3vw + 2rem, 3.5rem);
@@ -160,12 +193,24 @@
         line-height: 1.1;
       }
 
+      @media (max-width: 640px) {
+        .name {
+          font-size: clamp(2rem, 5vw + 1rem, 2.5rem);
+        }
+      }
+
       .qualifications {
         margin: 8px 0 0;
         color: var(--muted);
         font-size: 1.1rem;
         font-weight: 500;
         letter-spacing: 0.01em;
+      }
+
+      @media (max-width: 640px) {
+        .qualifications {
+          font-size: 0.95rem;
+        }
       }
 
       h1 {
@@ -179,6 +224,12 @@
         color: var(--muted);
         margin: 0;
         font-size: 1.05rem;
+      }
+
+      @media (max-width: 640px) {
+        .lead {
+          font-size: 1rem;
+        }
       }
 
       main {
@@ -208,6 +259,13 @@
         box-shadow: 0 10px 30px rgba(25, 31, 45, 0.06);
       }
 
+      @media (max-width: 640px) {
+        section {
+          padding: 20px;
+          border-radius: 16px;
+        }
+      }
+
       .grid {
         display: grid;
         gap: 16px;
@@ -223,6 +281,13 @@
         margin: 0 0 12px;
         font-size: 1.3rem;
         letter-spacing: -0.01em;
+      }
+
+      @media (max-width: 640px) {
+        h2 {
+          font-size: 1.15rem;
+          margin-bottom: 10px;
+        }
       }
 
       ul {
@@ -249,6 +314,13 @@
         font-weight: 600;
       }
 
+      @media (max-width: 640px) {
+        .pill {
+          padding: 8px 12px;
+          font-size: 0.9rem;
+        }
+      }
+
       .contact-grid {
         display: grid;
         grid-template-columns: 1.1fr 1fr;
@@ -268,6 +340,12 @@
         padding: 16px 18px;
         display: grid;
         gap: 8px;
+      }
+
+      @media (max-width: 640px) {
+        .contact-card {
+          padding: 14px 16px;
+        }
       }
 
       .contact-card strong {
@@ -305,6 +383,17 @@
         background: #fbfafc;
         color: var(--text);
         transition: border 0.2s ease, box-shadow 0.2s ease;
+        width: 100%;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      @media (max-width: 640px) {
+        input,
+        textarea {
+          padding: 14px 16px;
+          font-size: 16px; /* Prevents zoom on iOS */
+        }
       }
 
       input:focus,
@@ -330,6 +419,15 @@
         cursor: pointer;
         transition: transform 0.15s ease, box-shadow 0.2s ease;
         box-shadow: var(--shadow);
+        width: 100%;
+        min-height: 48px; /* Better touch target */
+      }
+
+      @media (max-width: 640px) {
+        button {
+          padding: 14px 20px;
+          font-size: 1rem;
+        }
       }
 
       button:hover {
@@ -364,7 +462,13 @@
         <div>
           <h1 class="name">Kelly L. Bentz</h1>
           <p class="qualifications">M.A., LPC, CSAT, CST</p>
-          <h2 style="margin-top: 24px; margin-bottom: 0">
+          <h2
+            style="
+              margin-top: 24px;
+              margin-bottom: 0;
+              font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
+            "
+          >
             Compassionate therapy for healing and connection
           </h2>
           <p class="lead">
@@ -497,7 +601,8 @@
 
       <section id="contact">
         <h2>Send a message</h2>
-        <form>
+        <form action="https://formspree.io/f/xldqzdln" method="POST">
+          <input type="hidden" name="_next" value="thank-you.html" />
           <label>
             Name
             <input type="text" name="name" placeholder="Your name" required />
@@ -514,7 +619,7 @@
           <label>
             How can Kelly help?
             <textarea
-              name="info"
+              name="message"
               placeholder="Share a bit about what you'd like to work on"
             ></textarea>
           </label>
@@ -522,26 +627,5 @@
         </form>
       </section>
     </main>
-
-    <script>
-      // Convert the form submission into a mailto link for a simple static flow
-      const form = document.querySelector("form");
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const data = new FormData(form);
-
-        const name =
-          (data.get("name") || "").toString().trim() || "website visitor";
-        const email = (data.get("email") || "").toString().trim();
-        const info = (data.get("info") || "").toString().trim();
-
-        const subject = encodeURIComponent(`New inquiry from ${name}`);
-        const body = encodeURIComponent(
-          `Name: ${name}\nEmail: ${email}\n\nMessage:\n${info}`
-        );
-
-        window.location.href = `mailto:kelly_bentz@yahoo.com?subject=${subject}&body=${body}`;
-      });
-    </script>
   </body>
 </html>

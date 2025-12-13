@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thank You | Kelly L. Bentz, LPC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f5f2;
+        --card: #ffffff;
+        --text: #1f242d;
+        --muted: #4f5665;
+        --accent: #8c6ff0;
+        --accent-soft: rgba(140, 111, 240, 0.08);
+        --border: rgba(31, 36, 45, 0.08);
+        --shadow: 0 18px 40px rgba(25, 31, 45, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        background: radial-gradient(
+            circle at 18% 20%,
+            #efe9ff 0%,
+            transparent 28%
+          ),
+          radial-gradient(circle at 82% 12%, #fde6d8 0%, transparent 30%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        padding: 0 16px 48px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      nav {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 20px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .nav-brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        text-decoration: none;
+        letter-spacing: -0.01em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .nav-link {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        color: var(--muted);
+        transition: color 0.2s ease, background 0.2s ease;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .nav-link:hover {
+        color: var(--text);
+        background: var(--accent-soft);
+      }
+
+      .nav-link-primary {
+        background: linear-gradient(120deg, #8c6ff0, #6b8cf7);
+        color: white;
+        padding: 10px 20px;
+        box-shadow: 0 4px 12px rgba(140, 111, 240, 0.3);
+      }
+
+      .nav-link-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(140, 111, 240, 0.4);
+        background: linear-gradient(120deg, #7a5ee0, #5b7ce7);
+      }
+
+      @media (max-width: 640px) {
+        nav {
+          flex-wrap: wrap;
+        }
+
+        .nav-links {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 0;
+      }
+
+      .thank-you-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 48px 32px;
+        box-shadow: 0 10px 30px rgba(25, 31, 45, 0.06);
+        text-align: center;
+        max-width: 600px;
+      }
+
+      .checkmark {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 24px;
+        background: linear-gradient(120deg, #8c6ff0, #6b8cf7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 24px rgba(140, 111, 240, 0.3);
+      }
+
+      .checkmark svg {
+        width: 48px;
+        height: 48px;
+        stroke: white;
+        stroke-width: 3;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: clamp(2rem, 2vw + 1.5rem, 2.5rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+
+      .thank-you-message {
+        color: var(--muted);
+        font-size: 1.1rem;
+        margin: 0 0 32px;
+        line-height: 1.6;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(120deg, #8c6ff0, #6b8cf7);
+        color: white;
+        box-shadow: 0 4px 12px rgba(140, 111, 240, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(140, 111, 240, 0.4);
+      }
+
+      .btn-secondary {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--accent-soft);
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="kelly.html" class="nav-brand">Kelly L. Bentz</a>
+      <div class="nav-links">
+        <a href="kelly.html#about" class="nav-link">About</a>
+        <a href="books.html" class="nav-link">Books</a>
+        <a href="kelly.html#contact" class="nav-link nav-link-primary">Contact</a>
+      </div>
+    </nav>
+
+    <main>
+      <div class="thank-you-card">
+        <div class="checkmark">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+        </div>
+        <h1>Thank You!</h1>
+        <p class="thank-you-message">
+          Your message has been sent successfully. Kelly will get back to you as
+          soon as possible, typically within 24-48 hours.
+        </p>
+        <div class="button-group">
+          <a href="kelly.html" class="btn btn-primary">Return Home</a>
+          <a href="books.html" class="btn btn-secondary">Browse Books</a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
+
