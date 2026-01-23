@@ -840,42 +840,7 @@
         color: #3b4251;
       }
 
-      .destination-pill {
-        align-self: flex-start;
-        padding: 0.6rem 1.1rem;
-        background: var(--accent-soft);
-        color: var(--accent);
-        border-radius: 999px;
-        font-weight: 700;
-        box-shadow: 0 10px 24px rgba(90, 63, 212, 0.2);
-      }
 
-      .destination-gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 0.8rem;
-      }
-
-      .destination-photo {
-        position: relative;
-        border-radius: 18px;
-        overflow: hidden;
-        min-height: 140px;
-        background: rgba(0, 0, 0, 0.05);
-        box-shadow: 0 14px 32px rgba(27, 37, 68, 0.18);
-      }
-
-      .destination-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        transition: transform 0.25s ease;
-      }
-
-      .destination-photo:hover img {
-        transform: scale(1.03);
-      }
 
       .gallery-placeholder {
         padding: 1rem 1.25rem;
@@ -885,6 +850,186 @@
         color: rgba(27, 37, 68, 0.7);
         text-align: center;
         font-weight: 600;
+      }
+
+      .journey-gallery {
+        width: 100%;
+        max-width: 1200px;
+        padding: 1.5rem 1.5rem 2rem;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.94),
+          rgba(255, 255, 255, 0.86)
+        );
+        border: 1px solid rgba(41, 53, 86, 0.06);
+        border-radius: 22px;
+        box-shadow: 0 18px 48px rgba(27, 37, 68, 0.16);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .journey-gallery-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 10;
+      }
+
+      .journey-gallery-icon {
+        font-size: 2rem;
+        line-height: 1;
+        filter: drop-shadow(0 2px 4px rgba(90, 63, 212, 0.2));
+        position: relative;
+        z-index: 11;
+      }
+
+      .journey-gallery-title-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .journey-gallery-title {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.01em;
+      }
+
+      .journey-gallery-subtitle {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #4f5363;
+        font-weight: 500;
+      }
+
+      .carousel-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem 0;
+      }
+
+      .carousel-track {
+        display: flex;
+        gap: 1rem;
+        animation: scroll 40s linear infinite;
+        will-change: transform;
+      }
+
+      .carousel-track:hover {
+        animation-play-state: paused;
+      }
+
+      .carousel-slide {
+        flex: 0 0 auto;
+        width: 280px;
+        height: 280px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 12px 32px rgba(27, 37, 68, 0.18);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .carousel-slide:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 16px 40px rgba(90, 63, 212, 0.25);
+        z-index: 10;
+      }
+
+      .carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+      }
+
+      .carousel-slide:hover img {
+        transform: scale(1.05);
+      }
+
+      .carousel-gradient-overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 120px;
+        pointer-events: none;
+        z-index: 5;
+      }
+
+      .carousel-gradient-overlay.left {
+        left: 0;
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0.95) 0%,
+          rgba(255, 255, 255, 0.8) 40%,
+          transparent 100%
+        );
+      }
+
+      .carousel-gradient-overlay.right {
+        right: 0;
+        background: linear-gradient(
+          to left,
+          rgba(255, 255, 255, 0.95) 0%,
+          rgba(255, 255, 255, 0.8) 40%,
+          transparent 100%
+        );
+      }
+
+      @keyframes scroll {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(calc(-280px * 9 - 1rem * 9));
+        }
+      }
+
+      @media (max-width: 600px) {
+        .journey-gallery {
+          padding: 1.25rem 1rem 1.5rem;
+        }
+
+        .journey-gallery-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        .journey-gallery-icon {
+          font-size: 1.75rem;
+        }
+
+        .journey-gallery-title {
+          font-size: 1.2rem;
+        }
+
+        .journey-gallery-subtitle {
+          font-size: 0.9rem;
+        }
+
+        .carousel-slide {
+          width: 240px;
+          height: 240px;
+        }
+
+        .carousel-gradient-overlay {
+          width: 80px;
+        }
+
+        @keyframes scroll {
+          100% {
+            transform: translateX(calc(-240px * 9 - 1rem * 9));
+          }
+        }
       }
 
       .language-toggle {
@@ -937,9 +1082,6 @@
           flex-direction: column;
         }
 
-        .destination-pill {
-          justify-self: flex-start;
-        }
 
         .language-toggle {
           top: 0.5rem;
@@ -956,7 +1098,7 @@
       class="language-toggle"
       aria-label="Switch language"
     >
-      Dansk
+      Danish 🇩🇰
     </button>
     <div id="christmas-banner" class="christmas-banner" hidden>
       Merry Christmas!
@@ -1031,18 +1173,10 @@
             <p class="destination-eyebrow" id="destination-eyebrow">
               Current destination
             </p>
-            <h2 id="destination-name">Loading destination...</h2>
+            <h2 id="destination-name"></h2>
             <p class="destination-why" id="destination-why">
               Pulling itinerary highlights...
             </p>
-          </div>
-          <div class="destination-pill" id="destination-pill">
-            Why it's cool
-          </div>
-        </div>
-        <div class="destination-gallery" id="destination-gallery">
-          <div class="gallery-placeholder" id="destination-gallery-loading">
-            Loading city photos...
           </div>
         </div>
       </section>
@@ -1095,7 +1229,7 @@
                   Recent stops
                 </h3>
                 <p id="timeline-past-subtitle" class="timeline-group-subtitle">
-                  Latest 5 places visited
+                  Latest 3 places visited
                 </p>
               </div>
               <button
@@ -1118,7 +1252,7 @@
                   id="timeline-upcoming-subtitle"
                   class="timeline-group-subtitle"
                 >
-                  Next 5 destinations
+                  Next 3 destinations
                 </p>
               </div>
               <button
@@ -1132,6 +1266,59 @@
             <ol id="timeline-upcoming-list" class="timeline-list"></ol>
           </div>
         </div>
+      </section>
+
+      <section class="journey-gallery" aria-live="polite">
+        <div class="journey-gallery-header">
+          <span class="journey-gallery-icon" aria-hidden="true">📸</span>
+          <div class="journey-gallery-title-group">
+            <h2 class="journey-gallery-title" id="journey-gallery-title">Memories from the Journey</h2>
+            <p class="journey-gallery-subtitle" id="journey-gallery-subtitle">Captured moments from Kels' adventure at sea</p>
+          </div>
+        </div>
+        <div class="carousel-container">
+          <div class="carousel-track" id="carousel-track">
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5239.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5243.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5244.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5245.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5246.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5248.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_6210.jpg" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_6348.jpg" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_9709.jpg" alt="Journey memory" loading="lazy" />
+            </div>
+            <!-- Duplicate slides for seamless loop -->
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5239.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5243.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+            <div class="carousel-slide">
+              <img src="kelspics/IMG_5244.PNG" alt="Journey memory" loading="lazy" />
+            </div>
+          </div>
+        </div>
+        <div class="carousel-gradient-overlay left"></div>
+        <div class="carousel-gradient-overlay right"></div>
       </section>
     </main>
 
@@ -1165,6 +1352,7 @@
           destinationHeadingCurrent: "Current destination",
           destinationHeadingNext: "Next destination",
           destinationWhyLabel: "Why it's cool",
+          destinationNameLoading: "Loading destination...",
           destinationLoading: "Pulling itinerary highlights...",
           destinationGalleryLoading: "City photos are taking a break for now.",
           destinationFallback: "Somewhere along the route",
@@ -1212,15 +1400,18 @@
           timelineSeeMore: "See more",
           timelineSeeLess: "See less",
           timelinePastTitle: "Recent stops",
-          timelinePastSubtitle: "Latest 5 places visited",
+          timelinePastSubtitle: "Latest 3 places visited",
           timelineUpcomingTitle: "Upcoming stops",
-          timelineUpcomingSubtitle: "Next 5 destinations",
+          timelineUpcomingSubtitle: "Next 3 destinations",
           timelineReplay: "Recenter the map on this stop",
           timeTitle: "Ship's local time",
           timeLoading: "Loading ship's local time...",
           timeSubtitle: (timezone) => `Based on ship position (${timezone})`,
           timeSubtitleOffset: (offset) =>
             `Based on ship position (UTC${offset || "?"})`,
+          journeyGalleryTitle: "Memories from the Journey",
+          journeyGallerySubtitle: "Captured moments from Kels' adventure at sea",
+          journeyMemoryAlt: "Journey memory",
         },
         da: {
           pageTitle: "Hvor i verden er Kels?",
@@ -1243,6 +1434,7 @@
           destinationHeadingCurrent: "Aktuel destination",
           destinationHeadingNext: "Næste destination",
           destinationWhyLabel: "Derfor er det fedt",
+          destinationNameLoading: "Indlæser destination...",
           destinationLoading: "Finder rejsens højdepunkt...",
           destinationGalleryLoading: "Bybilleder er sat på pause lige nu.",
           destinationFallback: "Et sted på ruten",
@@ -1289,9 +1481,9 @@
           timelineSeeMore: "Se mere",
           timelineSeeLess: "Se mindre",
           timelinePastTitle: "Seneste stop",
-          timelinePastSubtitle: "De seneste 5 steder besøgt",
+          timelinePastSubtitle: "De seneste 3 steder besøgt",
           timelineUpcomingTitle: "Kommende stop",
-          timelineUpcomingSubtitle: "De næste 5 destinationer",
+          timelineUpcomingSubtitle: "De næste 3 destinationer",
           timelineReplay: "Centrér kortet på dette stop",
           timeTitle: "Skibets lokale tid",
           timeLoading: "Indlæser skibets lokale tid...",
@@ -1299,6 +1491,9 @@
             `Baseret på skibets position (${timezone})`,
           timeSubtitleOffset: (offset) =>
             `Baseret på skibets position (UTC${offset || "?"})`,
+          journeyGalleryTitle: "Minder fra rejsen",
+          journeyGallerySubtitle: "Indfangede øjeblikke fra Kels' eventyr til søs",
+          journeyMemoryAlt: "Rejse minde",
         },
       };
 
@@ -1312,7 +1507,7 @@
         const tPrev = translations[previousLang];
 
         // Update button text
-        languageToggle.textContent = lang === "en" ? "Dansk" : "English";
+        languageToggle.textContent = lang === "en" ? "Danish 🇩🇰" : "English";
 
         // Update page title
         const titleEl = document.querySelector("header h1");
@@ -1355,12 +1550,6 @@
             isAtSea,
             t
           );
-        }
-        if (destinationPillEl) {
-          destinationPillEl.textContent = t.destinationWhyLabel;
-        }
-        if (destinationGalleryLoadingEl) {
-          destinationGalleryLoadingEl.textContent = t.destinationGalleryLoading;
         }
 
         // Update status badge
@@ -1697,8 +1886,35 @@
             lastSpotlightData?.isAtSea ?? shipStatusEl?.dataset.state === "sea",
         };
 
+        // Update destination name if it's showing loading text
+        const destinationNameEl = document.getElementById("destination-name");
+        if (destinationNameEl) {
+          const currentText = destinationNameEl.textContent;
+          if (!currentText || currentText === "" || 
+              currentText === "Loading destination..." || 
+              currentText === "Indlæser destination...") {
+            destinationNameEl.textContent = t.destinationNameLoading;
+          }
+        }
+
         renderDestinationSpotlight(translatedSpotlightData);
         renderTimeline();
+
+        // Update journey gallery
+        const journeyGalleryTitleEl = document.getElementById("journey-gallery-title");
+        const journeyGallerySubtitleEl = document.getElementById("journey-gallery-subtitle");
+        if (journeyGalleryTitleEl) {
+          journeyGalleryTitleEl.textContent = t.journeyGalleryTitle;
+        }
+        if (journeyGallerySubtitleEl) {
+          journeyGallerySubtitleEl.textContent = t.journeyGallerySubtitle;
+        }
+
+        // Update journey gallery image alt texts
+        const journeyImages = document.querySelectorAll(".journey-gallery img");
+        journeyImages.forEach((img) => {
+          img.alt = t.journeyMemoryAlt;
+        });
 
         // Update weather display if data exists
         updateWeatherDisplay();
@@ -2292,13 +2508,11 @@
       const destinationEyebrowEl = document.getElementById(
         "destination-eyebrow"
       );
-      const destinationPillEl = document.getElementById("destination-pill");
-      const destinationGalleryEl = document.getElementById(
-        "destination-gallery"
-      );
-      const destinationGalleryLoadingEl = document.getElementById(
-        "destination-gallery-loading"
-      );
+      
+      // Initialize destination name with loading text
+      if (destinationNameEl && !destinationNameEl.textContent.trim()) {
+        destinationNameEl.textContent = translations[currentLanguage].destinationNameLoading;
+      }
 
       let lastSpotlightData = null;
 
@@ -2424,15 +2638,12 @@
             t
           );
         }
-        if (destinationPillEl) {
-          destinationPillEl.textContent = t.destinationWhyLabel;
-        }
 
         const resolvedName =
           data.name ||
           data.entry?.label ||
           data.entry?.rawLabel ||
-          t.destinationFallback;
+          (Object.keys(data).length === 0 ? t.destinationNameLoading : t.destinationFallback);
         if (destinationNameEl) {
           destinationNameEl.textContent = resolvedName;
         }
@@ -2447,30 +2658,6 @@
           destinationWhyEl.textContent = descriptor;
         }
 
-        if (destinationGalleryEl) {
-          destinationGalleryEl.innerHTML = "";
-          const images = getImagesForDestination(resolvedName);
-          if (!images || images.length === 0) {
-            const placeholder = document.createElement("div");
-            placeholder.className = "gallery-placeholder";
-            placeholder.textContent = t.destinationGalleryLoading;
-            destinationGalleryEl.appendChild(placeholder);
-          } else {
-            images.slice(0, 3).forEach((url, index) => {
-              const tile = document.createElement("div");
-              tile.className = "destination-photo";
-              const img = document.createElement("img");
-              img.src = url;
-              img.alt = `${resolvedName} photo ${index + 1}`;
-              tile.appendChild(img);
-              destinationGalleryEl.appendChild(tile);
-            });
-          }
-        }
-
-        if (destinationGalleryLoadingEl) {
-          destinationGalleryLoadingEl.textContent = t.destinationGalleryLoading;
-        }
       }
 
       function interpolateLng(start, end, t) {
@@ -2812,24 +2999,24 @@
         const orderedPast = [...pastEntries].reverse();
 
         renderTimelineList(orderedPast, timelinePastListEl, {
-          limit: 5,
+          limit: 3,
           expanded: timelinePastExpanded,
         });
 
         renderTimelineList(upcomingEntries, timelineUpcomingListEl, {
-          limit: 5,
+          limit: 3,
           expanded: timelineUpcomingExpanded,
         });
 
         updateTimelineToggle(
           timelinePastToggleEl,
           timelinePastExpanded,
-          orderedPast.length > 5
+          orderedPast.length > 3
         );
         updateTimelineToggle(
           timelineUpcomingToggleEl,
           timelineUpcomingExpanded,
-          upcomingEntries.length > 5
+          upcomingEntries.length > 3
         );
       }
 
