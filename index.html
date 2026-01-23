@@ -7,107 +7,293 @@
     <link rel="icon" type="image/jpeg" href="dana.jpg" />
     <style>
       :root {
-        --background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6e 50%, #3a5a7e 100%);
-        --text: #f5f5f7;
-        --muted: #b8c5d1;
-        --accent: #64b5f6;
-        --card-bg: rgba(255, 255, 255, 0.1);
-        --card-border: rgba(255, 255, 255, 0.2);
+        --pink-primary: #ff6b9d;
+        --pink-secondary: #ff8fab;
+        --pink-light: #ffb3d1;
+        --purple-primary: #a855f7;
+        --purple-secondary: #c084fc;
+        --purple-light: #e9d5ff;
+        --blue-primary: #3b82f6;
+        --blue-secondary: #60a5fa;
+        --blue-light: #93c5fd;
+        --text: #ffffff;
+        --text-muted: rgba(255, 255, 255, 0.7);
+        --text-subtle: rgba(255, 255, 255, 0.5);
       }
+      
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
+      
       body {
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-        background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6e 50%, #3a5a7e 100%);
+        background: linear-gradient(135deg, 
+          #0f0c29 0%, 
+          #1a0d3e 25%, 
+          #2d1b4e 50%, 
+          #3d2a5e 75%, 
+          #4a3a6e 100%);
         background-attachment: fixed;
         min-height: 100vh;
         color: var(--text);
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
+        overflow-x: hidden;
       }
+      
+      /* Animated gradient overlay */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+          radial-gradient(circle at 20% 50%, rgba(255, 107, 157, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+          radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+        animation: gradientShift 15s ease infinite;
+      }
+      
+      @keyframes gradientShift {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+      }
+      
       header {
-        padding: 60px 20px 40px;
+        padding: 80px 20px 60px;
         text-align: center;
+        position: relative;
+        z-index: 1;
       }
+      
       header a {
         display: inline-block;
         text-decoration: none;
-        transition: transform 0.3s, opacity 0.3s;
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
       }
+      
       header a:hover {
-        transform: scale(1.05);
-        opacity: 0.9;
+        transform: scale(1.08) rotate(2deg);
       }
+      
+      .avatar-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 30px;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary), var(--blue-primary));
+      }
+      
       .avatar {
-        width: 120px;
-        height: 120px;
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid rgba(255, 255, 255, 0.3);
-        margin-bottom: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         display: block;
+        border: 3px solid rgba(15, 12, 41, 0.8);
+        box-shadow: 
+          0 0 40px rgba(255, 107, 157, 0.4),
+          0 0 80px rgba(168, 85, 247, 0.3),
+          0 20px 60px rgba(0, 0, 0, 0.4);
+        transition: box-shadow 0.4s ease;
       }
+      
+      header a:hover .avatar {
+        box-shadow: 
+          0 0 60px rgba(255, 107, 157, 0.6),
+          0 0 100px rgba(168, 85, 247, 0.5),
+          0 25px 80px rgba(0, 0, 0, 0.5);
+      }
+      
       h1 {
-        font-size: 3rem;
-        font-weight: 600;
-        margin: 0 0 10px;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin: 0 0 15px;
+        background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary), var(--blue-primary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.02em;
       }
+      
       p.subtitle {
         margin: 0;
-        color: var(--muted);
-        font-size: 1.25rem;
+        color: var(--text-muted);
+        font-size: 1.3rem;
+        font-weight: 300;
+        letter-spacing: 0.05em;
+        text-transform: lowercase;
       }
+      
       section {
         width: 100%;
         max-width: 1200px;
-        padding: 40px 20px;
+        padding: 60px 20px;
+        position: relative;
+        z-index: 1;
       }
+      
       h2 {
-        font-size: 2rem;
-        font-weight: 500;
+        font-size: 2.5rem;
+        font-weight: 600;
         text-align: center;
-        margin: 0 0 40px;
+        margin: 0 0 50px;
+        background: linear-gradient(135deg, var(--pink-light), var(--purple-light), var(--blue-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.01em;
+        text-transform: lowercase;
       }
+      
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 40px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
       }
+      
       .card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 20px;
-        padding: 30px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 35px 25px;
         text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        overflow: hidden;
       }
-      .clickable:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        background: rgba(255, 255, 255, 0.15);
+      
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, 
+          rgba(255, 107, 157, 0.1), 
+          rgba(168, 85, 247, 0.1), 
+          rgba(59, 130, 246, 0.1));
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+      
+      .card:hover::before {
+        opacity: 1;
+      }
+      
+      .card h3 {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+        color: var(--text);
+      }
+      
+      .card p {
+        font-size: 1rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .clickable {
         cursor: pointer;
       }
+      
+      .clickable:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 
+          0 25px 50px rgba(0, 0, 0, 0.4),
+          0 0 30px rgba(255, 107, 157, 0.3),
+          0 0 60px rgba(168, 85, 247, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.08);
+      }
+      
       a {
-        color: var(--accent);
+        color: var(--blue-secondary);
         text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
       }
-      a:hover {
-        text-decoration: underline;
+      
+      .card a {
+        background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary), var(--blue-primary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 600;
       }
+      
+      .card a:hover {
+        background: linear-gradient(135deg, var(--pink-light), var(--purple-light), var(--blue-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
       .contact span {
         display: block;
-        margin-top: 10px;
+        margin-top: 12px;
+        color: var(--text-muted);
+        font-size: 1.05rem;
       }
+      
+      .contact a {
+        color: var(--blue-secondary);
+        transition: color 0.3s ease;
+      }
+      
+      .contact a:hover {
+        color: var(--blue-light);
+      }
+      
       .icon {
         width: 40px;
         height: 40px;
-        fill: var(--accent);
+        fill: var(--blue-secondary);
+      }
+      
+      /* Smooth scroll */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5rem;
+        }
+        
+        h2 {
+          font-size: 2rem;
+        }
+        
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 25px;
+        }
+        
+        .avatar {
+          width: 120px;
+          height: 120px;
+        }
       }
     </style>
   </head>
@@ -118,19 +304,28 @@
         rel="noopener noreferrer"
         href="https://www.linkedin.com/in/danabentz/"
       >
-        <img src="dana.jpg" alt="Dana Bentz" class="avatar" />
+        <div class="avatar-wrapper">
+          <img src="dana.jpg" alt="Dana Bentz" class="avatar" />
+        </div>
       </a>
       <h1>Dana Bentz</h1>
-      <p class="subtitle">what I'm working on</p>
+      <p class="subtitle">nice to see you</p>
     </header>
 
     <section class="projects">
-      <h2>projects</h2>
+      <h2>coding projects</h2>
       <div class="grid">
-        <!-- <div class="card">
-        <h3><a target="_blank" rel="noopener noreferrer" href="https://getvestie.com">Vestie</a></h3>
-        <p>Investing app built for women</p>
-      </div> -->
+        <div class="card">
+          <h3>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://vestie.com"
+              >Vestie</a
+            >
+          </h3>
+          <p>Investing tool for women</p>
+        </div>
         <div class="card">
           <h3>
             <a
