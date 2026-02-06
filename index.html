@@ -451,6 +451,230 @@
           });
         }
       });
+
+      // Easter egg: Konami code (↑↑↓↓←→←→BA) 🎉
+      const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+      let konamiIndex = 0;
+      
+      function createSparkle(x, y) {
+        const sparkle = document.createElement('div');
+        sparkle.style.position = 'fixed';
+        sparkle.style.left = x + 'px';
+        sparkle.style.top = y + 'px';
+        sparkle.style.width = '8px';
+        sparkle.style.height = '8px';
+        sparkle.style.borderRadius = '50%';
+        sparkle.style.pointerEvents = 'none';
+        sparkle.style.zIndex = '9999';
+        
+        const colors = ['#ff6b9d', '#a855f7', '#3b82f6', '#ff8fab', '#c084fc', '#60a5fa'];
+        sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        sparkle.style.boxShadow = `0 0 10px ${sparkle.style.backgroundColor}`;
+        
+        document.body.appendChild(sparkle);
+        
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 50 + Math.random() * 50;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        let opacity = 1;
+        let yPos = y;
+        let xPos = x;
+        
+        function animate() {
+          opacity -= 0.02;
+          yPos += vy * 0.1;
+          xPos += vx * 0.1;
+          
+          sparkle.style.opacity = opacity;
+          sparkle.style.transform = `translate(${xPos - x}px, ${yPos - y}px) scale(${1 - (1 - opacity)})`;
+          
+          if (opacity > 0) {
+            requestAnimationFrame(animate);
+          } else {
+            sparkle.remove();
+          }
+        }
+        
+        animate();
+      }
+      
+      function triggerEasterEgg() {
+        // Create sparkles from multiple points
+        const sparklePoints = [
+          { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+          { x: window.innerWidth / 4, y: window.innerHeight / 4 },
+          { x: window.innerWidth * 3 / 4, y: window.innerHeight / 4 },
+          { x: window.innerWidth / 2, y: window.innerHeight / 3 }
+        ];
+        
+        sparklePoints.forEach((point, i) => {
+          setTimeout(() => {
+            for (let j = 0; j < 25; j++) {
+              setTimeout(() => {
+                createSparkle(point.x, point.y);
+              }, j * 15);
+            }
+          }, i * 100);
+        });
+        
+        // Add a fun message
+        const message = document.createElement('div');
+        message.textContent = '✨ You found the secret! ✨';
+        message.style.position = 'fixed';
+        message.style.top = '50%';
+        message.style.left = '50%';
+        message.style.transform = 'translate(-50%, -50%)';
+        message.style.fontSize = '2rem';
+        message.style.fontWeight = 'bold';
+        message.style.color = '#ff6b9d';
+        message.style.zIndex = '10000';
+        message.style.pointerEvents = 'none';
+        message.style.textShadow = '0 0 20px rgba(255, 107, 157, 0.8)';
+        message.style.animation = 'fadeInOut 2s ease-in-out';
+        document.body.appendChild(message);
+        
+        setTimeout(() => {
+          message.remove();
+        }, 2000);
+      }
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.code === konamiCode[konamiIndex]) {
+          konamiIndex++;
+          if (konamiIndex === konamiCode.length) {
+            triggerEasterEgg();
+            konamiIndex = 0;
+          }
+        } else {
+          konamiIndex = 0;
+        }
+      });
+      
+      // Full-screen confetti animation for "say hi" hover
+      function createConfettiPiece() {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'fixed';
+        confetti.style.pointerEvents = 'none';
+        confetti.style.zIndex = '9999';
+        
+        // Random size for paper-like pieces
+        const width = 8 + Math.random() * 12;
+        const height = 8 + Math.random() * 12;
+        confetti.style.width = width + 'px';
+        confetti.style.height = height + 'px';
+        
+        // Random shape - rectangles or squares
+        const isRect = Math.random() > 0.3;
+        if (isRect) {
+          confetti.style.borderRadius = '2px';
+        } else {
+          confetti.style.borderRadius = '50%';
+        }
+        
+        // Random colors from brand palette
+        const colors = ['#ff6b9d', '#a855f7', '#3b82f6', '#ff8fab', '#c084fc', '#60a5fa', '#ffb3d1', '#e9d5ff', '#93c5fd'];
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.boxShadow = `0 0 4px ${confetti.style.backgroundColor}`;
+        
+        // Start from random position at top of screen
+        const startX = Math.random() * window.innerWidth;
+        const startY = -20;
+        confetti.style.left = startX + 'px';
+        confetti.style.top = startY + 'px';
+        
+        document.body.appendChild(confetti);
+        
+        // Random physics - slower
+        const angle = (Math.random() - 0.5) * Math.PI * 0.6; // -54 to 54 degrees
+        const velocity = 20 + Math.random() * 40;
+        let vx = Math.sin(angle) * velocity;
+        let vy = Math.cos(angle) * velocity * 0.5 + 15;
+        const rotation = Math.random() * 360;
+        const rotationSpeed = (Math.random() - 0.5) * 8;
+        
+        let opacity = 0.9 + Math.random() * 0.1;
+        let yPos = startY;
+        let xPos = startX;
+        let currentRotation = rotation;
+        let frame = 0;
+        
+        function animate() {
+          frame++;
+          opacity -= 0.002;
+          yPos += vy * 0.1;
+          xPos += vx * 0.1;
+          currentRotation += rotationSpeed;
+          vy += 0.4; // gravity - slower
+          vx *= 0.995; // air resistance
+          
+          confetti.style.opacity = opacity;
+          confetti.style.transform = `translate(${xPos - startX}px, ${yPos - startY}px) rotate(${currentRotation}deg)`;
+          
+          if (opacity > 0 && yPos < window.innerHeight + 100) {
+            requestAnimationFrame(animate);
+          } else {
+            confetti.remove();
+          }
+        }
+        
+        animate();
+      }
+      
+      const sayHiHeading = document.querySelector('.contact h2');
+      let confettiInterval;
+      let isHovering = false;
+      
+      sayHiHeading.addEventListener('mousemove', (e) => {
+        const rect = sayHiHeading.getBoundingClientRect();
+        const textWidth = sayHiHeading.scrollWidth;
+        const textLeft = rect.left + (rect.width - textWidth) / 2;
+        const textRight = textLeft + textWidth;
+        
+        // Only trigger if mouse is over the actual text content area
+        if (e.clientX >= textLeft && e.clientX <= textRight) {
+          if (!isHovering) {
+            isHovering = true;
+            
+            // Create initial burst of confetti
+            for (let i = 0; i < 50; i++) {
+              setTimeout(() => createConfettiPiece(), i * 20);
+            }
+            
+            // Continue creating confetti while hovering
+            confettiInterval = setInterval(() => {
+              for (let i = 0; i < 2; i++) {
+                createConfettiPiece();
+              }
+            }, 250);
+          }
+        } else {
+          if (isHovering) {
+            isHovering = false;
+            if (confettiInterval) {
+              clearInterval(confettiInterval);
+            }
+          }
+        }
+      });
+      
+      sayHiHeading.addEventListener('mouseleave', () => {
+        isHovering = false;
+        if (confettiInterval) {
+          clearInterval(confettiInterval);
+        }
+      });
+      
+      // Add animations
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeInOut {
+          0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+          50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+      `;
+      document.head.appendChild(style);
     </script>
   </body>
 </html>
