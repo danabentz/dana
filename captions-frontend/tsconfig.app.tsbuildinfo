@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/captions.ts","./src/config.ts","./src/main.tsx","./src/session.ts","./src/types.d.ts","./src/routes/homepage.tsx","./src/routes/newsessionpage.tsx","./src/routes/overlaypage.tsx"],"version":"5.9.3"}
