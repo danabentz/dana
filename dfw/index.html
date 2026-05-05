@@ -34,38 +34,81 @@
   </section>
 </div>
 <script>
-const state={lane:'pre',rows:[],updatedAt:null,error:null};
+const state={lane:'pre',rows:[],updatedAt:null,error:null,source:'unknown'};
 const tabs=[...document.querySelectorAll('.tab')],grid=document.getElementById('grid'),statusEl=document.getElementById('status');
+const PRECHECK_GATES=new Set(['A21','C21','D30','E16']);
 for(const t of tabs){t.onclick=()=>{state.lane=t.dataset.lane;tabs.forEach(b=>b.classList.toggle('active',b===t));render();};}
-function normalize(rows){return rows.map(r=>({gate:r.gate||r.checkpoint||r.location||'Unknown',wait:r.wait||r.estimate||r.time||'Unknown',lane:(r.lane||r.type||'general').toLowerCase().includes('pre')?'pre':'general'}));}
+function normalizeRows(rows){
+  return rows
+    .map(r=>({
+      gate:String(r.gate||r.checkpoint||r.location||'Unknown').toUpperCase(),
+      wait:String(r.wait||r.estimate||r.time||'Unknown').replace(/\s+/g,' ').trim(),
+      lane:(r.lane||r.type||'general').toLowerCase().includes('pre')?'pre':'general'
+    }))
+    .filter(r=>r.gate!=='UNKNOWN');
+}
+function parseDFWText(text){
+  const rows=[];
+  const seen=new Set();
+  for(const line of text.split('\n')){
+    const m=line.match(/\b([A-E]\d{1,2})\b.{0,40}\b(Closed|\d+\s*(?:-|to)\s*\d+\s*min|\d+\s*min|No wait)\b/i);
+    if(!m) continue;
+    const gate=m[1].toUpperCase();
+    if(seen.has(gate)) continue;
+    seen.add(gate);
+    rows.push({gate,wait:m[2],lane:PRECHECK_GATES.has(gate)?'pre':'general'});
+  }
+  return rows;
+}
+function splitPrecheckFromGeneral(rows){
+  const general=rows.filter(r=>r.lane==='general');
+  const pre=general.filter(r=>PRECHECK_GATES.has(r.gate)).map(r=>({...r,lane:'pre'}));
+  return [...general,...pre];
+}
+async function fetchJson(url){
+  const res=await fetch(url,{headers:{'Accept':'application/json,text/plain'}});
+  if(!res.ok) throw new Error(`${url} -> ${res.status}`);
+  return res.json();
+}
+async function fetchText(url){
+  const res=await fetch(url);
+  if(!res.ok) throw new Error(`${url} -> ${res.status}`);
+  return res.text();
+}
 async function fetchData(){
-  const endpoints=[
-    'https://www.dfwairport.com/api/security-wait-times',
-    'https://www.dfwairport.com/api/security/wait-times',
-    'https://www.tsawaittimes.com/security-wait-times/DFW.json'
+  const jsonSources=[
+    {name:'tsa-wait-times',url:'https://www.tsawaittimes.com/security-wait-times/DFW.json'},
+    {name:'ifly',url:'https://www.ifly.com/airports/dfw-dallas-fort-worth-international-airport/wait-times'}
   ];
-  for(const ep of endpoints){
-    try{const res=await fetch(ep,{headers:{'Accept':'application/json'}});if(!res.ok) continue;const data=await res.json();
-      const rows=normalize(data.checkpoints||data.data||data);
-      if(rows.length) return rows;
+  for(const src of jsonSources){
+    try{
+      const data=await fetchJson(src.url);
+      const rows=normalizeRows(data.checkpoints||data.data||data);
+      if(rows.length) return {rows:splitPrecheckFromGeneral(rows),source:src.name};
     }catch(e){}
   }
-  // scrape fallback via jina mirror
-  const txt=await (await fetch('https://r.jina.ai/http://www.dfwairport.com/security/')).text();
-  const out=[];const lines=txt.split('\n');
-  for(const line of lines){const m=line.match(/([A-E]\d{1,2}).{0,30}(Closed|\d+\s*-\s*\d+\s*min|\d+\s*min)/i);if(m){out.push({gate:m[1],wait:m[2],lane:'general'});} }
-  const preGates=['A21','C21','D30','E16'];
-  preGates.forEach(g=>out.push({gate:g,wait:'See estimate',lane:'pre'}));
-  return out;
+
+  const textSources=[
+    {name:'dfw-jina',url:'https://r.jina.ai/http://www.dfwairport.com/security/'},
+    {name:'dfw-jina-https',url:'https://r.jina.ai/http://https://www.dfwairport.com/security/'}
+  ];
+  for(const src of textSources){
+    try{
+      const text=await fetchText(src.url);
+      const parsed=parseDFWText(text);
+      if(parsed.length) return {rows:splitPrecheckFromGeneral(parsed),source:src.name};
+    }catch(e){}
+  }
+  throw new Error('All wait-time sources failed');
 }
 function render(){
   const rows=state.rows.filter(r=>r.lane===state.lane);
   grid.innerHTML=rows.map(r=>`<article class="card"><div class="gate">Checkpoint ${r.gate}</div><div class="wait">${r.wait}</div><div class="meta">${state.lane==='pre'?'TSA PreCheck':'General'} lane</div></article>`).join('')||'<p class="meta">No data available for this lane right now.</p>';
   const ts=state.updatedAt?new Date(state.updatedAt).toLocaleTimeString():'';
-  statusEl.textContent=state.error?`Live source unavailable, showing best-effort data. Last refresh: ${ts}`:`Updated ${ts} · auto-refresh every 60s`;
+  statusEl.textContent=state.error?`Live sources unavailable (${state.error}). Last refresh: ${ts}`:`Updated ${ts} · source: ${state.source} · auto-refresh every 60s`;
 }
 async function refresh(){
-  try{state.rows=await fetchData();state.error=null;}catch(e){state.error=e.message;}
+  try{const result=await fetchData();state.rows=result.rows;state.source=result.source;state.error=null;}catch(e){state.error=e.message;state.rows=[];}
   state.updatedAt=Date.now();render();
 }
 refresh();setInterval(refresh,60000);
