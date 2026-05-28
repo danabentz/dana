@@ -144,6 +144,10 @@
         position: relative;
         z-index: 1;
       }
+
+      header + section {
+        padding-top: 20px;
+      }
       
       h2 {
         font-size: 2.5rem;
@@ -162,6 +166,12 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 30px;
+      }
+
+      .career-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: 920px;
+        margin: 0 auto;
       }
       
       .card {
@@ -210,6 +220,36 @@
         line-height: 1.6;
         position: relative;
         z-index: 1;
+      }
+
+      .current-tag {
+        display: inline-block;
+        margin-left: 10px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #fff;
+        background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary));
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        vertical-align: middle;
+      }
+
+      .past-tag {
+        display: inline-block;
+        margin-left: 10px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        vertical-align: middle;
       }
       
       .clickable {
@@ -289,6 +329,10 @@
           grid-template-columns: 1fr;
           gap: 25px;
         }
+
+        .career-grid {
+          max-width: 100%;
+        }
         
         .avatar {
           width: 120px;
@@ -312,9 +356,53 @@
       <p class="subtitle">nice to see you</p>
     </header>
 
+    <section class="work">
+      <h2>career</h2>
+      <div class="grid career-grid">
+        <div class="card">
+          <h3>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://airstudio.com/"
+              >AirStudio</a
+            >
+            <span class="current-tag">Current</span>
+          </h3>
+          <p>Head of Operations</p>
+        </div>
+        <div class="card">
+          <h3>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://vestie.com/"
+              >Vestie</a
+            >
+            <span class="current-tag">Current</span>
+          </h3>
+          <p>Founder</p>
+        </div>
+        <div class="card">
+          <h3>
+            StreamYard
+            <span class="past-tag">2020-2024</span>
+          </h3>
+          <p>Head of Customer Success, Product Manager</p>
+        </div>
+        <div class="card">
+          <h3>
+            Licensed Real Estate Agent
+            <span class="past-tag">2016-2020</span>
+          </h3>
+          <p>Keller Williams International Realty</p>
+        </div>
+      </div>
+    </section>
+
     <section class="projects">
       <h2>coding projects</h2>
-      <div class="grid">
+      <div class="grid career-grid">
         <div class="card">
           <h3>
             <a
@@ -334,6 +422,7 @@
               href="https://danabentz.com/kels"
               >Cruise ship tracker</a
             >
+            <span class="past-tag">Archived</span>
           </h3>
           <p>Follow Kels' adventures at sea in real time</p>
         </div>
@@ -368,6 +457,7 @@
               href="https://weightfoodtracker.netlify.app"
               >NutriSync</a
             >
+            <span class="past-tag">Archived</span>
           </h3>
           <p>Sleep, nutrition, weight, and activity tracker</p>
         </div>
@@ -390,39 +480,18 @@
               href="https://clickmonial.com"
               >Clickmonial</a
             >
+            <span class="past-tag">Archived</span>
           </h3>
-          <p>[Archived] Easily collect video testimonials</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="work">
-      <h2>career</h2>
-      <div class="grid">
-        <div class="card">
-          <h3>Licensed Real Estate Agent</h3>
-          <p>Keller Williams International Realty</p>
-        </div>
-        <div class="card">
-          <h3>StreamYard</h3>
-          <p>Head of Customer Success, Product Manager</p>
-        </div>
-        <div class="card">
-          <h3>✨ A secret startup ✨</h3>
-          <p>Head of Operations</p>
+          <p>Easily collect video testimonials</p>
         </div>
       </div>
     </section>
 
     <section class="contact">
       <h2>say hi 👋</h2>
-      <div class="grid">
+      <div class="grid career-grid">
         <div class="card">
-          <h3>Phone/WhatsApp</h3>
-          <span>503-431-9691</span>
-        </div>
-        <div class="card">
-          <h3>Email</h3>
+          <h3>Contact</h3>
           <span
             ><a
               target="_blank"
@@ -434,7 +503,7 @@
         </div>
         <div class="card">
           <h3>Location</h3>
-          <span>Based in Dallas, TX</span>
+          <span>Dallas, TX</span>
         </div>
        
     </section>
