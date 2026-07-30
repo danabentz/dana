@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Where in the world is Kels?</title>
+    <title>Where in the world is Klevi?</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -19,28 +19,28 @@
     <style>
       :root {
         color-scheme: light;
-        --surface: rgba(255, 255, 255, 0.82);
-        --text: #152033;
-        --accent: #5a3fd4;
-        --accent-soft: rgba(90, 63, 212, 0.16);
+        --surface: rgba(255, 255, 255, 0.9);
+        --text: #0b1224;
+        --accent: #2f3f8f;
+        --accent-soft: rgba(47, 63, 143, 0.16);
         --backdrop: radial-gradient(
-            circle at 18% 20%,
-            rgba(90, 63, 212, 0.24),
+            circle at 18% 45%,
+            rgba(30, 58, 138, 0.38),
             transparent 58%
           ),
           radial-gradient(
-            circle at 78% 8%,
-            rgba(231, 109, 161, 0.2),
+            circle at 82% 55%,
+            rgba(76, 29, 149, 0.32),
             transparent 55%
           ),
-          linear-gradient(135deg, #f2f4fb 0%, #f9f0f3 45%, #fef8ee 100%);
-        --status-sea: #c06c0d;
-        --status-sea-bg: rgba(255, 180, 60, 0.18);
+          linear-gradient(90deg, #0b1c36 0%, #152a55 48%, #1a1640 100%);
+        --status-sea: #c4881a;
+        --status-sea-bg: rgba(196, 136, 26, 0.18);
         --status-docked: #1f7d52;
         --status-docked-bg: rgba(58, 180, 122, 0.18);
         --status-unknown: #4f5363;
         --status-unknown-bg: rgba(124, 130, 155, 0.16);
-        --pin-shadow: rgba(0, 113, 227, 0.32);
+        --pin-shadow: rgba(30, 58, 138, 0.4);
       }
 
       * {
@@ -50,14 +50,18 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "Manrope", "SF Pro Display", "Helvetica Neue", Arial,
-          sans-serif;
+        font-family: "Barlow", "Helvetica Neue", Arial, sans-serif;
         background: var(--backdrop);
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 1.5rem;
         padding: 2rem 1.5rem 3rem;
+        color: #e8eefc;
+      }
+
+      body main.shell,
+      body .countdown-banner {
         color: var(--text);
       }
 
@@ -134,9 +138,9 @@
         background: var(--surface);
         background-color: #ffffff;
         border-radius: 30px;
-        box-shadow: 0 26px 70px rgba(27, 37, 68, 0.22);
+        box-shadow: 0 28px 80px rgba(5, 12, 28, 0.45);
         backdrop-filter: blur(26px) saturate(140%);
-        border: 1px solid rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(148, 163, 220, 0.28);
         padding: clamp(2.4rem, 4vw, 3rem);
         display: grid;
         gap: 2.4rem;
@@ -1038,18 +1042,17 @@
         right: 1.5rem;
         z-index: 1000;
         background: #fff;
-        border: 1px solid rgba(90, 63, 212, 0.2);
+        border: 1px solid rgba(47, 63, 143, 0.22);
         border-radius: 999px;
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
         font-weight: 600;
         color: var(--accent);
         cursor: pointer;
-        box-shadow: 0 8px 24px rgba(27, 37, 68, 0.15);
+        box-shadow: 0 8px 24px rgba(11, 28, 54, 0.28);
         backdrop-filter: blur(26px) saturate(140%);
         transition: all 0.3s ease;
-        font-family: "Manrope", "SF Pro Display", "Helvetica Neue", Arial,
-          sans-serif;
+        font-family: "Barlow", "Helvetica Neue", Arial, sans-serif;
       }
 
       .language-toggle:hover {
@@ -1090,31 +1093,58 @@
           font-size: 0.8rem;
         }
       }
+
+      /* Hide Google Translate chrome; we drive it from our Albanian button */
+      #google_translate_element {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      .goog-te-banner-frame.skiptranslate,
+      .goog-te-balloon-frame {
+        display: none !important;
+      }
+
+      body {
+        top: 0 !important;
+      }
+
+      font font {
+        vertical-align: inherit !important;
+        background: none !important;
+        box-shadow: none !important;
+      }
     </style>
   </head>
   <body>
+    <div id="google_translate_element" aria-hidden="true"></div>
     <button
       id="language-toggle"
-      class="language-toggle"
+      class="language-toggle skiptranslate"
       aria-label="Switch language"
     >
-      Danish 🇩🇰
+      Albanian 🇦🇱
     </button>
     <div id="christmas-banner" class="christmas-banner" hidden>
       Merry Christmas!
     </div>
     <section class="birthday-shell" id="birthday-shell" hidden>
       <div class="birthday-content">
-        <h1>HAPPY BIRTHDAY KELS!</h1>
+        <h1>HAPPY BIRTHDAY KLEVI!</h1>
         <p class="birthday-lead">Today's forecast: a perfect day at sea</p>
       </div>
     </section>
+    <!--
     <div class="countdown-banner" id="countdown-banner">
-      Loading days until Kels is home...
+      Loading days until Klevi is home...
     </div>
+    -->
     <main class="shell">
       <header>
-        <h1>Where in the world is Kels?</h1>
+        <h1>Where in the world is Klevi?</h1>
       </header>
 
       <section class="status" aria-live="polite">
@@ -1126,7 +1156,7 @@
           data-state="unknown"
           >Loading status...</span
         >
-        <p id="location-status">Loading Kels' current adventure...</p>
+        <p id="location-status">Loading Klevi's current adventure...</p>
         <strong id="location-label"></strong>
       </section>
 
@@ -1160,7 +1190,7 @@
       <div
         id="map"
         role="img"
-        aria-label="Map showing Kels' current location"
+        aria-label="Map showing Klevi's current location"
       ></div>
 
       <section
@@ -1218,7 +1248,7 @@
         <div class="timeline-header">
           <h2 id="timeline-title">Track so far</h2>
           <p id="timeline-subtitle">
-            Every port call and at-sea day with quick links back to the map.
+            Every port call and at-sea day.
           </p>
         </div>
         <div class="timeline-layout">
@@ -1268,12 +1298,13 @@
         </div>
       </section>
 
+      <!--
       <section class="journey-gallery" aria-live="polite">
         <div class="journey-gallery-header">
           <span class="journey-gallery-icon" aria-hidden="true">📸</span>
           <div class="journey-gallery-title-group">
             <h2 class="journey-gallery-title" id="journey-gallery-title">Memories from the Journey</h2>
-            <p class="journey-gallery-subtitle" id="journey-gallery-subtitle">Captured moments from Kels' adventure at sea</p>
+            <p class="journey-gallery-subtitle" id="journey-gallery-subtitle">Captured moments from Klevi's adventure at sea</p>
           </div>
         </div>
         <div class="carousel-container">
@@ -1305,7 +1336,6 @@
             <div class="carousel-slide">
               <img src="kelspics/IMG_9709.jpg" alt="Journey memory" loading="lazy" />
             </div>
-            <!-- Duplicate slides for seamless loop -->
             <div class="carousel-slide">
               <img src="kelspics/IMG_5239.PNG" alt="Journey memory" loading="lazy" />
             </div>
@@ -1320,6 +1350,7 @@
         <div class="carousel-gradient-overlay left"></div>
         <div class="carousel-gradient-overlay right"></div>
       </section>
+      -->
     </main>
 
     <script
@@ -1332,17 +1363,17 @@
       // Translation system
       const translations = {
         en: {
-          pageTitle: "Where in the world is Kels?",
+          pageTitle: "Where in the world is Klevi?",
           christmasBanner: "Merry Christmas!",
-          birthdayTitle: "HAPPY BIRTHDAY KELS!",
+          birthdayTitle: "HAPPY BIRTHDAY KLEVI!",
           birthdayLead: "Today's forecast: a perfect day at sea",
-          countdownLoading: "Loading days until Kels is home...",
-          countdownDays: (days) => `${days} days until Kels is home! 🏡`,
+          countdownLoading: "Loading days until Klevi is home...",
+          countdownDays: (days) => `${days} days until Klevi is home! 🏡`,
           statusLoading: "Loading status...",
           statusAtSea: "Somewhere at sea",
           statusDocked: "Docked",
           statusUnknown: "Status unknown",
-          locationLoading: "Loading Kels' current adventure...",
+          locationLoading: "Loading Klevi's current adventure...",
           tomorrowLoading: "Loading tomorrow's plan...",
           tomorrowPrefix: "Tomorrow: ",
           tomorrowAtSea: "At sea",
@@ -1378,7 +1409,7 @@
           crossingDateLine: "Crossing the International Date Line.",
           showingCached: "Showing cached location.",
           cachedCoordinates: "Cached coordinates",
-          mapAriaLabel: "Map showing Kels' current location",
+          mapAriaLabel: "Map showing Klevi's current location",
           weatherTitle: "Weather at Ship Location",
           weatherLoading: "Loading weather...",
           weatherError: "Unable to load weather",
@@ -1394,8 +1425,7 @@
           wind: "Windy",
           noConditions: "Clear conditions",
           timelineTitle: "Track so far",
-          timelineSubtitle:
-            "Every port call and at-sea day with quick links back to the map.",
+          timelineSubtitle: "Every port call and at-sea day.",
           timelineViewOnMap: "View on map",
           timelineSeeMore: "See more",
           timelineSeeLess: "See less",
@@ -1410,104 +1440,158 @@
           timeSubtitleOffset: (offset) =>
             `Based on ship position (UTC${offset || "?"})`,
           journeyGalleryTitle: "Memories from the Journey",
-          journeyGallerySubtitle: "Captured moments from Kels' adventure at sea",
+          journeyGallerySubtitle: "Captured moments from Klevi's adventure at sea",
           journeyMemoryAlt: "Journey memory",
         },
-        da: {
-          pageTitle: "Hvor i verden er Kels?",
-          christmasBanner: "Glædelig jul!",
-          birthdayTitle: "TILLYKKE MED FØDSELSDAGEN KELS!",
-          birthdayLead: "Dagens vejrudsigt: en perfekt dag til søs",
-          countdownLoading: "Indlæser dage indtil Kels er hjemme...",
-          countdownDays: (days) => `${days} dage indtil Kels er hjemme! 🏡`,
-          statusLoading: "Indlæser status...",
-          statusAtSea: "Et sted til søs",
-          statusDocked: "Fortøjet",
-          statusUnknown: "Status ukendt",
-          locationLoading: "Indlæser Kels' nuværende eventyr...",
-          tomorrowLoading: "Indlæser i morgen plan...",
-          tomorrowPrefix: "I morgen: ",
-          tomorrowAtSea: "Til søs",
+        sq: {
+          pageTitle: "Ku në botë është Klevi?",
+          christmasBanner: "Gëzuar Krishtlindjet!",
+          birthdayTitle: "GËZUAR DITËLINDJEN KLEVI!",
+          birthdayLead: "Parashikimi i sotëm: një ditë e përsosur në det",
+          countdownLoading: "Duke ngarkuar ditët derisa Klevi të jetë në shtëpi...",
+          countdownDays: (days) => `${days} ditë derisa Klevi të jetë në shtëpi! 🏡`,
+          statusLoading: "Duke ngarkuar statusin...",
+          statusAtSea: "Dikah në det",
+          statusDocked: "I ankoruar",
+          statusUnknown: "Status i panjohur",
+          locationLoading: "Duke ngarkuar aventurën aktuale të Klevit...",
+          tomorrowLoading: "Duke ngarkuar planin e nesërm...",
+          tomorrowPrefix: "Nesër: ",
+          tomorrowAtSea: "Në det",
           tomorrowAtSeaBetween: (prev, next) =>
-            `Til søs mellem ${prev} og ${next}`,
-          itineraryUnavailable: "Rejseplan utilgængelig",
-          destinationHeadingCurrent: "Aktuel destination",
-          destinationHeadingNext: "Næste destination",
-          destinationWhyLabel: "Derfor er det fedt",
-          destinationNameLoading: "Indlæser destination...",
-          destinationLoading: "Finder rejsens højdepunkt...",
-          destinationGalleryLoading: "Bybilleder er sat på pause lige nu.",
-          destinationFallback: "Et sted på ruten",
+            `Në det midis ${prev} dhe ${next}`,
+          itineraryUnavailable: "Itinerari i padisponueshëm",
+          destinationHeadingCurrent: "Destinacioni aktual",
+          destinationHeadingNext: "Destinacioni i radhës",
+          destinationWhyLabel: "Pse është i mrekullueshëm",
+          destinationNameLoading: "Duke ngarkuar destinacionin...",
+          destinationLoading: "Duke nxjerrë pikat kryesore të itinerarit...",
+          destinationGalleryLoading: "Fotot e qytetit janë duke pushuar për momentin.",
+          destinationFallback: "Dikah përgjatë rrugës",
           couldNotDetermine:
-            "Vi kunne ikke bestemme den nuværende rejseplan position.",
-          trackingUpdate: "Sporer den seneste rejseopdatering.",
-          liveUpdate: "Live opdatering: ",
-          currentlySailing: "Sejler i øjeblikket på det åbne hav.",
-          currentlySailingToward: (dest) => `Sejler i øjeblikket mod ${dest}.`,
+            "Nuk mundëm të përcaktonim pozicionin aktual të itinerarit.",
+          trackingUpdate: "Duke ndjekur përditësimin më të fundit të udhëtimit.",
+          liveUpdate: "Përditësim live: ",
+          currentlySailing: "Aktualisht po lundron në oqeanin e hapur.",
+          currentlySailingToward: (dest) => `Aktualisht po lundron drejt ${dest}.`,
           currentlySailingEnRoute: (dest) =>
-            `Sejler i øjeblikket på vej til ${dest}.`,
-          currentlyAlongside: (port) => `I øjeblikket ved siden af ${port}.`,
-          latestCoordinates: "Seneste live koordinater modtaget.",
-          enRouteTo: (dest) => `På vej til ${dest}`,
-          sailingOcean: "Sejler på det åbne hav",
-          dockedAt: (port) => `Fortøjet ved ${port}`,
-          sailingBetween: (prev, next) => `Sejler mellem ${prev} og ${next}.`,
-          sailingOnward: (prev) => `Sejler videre fra ${prev}.`,
-          approaching: (next) => `Nærmer sig ${next}.`,
-          dockedNear: (label) => `Fortøjet nær ${label}.`,
-          transitingCanal: "Passerer Panamakanalen.",
-          crossingDateLine: "Krydser datolinjen.",
-          showingCached: "Viser cached placering.",
-          cachedCoordinates: "Cachede koordinater",
-          mapAriaLabel: "Kort der viser Kels' nuværende placering",
-          weatherTitle: "Vejr ved skibets placering",
-          weatherLoading: "Indlæser vejr...",
-          weatherError: "Kunne ikke indlæse vejr",
-          forecastTitle: "Vejrudsigt for næste havn (24–48t)",
-          forecastLoading: "Indlæser vejrudsigt...",
-          forecastUnavailable: "Ingen vejrudsigt",
-          forecastNoPort: "Ingen kommende havn",
+            `Aktualisht po lundron në rrugë për në ${dest}.`,
+          currentlyAlongside: (port) => `Aktualisht pranë ${port}.`,
+          latestCoordinates: "Koordinatat e fundit live u morën.",
+          enRouteTo: (dest) => `Në rrugë për në ${dest}`,
+          sailingOcean: "Lundron në oqeanin e hapur",
+          dockedAt: (port) => `I ankoruar në ${port}`,
+          sailingBetween: (prev, next) =>
+            `Po lundron midis ${prev} dhe ${next}.`,
+          sailingOnward: (prev) => `Po vazhdon lundrimin nga ${prev}.`,
+          approaching: (next) => `Po afrohet te ${next}.`,
+          dockedNear: (label) => `I ankoruar pranë ${label}.`,
+          transitingCanal: "Po kalon Kanalin e Panamasë.",
+          crossingDateLine: "Po kalon vijën ndërkombëtare të datës.",
+          showingCached: "Duke shfaqur vendndodhjen e ruajtur.",
+          cachedCoordinates: "Koordinata të ruajtura",
+          mapAriaLabel: "Harta që tregon vendndodhjen aktuale të Klevit",
+          weatherTitle: "Moti në vendndodhjen e anijes",
+          weatherLoading: "Duke ngarkuar motin...",
+          weatherError: "Nuk mund të ngarkohet moti",
+          forecastTitle: "Parashikimi i portit të radhës (24–48 orë)",
+          forecastLoading: "Duke ngarkuar parashikimin...",
+          forecastUnavailable: "Parashikimi i padisponueshëm",
+          forecastNoPort: "Asnjë port i ardhshëm",
           forecastDayLabel: (offset) =>
-            offset === 1 ? "Næste 24t" : "Næste 48t",
-          forecastFor: (port) => `Næste stop: ${port}`,
-          rain: "Regn",
-          snow: "Sne",
-          wind: "Blæsende",
-          noConditions: "Klart vejr",
-          timelineTitle: "Spor indtil nu",
-          timelineSubtitle:
-            "Hver havneanløb og dag til søs med hurtige links tilbage til kortet.",
-          timelineViewOnMap: "Se på kort",
-          timelineSeeMore: "Se mere",
-          timelineSeeLess: "Se mindre",
-          timelinePastTitle: "Seneste stop",
-          timelinePastSubtitle: "De seneste 3 steder besøgt",
-          timelineUpcomingTitle: "Kommende stop",
-          timelineUpcomingSubtitle: "De næste 3 destinationer",
-          timelineReplay: "Centrér kortet på dette stop",
-          timeTitle: "Skibets lokale tid",
-          timeLoading: "Indlæser skibets lokale tid...",
-          timeSubtitle: (timezone) =>
-            `Baseret på skibets position (${timezone})`,
+            offset === 1 ? "24 orët e ardhshme" : "48 orët e ardhshme",
+          forecastFor: (port) => `Ndalesa e radhës: ${port}`,
+          rain: "Shi",
+          snow: "Borë",
+          wind: "Me erë",
+          noConditions: "Kushte të kthjellëta",
+          timelineTitle: "Rruga deri tani",
+          timelineSubtitle: "Çdo ndalesë në port dhe ditë në det.",
+          timelineViewOnMap: "Shiko në hartë",
+          timelineSeeMore: "Shiko më shumë",
+          timelineSeeLess: "Shiko më pak",
+          timelinePastTitle: "Ndalesat e fundit",
+          timelinePastSubtitle: "3 vendet e fundit të vizituara",
+          timelineUpcomingTitle: "Ndalesat e ardhshme",
+          timelineUpcomingSubtitle: "3 destinacionet e ardhshme",
+          timelineReplay: "Riqendra hartën në këtë ndalesë",
+          timeTitle: "Ora lokale e anijes",
+          timeLoading: "Duke ngarkuar orën lokale të anijes...",
+          timeSubtitle: (timezone) => `Bazuar në pozicionin e anijes (${timezone})`,
           timeSubtitleOffset: (offset) =>
-            `Baseret på skibets position (UTC${offset || "?"})`,
-          journeyGalleryTitle: "Minder fra rejsen",
-          journeyGallerySubtitle: "Indfangede øjeblikke fra Kels' eventyr til søs",
-          journeyMemoryAlt: "Rejse minde",
+            `Bazuar në pozicionin e anijes (UTC${offset || "?"})`,
+          journeyGalleryTitle: "Kujtime nga udhëtimi",
+          journeyGallerySubtitle: "Momente të kapura nga aventura e Klevit në det",
+          journeyMemoryAlt: "Kujtim udhëtimi",
         },
       };
 
-      let currentLanguage = "en";
+      function readGoogTransLanguage() {
+        const match = document.cookie.match(/(?:^|;\s*)googtrans=\/[^/]+\/([^;]+)/);
+        return match && match[1] === "sq" ? "sq" : "en";
+      }
+
+      let currentLanguage = readGoogTransLanguage();
       const languageToggle = document.getElementById("language-toggle");
+      languageToggle.textContent =
+        currentLanguage === "en" ? "Albanian 🇦🇱" : "English";
+      document.documentElement.lang = currentLanguage === "sq" ? "sq" : "en";
+
+      function setGoogTransCookie(lang) {
+        const value = lang === "sq" ? "/en/sq" : "/en/en";
+        const expires = "expires=Fri, 31 Dec 9999 23:59:59 GMT";
+        document.cookie = `googtrans=${value};path=/;${expires}`;
+        try {
+          const host = location.hostname;
+          if (host && host !== "localhost") {
+            document.cookie = `googtrans=${value};path=/;domain=${host};${expires}`;
+          }
+        } catch (error) {
+          // Ignore cookie domain failures on local previews.
+        }
+      }
+
+      function applyGoogleTranslate(lang, attempt = 0) {
+        setGoogTransCookie(lang);
+        const select = document.querySelector(".goog-te-combo");
+        if (!select) {
+          if (attempt < 50) {
+            setTimeout(() => applyGoogleTranslate(lang, attempt + 1), 100);
+          }
+          return;
+        }
+        const nextValue = lang === "sq" ? "sq" : "en";
+        if (select.value !== nextValue) {
+          select.value = nextValue;
+          select.dispatchEvent(new Event("change"));
+        }
+      }
+
+      window.googleTranslateElementInit = function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,sq",
+            autoDisplay: false,
+          },
+          "google_translate_element"
+        );
+        if (currentLanguage === "sq") {
+          applyGoogleTranslate("sq");
+        }
+      };
 
       function translatePage(lang) {
         const previousLang = currentLanguage;
         currentLanguage = lang;
-        const t = translations[lang];
-        const tPrev = translations[previousLang];
+        const t = translations[lang] || translations.en;
+        const tPrev = translations[previousLang] || translations.en;
 
         // Update button text
-        languageToggle.textContent = lang === "en" ? "Danish 🇩🇰" : "English";
+        languageToggle.textContent =
+          lang === "en" ? "Albanian 🇦🇱" : "English";
+        document.documentElement.lang = lang === "sq" ? "sq" : "en";
+        document.title = t.pageTitle;
 
         // Update page title
         const titleEl = document.querySelector("header h1");
@@ -1531,7 +1615,7 @@
           const currentText = countdownBanner.textContent;
           if (
             currentText.includes("Loading") ||
-            currentText.includes("Indlæser")
+            currentText.includes("Duke ngarkuar")
           ) {
             countdownBanner.textContent = t.countdownLoading;
           } else {
@@ -1558,17 +1642,17 @@
           const currentStatus = shipStatusEl.textContent;
           if (
             currentStatus.includes("Loading") ||
-            currentStatus.includes("Indlæser")
+            currentStatus.includes("Duke ngarkuar")
           ) {
             shipStatusEl.textContent = t.statusLoading;
           } else if (
             currentStatus.toLowerCase().includes("sea") ||
-            currentStatus.toLowerCase().includes("søs")
+            currentStatus.toLowerCase().includes("det")
           ) {
             shipStatusEl.textContent = t.statusAtSea;
           } else if (
             currentStatus.toLowerCase().includes("dock") ||
-            currentStatus.toLowerCase().includes("fortøj")
+            currentStatus.toLowerCase().includes("ankoruar")
           ) {
             shipStatusEl.textContent = t.statusDocked;
           } else {
@@ -1582,11 +1666,11 @@
           const currentText = locationStatusEl.textContent;
           if (
             currentText.includes("Loading") ||
-            currentText.includes("Indlæser")
+            currentText.includes("Duke ngarkuar")
           ) {
             locationStatusEl.textContent = t.locationLoading;
           } else {
-            // Try to translate common patterns - check both English and Danish
+            // Try to translate common patterns - check both English and Albanian
             let translated = currentText;
 
             // English patterns
@@ -1597,8 +1681,8 @@
               if (match) {
                 translated = t.sailingBetween(match[1], match[2]);
               }
-            } else if (currentText.includes("Sejler mellem")) {
-              const match = currentText.match(/Sejler mellem (.+?) og (.+?)\./);
+            } else if (currentText.includes("Po lundron midis")) {
+              const match = currentText.match(/Po lundron midis (.+?) dhe (.+?)\./);
               if (match) {
                 translated = t.sailingBetween(match[1], match[2]);
               }
@@ -1607,8 +1691,8 @@
               if (match) {
                 translated = t.sailingOnward(match[1]);
               }
-            } else if (currentText.includes("Sejler videre fra")) {
-              const match = currentText.match(/Sejler videre fra (.+?)\./);
+            } else if (currentText.includes("Po vazhdon lundrimin nga")) {
+              const match = currentText.match(/Po vazhdon lundrimin nga (.+?)\./);
               if (match) {
                 translated = t.sailingOnward(match[1]);
               }
@@ -1617,8 +1701,8 @@
               if (match) {
                 translated = t.approaching(match[1]);
               }
-            } else if (currentText.includes("Nærmer sig")) {
-              const match = currentText.match(/Nærmer sig (.+?)\./);
+            } else if (currentText.includes("Po afrohet te")) {
+              const match = currentText.match(/Po afrohet te (.+?)\./);
               if (match) {
                 translated = t.approaching(match[1]);
               }
@@ -1627,24 +1711,24 @@
               if (match) {
                 translated = t.dockedNear(match[1]);
               }
-            } else if (currentText.includes("Fortøjet nær")) {
-              const match = currentText.match(/Fortøjet nær (.+?)\./);
+            } else if (currentText.includes("I ankoruar pranë")) {
+              const match = currentText.match(/I ankoruar pranë (.+?)\./);
               if (match) {
                 translated = t.dockedNear(match[1]);
               }
             } else if (
               currentText.includes("Transiting the Panama Canal") ||
-              currentText.includes("Passerer Panamakanalen")
+              currentText.includes("Po kalon Kanalin e Panamasë")
             ) {
               translated = t.transitingCanal;
             } else if (
               currentText.includes("Crossing the International Date Line") ||
-              currentText.includes("Krydser datolinjen")
+              currentText.includes("Po kalon vijën ndërkombëtare të datës")
             ) {
               translated = t.crossingDateLine;
             } else if (
               currentText.includes("sailing the open ocean") ||
-              currentText.includes("Sejler i øjeblikket på det åbne hav")
+              currentText.includes("Aktualisht po lundron në oqeanin e hapur")
             ) {
               translated = t.currentlySailing;
             } else if (currentText.includes("Currently sailing toward")) {
@@ -1654,9 +1738,9 @@
               if (match) {
                 translated = t.currentlySailingToward(match[1]);
               }
-            } else if (currentText.includes("Sejler i øjeblikket mod")) {
+            } else if (currentText.includes("Aktualisht po lundron drejt")) {
               const match = currentText.match(
-                /Sejler i øjeblikket mod (.+?)\./
+                /Aktualisht po lundron drejt (.+?)\./
               );
               if (match) {
                 translated = t.currentlySailingToward(match[1]);
@@ -1671,9 +1755,9 @@
               if (match) {
                 translated = t.currentlySailingEnRoute(match[1]);
               }
-            } else if (currentText.includes("Sejler i øjeblikket på vej til")) {
+            } else if (currentText.includes("Aktualisht po lundron në rrugë për në")) {
               const match = currentText.match(
-                /Sejler i øjeblikket på vej til (.+?)\./
+                /Aktualisht po lundron në rrugë për në (.+?)\./
               );
               if (match) {
                 translated = t.currentlySailingEnRoute(match[1]);
@@ -1683,36 +1767,36 @@
               if (match) {
                 translated = t.currentlyAlongside(match[1]);
               }
-            } else if (currentText.includes("I øjeblikket ved siden af")) {
+            } else if (currentText.includes("Aktualisht pranë")) {
               const match = currentText.match(
-                /I øjeblikket ved siden af (.+?)\./
+                /Aktualisht pranë (.+?)\./
               );
               if (match) {
                 translated = t.currentlyAlongside(match[1]);
               }
             } else if (
               currentText.includes("Latest live coordinates") ||
-              currentText.includes("Seneste live koordinater")
+              currentText.includes("Koordinatat e fundit live")
             ) {
               translated = t.latestCoordinates;
             } else if (
               currentText.includes("Showing cached") ||
-              currentText.includes("Viser cached")
+              currentText.includes("Duke shfaqur vendndodhjen e ruajtur")
             ) {
               translated = t.showingCached;
             } else if (
               currentText.includes("Live update:") ||
-              currentText.includes("Live opdatering:")
+              currentText.includes("Përditësim live:")
             ) {
               const afterPrefix = currentText.replace(
-                /^(Live update|Live opdatering):\s*/,
+                /^(Live update|Përditësim live):\s*/,
                 ""
               );
               // Try to translate the content after the prefix
               let translatedAfter = afterPrefix;
-              if (afterPrefix.includes("Sejler i øjeblikket på vej til")) {
+              if (afterPrefix.includes("Aktualisht po lundron në rrugë për në")) {
                 const match = afterPrefix.match(
-                  /Sejler i øjeblikket på vej til (.+?)\./
+                  /Aktualisht po lundron në rrugë për në (.+?)\./
                 );
                 if (match) {
                   translatedAfter = t.currentlySailingEnRoute(match[1]);
@@ -1726,9 +1810,9 @@
                 if (match) {
                   translatedAfter = t.currentlySailingEnRoute(match[1]);
                 }
-              } else if (afterPrefix.includes("Sejler i øjeblikket mod")) {
+              } else if (afterPrefix.includes("Aktualisht po lundron drejt")) {
                 const match = afterPrefix.match(
-                  /Sejler i øjeblikket mod (.+?)\./
+                  /Aktualisht po lundron drejt (.+?)\./
                 );
                 if (match) {
                   translatedAfter = t.currentlySailingToward(match[1]);
@@ -1741,16 +1825,16 @@
                   translatedAfter = t.currentlySailingToward(match[1]);
                 }
               } else if (
-                afterPrefix.includes("Sejler i øjeblikket på det åbne hav")
+                afterPrefix.includes("Aktualisht po lundron në oqeanin e hapur")
               ) {
                 translatedAfter = t.currentlySailing;
               } else if (
                 afterPrefix.includes("Currently sailing the open ocean")
               ) {
                 translatedAfter = t.currentlySailing;
-              } else if (afterPrefix.includes("I øjeblikket ved siden af")) {
+              } else if (afterPrefix.includes("Aktualisht pranë")) {
                 const match = afterPrefix.match(
-                  /I øjeblikket ved siden af (.+?)\./
+                  /Aktualisht pranë (.+?)\./
                 );
                 if (match) {
                   translatedAfter = t.currentlyAlongside(match[1]);
@@ -1760,7 +1844,7 @@
                 if (match) {
                   translatedAfter = t.currentlyAlongside(match[1]);
                 }
-              } else if (afterPrefix.includes("Seneste live koordinater")) {
+              } else if (afterPrefix.includes("Koordinatat e fundit live")) {
                 translatedAfter = t.latestCoordinates;
               } else if (afterPrefix.includes("Latest live coordinates")) {
                 translatedAfter = t.latestCoordinates;
@@ -1787,25 +1871,25 @@
             let translated = currentText;
             if (
               currentText.includes("En route to") ||
-              currentText.includes("På vej til")
+              currentText.includes("Në rrugë për në")
             ) {
               const match = currentText.match(
-                /(?:En route to|På vej til) (.+)/
+                /(?:En route to|Në rrugë për në) (.+)/
               );
               if (match) {
                 translated = t.enRouteTo(match[1]);
               }
             } else if (
               currentText.includes("Sailing the open ocean") ||
-              currentText.includes("Sejler på det åbne hav")
+              currentText.includes("Lundron në oqeanin e hapur")
             ) {
               translated = t.sailingOcean;
             } else if (
               currentText.includes("Docked at") ||
-              currentText.includes("Fortøjet ved")
+              currentText.includes("I ankoruar në")
             ) {
               const match = currentText.match(
-                /(?:Docked at|Fortøjet ved) (.+)/
+                /(?:Docked at|I ankoruar në) (.+)/
               );
               if (match) {
                 translated = t.dockedAt(match[1]);
@@ -1821,33 +1905,33 @@
           const currentText = tomorrowStatusEl.textContent;
           if (
             currentText.includes("Loading") ||
-            currentText.includes("Indlæser")
+            currentText.includes("Duke ngarkuar")
           ) {
             tomorrowStatusEl.textContent = t.tomorrowLoading;
           } else if (
             currentText.startsWith("Tomorrow: ") ||
-            currentText.startsWith("I morgen: ")
+            currentText.startsWith("Nesër: ")
           ) {
             const afterPrefix = currentText.replace(
-              /^(Tomorrow|I morgen):\s*/,
+              /^(Tomorrow|Nesër):\s*/,
               ""
             );
             if (
               afterPrefix.includes("At sea between") ||
-              afterPrefix.includes("Til søs mellem")
+              afterPrefix.includes("Në det midis")
             ) {
               const match = afterPrefix.match(
-                /(?:At sea between|Til søs mellem) (.+?) (?:and|og) (.+)/
+                /(?:At sea between|Në det midis) (.+?) (?:and|dhe) (.+)/
               );
               if (match) {
                 tomorrowStatusEl.textContent =
                   t.tomorrowPrefix + t.tomorrowAtSeaBetween(match[1], match[2]);
               }
-            } else if (afterPrefix === "At sea" || afterPrefix === "Til søs") {
+            } else if (afterPrefix === "At sea" || afterPrefix === "Në det") {
               tomorrowStatusEl.textContent = t.tomorrowPrefix + t.tomorrowAtSea;
             } else if (
               afterPrefix.includes("Itinerary unavailable") ||
-              afterPrefix.includes("Rejseplan utilgængelig")
+              afterPrefix.includes("Itinerari i padisponueshëm")
             ) {
               tomorrowStatusEl.textContent =
                 t.tomorrowPrefix + t.itineraryUnavailable;
@@ -1892,7 +1976,7 @@
           const currentText = destinationNameEl.textContent;
           if (!currentText || currentText === "" || 
               currentText === "Loading destination..." || 
-              currentText === "Indlæser destination...") {
+              currentText === "Duke ngarkuar destinacionin...") {
             destinationNameEl.textContent = t.destinationNameLoading;
           }
         }
@@ -1922,8 +2006,19 @@
       }
 
       languageToggle.addEventListener("click", () => {
-        const newLang = currentLanguage === "en" ? "da" : "en";
-        translatePage(newLang);
+        const newLang = currentLanguage === "en" ? "sq" : "en";
+        currentLanguage = newLang;
+        languageToggle.textContent =
+          newLang === "en" ? "Albanian 🇦🇱" : "English";
+        document.documentElement.lang = newLang === "sq" ? "sq" : "en";
+        applyGoogleTranslate(newLang);
+
+        // Keep units/locales in sync; Google Translate handles visible copy.
+        if (typeof updateWeatherDisplay === "function") updateWeatherDisplay();
+        if (typeof startLocalTimeClock === "function") startLocalTimeClock();
+        if (typeof renderTimeline === "function") renderTimeline();
+        if (typeof updateTimeLabels === "function") updateTimeLabels();
+        if (typeof renderForecast === "function") renderForecast();
       });
 
       const countdownBanner = document.getElementById("countdown-banner");
@@ -1957,7 +2052,7 @@
         if (birthdayShell) birthdayShell.removeAttribute("hidden");
         if (countdownBanner) countdownBanner.style.display = "none";
         if (mainShell) mainShell.classList.add("birthday-visible");
-        document.title = "Happy Birthday Kels!";
+        document.title = "Happy Birthday Klevi!";
         if (forcedBirthday && !isBirthdayDate) {
           console.info(
             "[INIT] Birthday preview mode enabled via URL parameter."
@@ -2052,7 +2147,7 @@
       if (isChristmas) {
         document.body.classList.add("christmas-mode");
         if (christmasBanner) christmasBanner.removeAttribute("hidden");
-        document.title = "Merry Christmas, Kels!";
+        document.title = "Merry Christmas, Klevi!";
         if (forcedChristmas && !isChristmasDate) {
           console.info(
             "[INIT] Christmas preview mode enabled via URL parameter."
@@ -2140,10 +2235,11 @@
           }
         }, 5000);
       }
-      const targetDate = new Date("2026-05-15T00:00:00");
+      const targetDate = new Date("2026-08-06T00:00:00");
       const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
       function updateCountdown() {
+        if (!countdownBanner) return;
         const now = new Date();
         const today = new Date(
           now.getFullYear(),
@@ -2156,35 +2252,25 @@
         countdownBanner.textContent = t.countdownDays(daysRemaining);
       }
 
-      updateCountdown();
-      if (!isBirthday) {
-        setInterval(updateCountdown, 1000 * 60 * 60);
-      }
+      // Countdown banner is currently commented out in the markup.
+      // updateCountdown();
+      // if (!isBirthday) {
+      //   setInterval(updateCountdown, 1000 * 60 * 60);
+      // }
 
       const staticItinerary = {
-        "2026-04-24": "Tokyo, Japan",
-        "2026-04-25": "Tokyo, Japan",
-        "2026-04-26": "Hitachinaka, Japan",
-        "2026-04-27": "Sendai, Japan",
-        "2026-04-28": "At Sea",
-        "2026-04-29": "Hakodate, Japan",
-        "2026-04-30": "Kushiro, Japan",
-        "2026-05-01": "At Sea",
-        "2026-05-02": "At Sea",
-        "2026-05-03": "At Sea",
-        "2026-05-04": "At Sea",
-        "2026-05-05": "At Sea",
-        "2026-05-06": "At Sea",
-        "2026-05-07": "At Sea",
-        "2026-05-08": "Kodiak Island, Alaska",
-        "2026-05-09": "At Sea",
-        "2026-05-10": "Glacier Bay, Alaska",
-        "2026-05-11": "Sitka, Alaska",
-        "2026-05-12": "Klawock, Alaska",
-        "2026-05-13": "Prince Rupert, BC, Canada",
-        "2026-05-14": "At Sea",
-        "2026-05-15": "Vancouver, BC, Canada",
-        "2026-05-16": "Vancouver, BC, Canada",
+        "2026-07-26": "Reykjavik, Iceland",
+        "2026-07-27": "At Sea",
+        "2026-07-28": "Umivik Bay, Greenland",
+        "2026-07-29": "Skjoldungen Island, Greenland",
+        "2026-07-30": "Prince Christian Sound, Greenland",
+        "2026-07-31": "Qaqortoq, Greenland",
+        "2026-08-01": "Qassiarsuk, Greenland",
+        "2026-08-02": "Nuuk, Greenland",
+        "2026-08-03": "Camp Kangiusaq, Greenland",
+        "2026-08-04": "Evighedsfjorden, Greenland",
+        "2026-08-05": "Sisimiut, Greenland",
+        "2026-08-06": "Kangerlussuaq, Greenland",
       };
 
       const locationReference = {
@@ -2199,7 +2285,7 @@
         "Kusadasi (Ephesus), Turkey": { lat: 37.8618, lng: 27.2571 },
         "Çesme, Turkey": { lat: 38.3233, lng: 26.3025 },
         "At Sea": {
-          descriptor: "Kels is currently sailing the open ocean.",
+          descriptor: "Klevi is currently sailing the open ocean.",
           zoom: 4,
         },
         "Istanbul, Turkey": { lat: 41.0082, lng: 28.9784 },
@@ -2258,6 +2344,24 @@
         "Klawock, Alaska": { lat: 55.5536, lng: -133.0859 },
         "Prince Rupert, BC, Canada": { lat: 54.315, lng: -130.3208 },
         "Vancouver, BC, Canada": { lat: 49.2827, lng: -123.1207 },
+        "Reykjavik, Iceland": { lat: 64.1466, lng: -21.9426 },
+        "Umivik Bay, Greenland": { lat: 64.333, lng: -40.5, zoom: 6 },
+        "Skjoldungen Island, Greenland": { lat: 63.35, lng: -41.3, zoom: 7 },
+        "Prince Christian Sound, Greenland": {
+          lat: 60.14,
+          lng: -43.9,
+          descriptor: "Cruising Prince Christian Sound.",
+          zoom: 7,
+        },
+        "Kangikitsok, Greenland": { lat: 60.2, lng: -44.1, zoom: 7 },
+        "Qaqortoq, Greenland": { lat: 60.7167, lng: -46.0333 },
+        "Hvalsey, Greenland": { lat: 60.826, lng: -45.781 },
+        "Qassiarsuk, Greenland": { lat: 61.15, lng: -45.5167 },
+        "Nuuk, Greenland": { lat: 64.1814, lng: -51.6941 },
+        "Camp Kangiusaq, Greenland": { lat: 64.35, lng: -50.9, zoom: 7 },
+        "Evighedsfjorden, Greenland": { lat: 65.85, lng: -52.3, zoom: 7 },
+        "Sisimiut, Greenland": { lat: 66.9395, lng: -53.6735 },
+        "Kangerlussuaq, Greenland": { lat: 67.0086, lng: -50.689 },
         "Osaka, Japan": { lat: 34.6937, lng: 135.5023 },
         "Kochi, Japan": { lat: 33.5597, lng: 133.5311 },
         "Keelung, Taiwan": { lat: 25.1283, lng: 121.7417 },
@@ -2336,8 +2440,8 @@
         entry.index = index;
       });
 
-      const markerEmoji = isBirthday ? "🎁" : isChristmas ? "🎄" : null;
-      const useImage = !isBirthday && !isChristmas;
+      const markerEmoji = isBirthday ? "🎁" : isChristmas ? "🎄" : "👖";
+      const useImage = false;
 
       const map = L.map("map", {
         zoomControl: false,
@@ -2353,17 +2457,17 @@
       ).addTo(map);
 
       const markerIcon = L.divIcon({
-        className: "kels-pin",
-        iconSize: useImage ? [108, 108] : [48, 48],
+        className: "klevi-pin",
+        iconSize: useImage ? [108, 108] : [56, 56],
         html: useImage
-          ? `<div style="display:flex;align-items:center;justify-content:center;width:108px;height:108px;border-radius:50%;background:var(--accent-soft);backdrop-filter:blur(6px);box-shadow:0 14px 30px var(--pin-shadow);padding:9px;"><img src="cruise-ship.png" alt="Kels' ship" style="width:100%;height:100%;object-fit:contain;display:block;" /></div>`
-          : `<div style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--accent-soft);backdrop-filter:blur(6px);box-shadow:0 14px 30px var(--pin-shadow);color:var(--accent);font-size:26px;line-height:1;">${markerEmoji}</div>`,
+          ? `<div style="display:flex;align-items:center;justify-content:center;width:108px;height:108px;border-radius:50%;background:var(--accent-soft);backdrop-filter:blur(6px);box-shadow:0 14px 30px var(--pin-shadow);padding:9px;"><img src="cruise-ship.png" alt="Klevi's ship" style="width:100%;height:100%;object-fit:contain;display:block;" /></div>`
+          : `<div style="display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:var(--accent-soft);backdrop-filter:blur(6px);box-shadow:0 14px 30px var(--pin-shadow);font-size:30px;line-height:1;">${markerEmoji}</div>`,
       });
 
       let marker = L.marker([0, 0], { icon: markerIcon }).addTo(map);
-      marker.bindTooltip("Kels' ship", {
+      marker.bindTooltip("Klevi's ship", {
         direction: "top",
-        offset: useImage ? [0, -41] : [0, -18],
+        offset: useImage ? [0, -41] : [0, -22],
       });
 
       const locationStatusEl = document.getElementById("location-status");
@@ -2750,7 +2854,7 @@
 
       function formatTimelineDate(dateStr) {
         const date = new Date(`${dateStr}T12:00:00`);
-        const locale = currentLanguage === "da" ? "da-DK" : undefined;
+        const locale = currentLanguage === "sq" ? "sq-AL" : undefined;
         return {
           dateLabel: date.toLocaleDateString(locale, {
             weekday: "short",
@@ -2938,7 +3042,7 @@
 
       async function fetchCoordinatesFromShipXplorer() {
         const proxyUrl =
-          "https://r.jina.ai/https://www.shipxplorer.com/data/vessels/SEABOURN-SOJOURN-IMO-9417098-MMSI-311027100";
+          "https://r.jina.ai/https://www.shipxplorer.com/data/vessels/SEABOURN-VENTURE-IMO-9862023-MMSI-311000930";
         try {
           const response = await fetch(proxyUrl, {
             headers: {
@@ -3093,7 +3197,7 @@
       async function fetchCoordinatesFromCruiseMapper() {
         try {
           const response = await fetch(
-            "https://r.jina.ai/https://www.cruisemapper.com/?imo=9417098",
+            "https://r.jina.ai/https://www.cruisemapper.com/?imo=9862023",
             { headers: { Accept: "text/plain" } }
           );
           if (!response.ok) {
@@ -3139,7 +3243,7 @@
           (async () => {
             try {
               const response = await fetch(
-                "https://r.jina.ai/https://www.cruisemapper.com/?imo=9417098",
+                "https://r.jina.ai/https://www.cruisemapper.com/?imo=9862023",
                 { headers: { Accept: "text/plain" } }
               );
               if (!response.ok) return null;
@@ -3574,7 +3678,7 @@
         const render = () => {
           const now = new Date();
           let dateToFormat = now;
-          const locale = currentLanguage === "da" ? "da-DK" : "en-US";
+          const locale = currentLanguage === "sq" ? "sq-AL" : "en-US";
           const options = {
             hour: "2-digit",
             minute: "2-digit",
@@ -3618,7 +3722,7 @@
 
       // Format temperature based on current language
       function formatTemperature(tempF) {
-        if (currentLanguage === "da") {
+        if (currentLanguage === "sq") {
           return fahrenheitToCelsius(tempF);
         }
         return Math.round(tempF);
@@ -3626,13 +3730,13 @@
 
       // Get temperature unit based on current language
       function getTemperatureUnit() {
-        return currentLanguage === "da" ? "°C" : "°F";
+        return currentLanguage === "sq" ? "°C" : "°F";
       }
 
       function formatForecastDayLabel(dateString, offset) {
         const t = translations[currentLanguage];
         const formatter = new Intl.DateTimeFormat(
-          currentLanguage === "da" ? "da-DK" : "en-US",
+          currentLanguage === "sq" ? "sq-AL" : "en-US",
           {
             weekday: "short",
           }
@@ -4235,5 +4339,9 @@
 
       init();
     </script>
+    <script
+      src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+      defer
+    ></script>
   </body>
 </html>
