@@ -2235,7 +2235,7 @@
           }
         }, 5000);
       }
-      const targetDate = new Date("2026-08-06T00:00:00");
+      const targetDate = new Date("2026-08-29T00:00:00");
       const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
       function updateCountdown() {
@@ -2261,12 +2261,40 @@
       const staticItinerary = {
         "2026-07-26": "Reykjavik, Iceland",
         "2026-07-27": "At Sea",
+        "2026-07-28": "At Sea",
         "2026-07-28": "Umivik Bay, Greenland",
         "2026-07-29": "Skjoldungen Island, Greenland",
         "2026-07-30": "Prince Christian Sound, Greenland",
         "2026-07-31": "Qaqortoq, Greenland",
         "2026-08-01": "Qassiarsuk, Greenland",
         "2026-08-02": "Nuuk, Greenland",
+        "2026-08-03": "At Sea",
+        "2026-08-04": "Kangerlussuaq, Greenland",
+        "2026-08-05": "Sisimiut, Greenland",
+        "2026-08-06": "Kangerlussuaq, Greenland",
+        "2026-08-07": "At Sea",
+        "2026-08-08": "Ilulissat, Greenland",
+        "2026-08-09": "Sisimiut, Greenland",
+        "2026-08-10": "At Sea",
+        "2026-08-11": "Baffin Island, Canada",
+        "2026-08-12": "Devon Island, Canada",
+        "2026-08-13": "Northwest Passage",
+        "2026-08-14": "Northwest Passage",
+        "2026-08-15": "Northwest Passage",
+        "2026-08-16": "Northwest Passage",
+        "2026-08-17": "Victoria Island, Canada",
+        "2026-08-18": "Northwest Passage",
+        "2026-08-19": "Northwest Passage",
+        "2026-08-20": "Northwest Passage",
+        "2026-08-21": "Herschel Island, Alaska",
+        "2026-08-22": "At Sea",
+        "2026-08-23": "At Sea",
+        "2026-08-24": "At Sea",
+        "2026-08-25": "Nome, Alaska",
+        "2026-08-26": "At Sea",
+        "2026-08-27": "At Sea",
+        "2026-08-28": "At Sea",
+        "2026-08-29": "Anchorage, AK",
         "2026-08-03": "Camp Kangiusaq, Greenland",
         "2026-08-04": "Evighedsfjorden, Greenland",
         "2026-08-05": "Sisimiut, Greenland",
@@ -2362,6 +2390,34 @@
         "Evighedsfjorden, Greenland": { lat: 65.85, lng: -52.3, zoom: 7 },
         "Sisimiut, Greenland": { lat: 66.9395, lng: -53.6735 },
         "Kangerlussuaq, Greenland": { lat: 67.0086, lng: -50.689 },
+        "Ilulissat, Greenland": { lat: 69.2198, lng: -51.0986, zoom: 7 },
+        "Baffin Island, Canada": {
+          lat: 68.5,
+          lng: -71.5,
+          descriptor: "Exploring Baffin Island.",
+          zoom: 5,
+        },
+        "Devon Island, Canada": {
+          lat: 75.0,
+          lng: -87.0,
+          descriptor: "Along Devon Island.",
+          zoom: 5,
+        },
+        "Northwest Passage": {
+          lat: 72.0,
+          lng: -95.0,
+          descriptor: "Transiting the Northwest Passage.",
+          zoom: 4,
+        },
+        "Victoria Island, Canada": {
+          lat: 69.0,
+          lng: -108.0,
+          descriptor: "Along Victoria Island.",
+          zoom: 5,
+        },
+        "Herschel Island, Alaska": { lat: 69.57, lng: -138.92, zoom: 7 },
+        "Nome, Alaska": { lat: 64.5011, lng: -165.4064 },
+        "Anchorage, AK": { lat: 61.2181, lng: -149.9003 },
         "Osaka, Japan": { lat: 34.6937, lng: 135.5023 },
         "Kochi, Japan": { lat: 33.5597, lng: 133.5311 },
         "Keelung, Taiwan": { lat: 25.1283, lng: 121.7417 },
@@ -3040,54 +3096,180 @@
         return t.tomorrowPrefix + entry.label;
       }
 
-      async function fetchCoordinatesFromShipXplorer() {
-        const proxyUrl =
-          "https://r.jina.ai/https://www.shipxplorer.com/data/vessels/SEABOURN-VENTURE-IMO-9862023-MMSI-311000930";
+      const SHIP_IMO = "9862023";
+      const SHIP_MMSI = "311000930";
+      const ALL_ORIGINS_GET = "https://api.allorigins.win/get?url=";
+
+      const CRUISE_MAPPER_DESTINATION_MAP = {
+        NOME: "Nome, Alaska",
+        ANCHORAGE: "Anchorage, AK",
+        HUBBARD: "Hubbard Glacier, Alaska",
+        REYKJAVIK: "Reykjavik, Iceland",
+        ILULISSAT: "Ilulissat, Greenland",
+        SISIMIUT: "Sisimiut, Greenland",
+        KANGERLUSSUAQ: "Kangerlussuaq, Greenland",
+        NUUK: "Nuuk, Greenland",
+        QAQORTOQ: "Qaqortoq, Greenland",
+      };
+
+      async function fetchViaAllOrigins(targetUrl) {
         try {
-          const response = await fetch(proxyUrl, {
-            headers: {
-              Accept: "text/plain",
-            },
-          });
+          const response = await fetch(
+            ALL_ORIGINS_GET + encodeURIComponent(targetUrl)
+          );
           if (!response.ok) {
-            console.warn("[SX] Response not OK:", response.status);
+            console.warn("[PROXY] Response not OK:", response.status, targetUrl);
             return null;
           }
-
-          const rawText = await response.text();
-
-          // Find Latitude div - look for id="title" containing "Latitude" followed by id="value"
-          let latValue = null;
-          let lngValue = null;
-
-          // Try to find latitude - search for "Latitude" title and get its value
-          const latMatch = rawText.match(
-            /<div[^>]*id\s*=\s*["']title["'][^>]*>Latitude<\/div>\s*<div[^>]*id\s*=\s*["']value["'][^>]*>([^<]+)<\/div>/is
-          );
-          if (latMatch) {
-            latValue = parseFloat(latMatch[1].trim());
-            console.log("[SX] Found Latitude:", latValue);
-          }
-
-          // Try to find longitude - search for "Longitude" title and get its value
-          const lngMatch = rawText.match(
-            /<div[^>]*id\s*=\s*["']title["'][^>]*>Longitude<\/div>\s*<div[^>]*id\s*=\s*["']value["'][^>]*>([^<]+)<\/div>/is
-          );
-          if (lngMatch) {
-            lngValue = parseFloat(lngMatch[1].trim());
-            console.log("[SX] Found Longitude:", lngValue);
-          }
-
-          if (Number.isFinite(latValue) && Number.isFinite(lngValue)) {
-            console.log("[SX] ✅ Coordinates extracted:", latValue, lngValue);
-            return { lat: latValue, lng: lngValue };
-          }
-
-          return null;
+          const payload = await response.json();
+          if (!payload?.contents) return null;
+          return payload.contents;
         } catch (error) {
-          console.warn("[SX] Error fetching from ShipXplorer:", error);
+          console.warn("[PROXY] Error fetching:", targetUrl, error);
           return null;
         }
+      }
+
+      function parseCoordinatesFromText(text) {
+        const coordsMatch = text.match(
+          /coordinates\s+([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
+        );
+        if (!coordsMatch) return null;
+
+        let lat = parseFloat(coordsMatch[1]);
+        const latDir = coordsMatch[2].toUpperCase();
+        let lng = parseFloat(coordsMatch[3]);
+        const lngDir = coordsMatch[4].toUpperCase();
+
+        if (latDir === "S") lat = -lat;
+        if (lngDir === "W") lng = -lng;
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+        return { lat, lng };
+      }
+
+      function normalizeCruiseMapperDestination(raw) {
+        const trimmed = raw.trim();
+        const mapped = CRUISE_MAPPER_DESTINATION_MAP[trimmed.toUpperCase()];
+        return mapped || trimmed;
+      }
+
+      function parseDestinationFromCruiseMapperText(text) {
+        const patterns = [
+          /en route to\s+([A-Za-z][A-Za-z0-9\s,.()-]+?)(?:\s*[.,;!?\n]|<|$)/i,
+          /\* Destination\s+([A-Za-z][A-Za-z0-9\s,.()-]+?)(?:\s*[\n\r]|$)/im,
+        ];
+
+        for (const pattern of patterns) {
+          const routeMatch = text.match(pattern);
+          if (!routeMatch) continue;
+
+          let destination = routeMatch[1].trim();
+          const looksLikeHtml =
+            /^[A-Z0-9\-_]+$/.test(destination) &&
+            destination.length > 8 &&
+            !/[a-z]/.test(destination);
+          const htmlArtifacts =
+            /^(MSRV|CLASS|ID|DATA|SRC|HREF|ALT|TITLE|STYLE|SCRIPT|RYBINSK|RYB|MSRV-RYB)/i;
+          const invalidPatterns = /^[0-9]+$|^[A-Z]{2,}-[A-Z]{2,}/;
+
+          if (
+            looksLikeHtml ||
+            htmlArtifacts.test(destination) ||
+            invalidPatterns.test(destination) ||
+            destination.length < 2 ||
+            destination.length > 50
+          ) {
+            continue;
+          }
+
+          return normalizeCruiseMapperDestination(destination);
+        }
+
+        return null;
+      }
+
+      async function fetchCoordinatesFromMyShipTracking() {
+        const text = await fetchViaAllOrigins(
+          `https://www.myshiptracking.com/requests/vesselonmap.php?type=json&mmsi=${SHIP_MMSI}`
+        );
+        if (!text) return null;
+
+        const parts = text.trim().split(/\s+/);
+        if (parts.length < 2) return null;
+
+        const lat = parseFloat(parts[0]);
+        const lng = parseFloat(parts[1]);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+        console.log("[MST] ✅ Coordinates extracted:", lat, lng);
+        return { lat, lng };
+      }
+
+      async function fetchCoordinatesFromCruiseMapper() {
+        try {
+          const text = await fetchViaAllOrigins(
+            `https://www.cruisemapper.com/?imo=${SHIP_IMO}`
+          );
+          if (!text) return null;
+
+          const coords = parseCoordinatesFromText(text);
+          if (coords) {
+            console.log("[CM] ✅ Coordinates extracted:", coords.lat, coords.lng);
+          }
+          return coords;
+        } catch (error) {
+          console.warn("[CM] Error fetching from CruiseMapper:", error);
+          return null;
+        }
+      }
+
+      async function fetchLiveShipPosition() {
+        const [cruiseMapperData, myShipTrackingCoords] = await Promise.all([
+          (async () => {
+            try {
+              const text = await fetchViaAllOrigins(
+                `https://www.cruisemapper.com/?imo=${SHIP_IMO}`
+              );
+              if (!text) return null;
+
+              const result = {
+                coords: parseCoordinatesFromText(text),
+                destination: null,
+                isAtSea: false,
+              };
+
+              const destination = parseDestinationFromCruiseMapperText(text);
+              if (destination) {
+                result.destination = destination;
+                result.isAtSea = true;
+                console.log(
+                  "[CM] ✅ Route detected, destination:",
+                  result.destination
+                );
+              }
+
+              return result;
+            } catch (error) {
+              console.warn("[CM] CruiseMapper error:", error);
+              return null;
+            }
+          })(),
+          fetchCoordinatesFromMyShipTracking(),
+        ]);
+
+        const coords =
+          myShipTrackingCoords || cruiseMapperData?.coords || null;
+        const isAtSea = cruiseMapperData?.isAtSea || false;
+        const destination = cruiseMapperData?.destination || null;
+
+        return {
+          coords,
+          destination,
+          port: null,
+          isAtSea,
+          summary: "Live position update",
+        };
       }
 
       function getStatusFromItinerary(todayEntry) {
