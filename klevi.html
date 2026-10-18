@@ -2262,6 +2262,7 @@
         "2026-07-26": "Reykjavik, Iceland",
         "2026-07-27": "At Sea",
         "2026-07-28": "At Sea",
+        "2026-07-28": "Umivik Bay, Greenland",
         "2026-07-29": "Skjoldungen Island, Greenland",
         "2026-07-30": "Prince Christian Sound, Greenland",
         "2026-07-31": "Qaqortoq, Greenland",
@@ -2294,6 +2295,10 @@
         "2026-08-27": "At Sea",
         "2026-08-28": "At Sea",
         "2026-08-29": "Anchorage, AK",
+        "2026-08-03": "Camp Kangiusaq, Greenland",
+        "2026-08-04": "Evighedsfjorden, Greenland",
+        "2026-08-05": "Sisimiut, Greenland",
+        "2026-08-06": "Kangerlussuaq, Greenland",
       };
 
       const locationReference = {
@@ -3369,6 +3374,172 @@
             coords: todayEntry.coords,
           };
         }
+      }
+
+      async function fetchCoordinatesFromCruiseMapper() {
+        try {
+          const response = await fetch(
+            "https://r.jina.ai/https://www.cruisemapper.com/?imo=9862023",
+            { headers: { Accept: "text/plain" } }
+          );
+          if (!response.ok) {
+            console.warn("[CM] Response not OK:", response.status);
+            return null;
+          }
+
+          const text = await response.text();
+
+          // Look for pattern: "coordinates 37.92809 N / 16.3297 E"
+          // Also handle variations like "coordinates 37.92809 N / 16.3297 E en route to Messina"
+          const coordsMatch = text.match(
+            /coordinates\s+([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
+          );
+
+          if (coordsMatch) {
+            let lat = parseFloat(coordsMatch[1]);
+            const latDir = coordsMatch[2].toUpperCase();
+            let lng = parseFloat(coordsMatch[3]);
+            const lngDir = coordsMatch[4].toUpperCase();
+
+            // Apply direction (N/S, E/W)
+            if (latDir === "S") lat = -lat;
+            if (lngDir === "W") lng = -lng;
+
+            if (Number.isFinite(lat) && Number.isFinite(lng)) {
+              console.log("[CM] ✅ Coordinates extracted:", lat, lng);
+              return { lat, lng };
+            }
+          }
+
+          return null;
+        } catch (error) {
+          console.warn("[CM] Error fetching from CruiseMapper:", error);
+          return null;
+        }
+      }
+
+      async function fetchLiveShipPosition() {
+        // Fetch both in parallel for speed
+        const [cruiseMapperData, shipXplorerCoords] = await Promise.all([
+          // Get coordinates and destination from CruiseMapper IMO page
+          (async () => {
+            try {
+              const response = await fetch(
+                "https://r.jina.ai/https://www.cruisemapper.com/?imo=9862023",
+                { headers: { Accept: "text/plain" } }
+              );
+              if (!response.ok) return null;
+              const text = await response.text();
+
+              const result = {
+                coords: null,
+                destination: null,
+                isAtSea: false,
+              };
+
+              // Extract coordinates: "coordinates 37.92809 N / 16.3297 E"
+              const coordsMatch = text.match(
+                /coordinates\s+([\d.]+)\s*([NS])\s*\/\s*([\d.]+)\s*([EW])/i
+              );
+
+              if (coordsMatch) {
+                let lat = parseFloat(coordsMatch[1]);
+                const latDir = coordsMatch[2].toUpperCase();
+                let lng = parseFloat(coordsMatch[3]);
+                const lngDir = coordsMatch[4].toUpperCase();
+
+                // Apply direction (N/S, E/W)
+                if (latDir === "S") lat = -lat;
+                if (lngDir === "W") lng = -lng;
+
+                if (Number.isFinite(lat) && Number.isFinite(lng)) {
+                  result.coords = { lat, lng };
+                  console.log("[CM] ✅ Coordinates extracted:", lat, lng);
+                }
+              }
+
+              // Extract destination: "en route to Messina" (often appears after coordinates)
+              const patterns = [
+                // Pattern 1: More restrictive - proper capitalization
+                /en route to\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+[A-Z][a-z]+)?)(?:\s*[.,;!?\n]|<|$)/,
+                // Pattern 2: Less restrictive but still reasonable
+                /en route to\s+([A-Za-z][a-z]+(?:\s+[A-Za-z][a-z]+)*)(?:\s*[.,;!?\n]|<|$)/i,
+              ];
+
+              let routeMatch = null;
+              for (const pattern of patterns) {
+                routeMatch = text.match(pattern);
+                if (routeMatch) {
+                  let destination = routeMatch[1].trim();
+
+                  // Filter out HTML-like patterns
+                  const looksLikeHtml =
+                    /^[A-Z0-9\-_]+$/.test(destination) &&
+                    destination.length > 8 &&
+                    !/[a-z]/.test(destination);
+
+                  const htmlArtifacts =
+                    /^(MSRV|CLASS|ID|DATA|SRC|HREF|ALT|TITLE|STYLE|SCRIPT|RYBINSK|RYB|MSRV-RYB)/i;
+
+                  const invalidPatterns = /^[0-9]+$|^[A-Z]{2,}-[A-Z]{2,}/;
+
+                  if (
+                    looksLikeHtml ||
+                    htmlArtifacts.test(destination) ||
+                    invalidPatterns.test(destination)
+                  ) {
+                    console.log(
+                      "[CM] Filtered out invalid pattern:",
+                      destination
+                    );
+                    routeMatch = null;
+                    continue;
+                  }
+
+                  if (destination.length < 2 || destination.length > 50) {
+                    console.log(
+                      "[CM] Invalid destination length:",
+                      destination
+                    );
+                    routeMatch = null;
+                    continue;
+                  }
+
+                  break;
+                }
+              }
+
+              if (routeMatch) {
+                result.destination = routeMatch[1].trim();
+                result.isAtSea = true;
+                console.log(
+                  "[CM] ✅ 'en route' detected, destination:",
+                  result.destination
+                );
+              }
+
+              return result;
+            } catch (error) {
+              console.warn("[CM] CruiseMapper error:", error);
+              return null;
+            }
+          })(),
+          // Get coordinates from ShipXplorer as backup
+          fetchCoordinatesFromShipXplorer(),
+        ]);
+
+        // Prioritize CruiseMapper coordinates, fallback to ShipXplorer
+        const coords = cruiseMapperData?.coords || shipXplorerCoords;
+        const isAtSea = cruiseMapperData?.isAtSea || false;
+        const destination = cruiseMapperData?.destination || null;
+
+        return {
+          coords,
+          destination,
+          port: null,
+          isAtSea,
+          summary: "Live position update",
+        };
       }
 
       async function updateLivePosition(todayEntry) {
