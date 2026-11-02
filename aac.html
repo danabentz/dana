@@ -25,8 +25,10 @@
         --muted: #9fb0c3;
         --stars: #00a862;
         --stars-deep: #006847;
-        --banditos: #ff7a2f;
-        --banditos-deep: #c2410c;
+        --banditos: #ff5c5c;
+        --banditos-deep: #b91c1c;
+        --banditos-text: #ff5c5c;
+        --wolves-text: #ffffff;
         --wolves: #6aa8ff;
         --wolves-deep: #2c5fb3;
         --danger: #f87171;
@@ -43,7 +45,7 @@
         font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(circle at 12% 8%, rgba(255, 122, 47, 0.22), transparent 38%),
+          radial-gradient(circle at 12% 8%, rgba(255, 92, 92, 0.2), transparent 38%),
           radial-gradient(circle at 88% 10%, rgba(106, 168, 255, 0.22), transparent 38%),
           radial-gradient(circle at 50% 110%, rgba(0, 168, 98, 0.2), transparent 45%),
           var(--bg);
@@ -87,11 +89,11 @@
       }
 
       h1 .banditos {
-        color: var(--banditos);
+        color: var(--banditos-text);
       }
 
       h1 .wolves {
-        color: var(--wolves);
+        color: var(--wolves-text);
       }
 
       h1 .vs {
@@ -210,6 +212,8 @@
       .team {
         --team: var(--banditos);
         --team-deep: var(--banditos-deep);
+        --team-text: var(--banditos-text);
+        --team-button: #dc2626;
         border-radius: var(--radius);
         background: var(--panel);
         border: 1px solid var(--border);
@@ -222,6 +226,8 @@
       .team.wolves {
         --team: var(--wolves);
         --team-deep: var(--wolves-deep);
+        --team-text: var(--wolves-text);
+        --team-button: var(--wolves);
       }
 
       .team-head {
@@ -239,7 +245,7 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.02em;
-        color: var(--team);
+        color: var(--team-text);
       }
 
       .team-count {
@@ -308,7 +314,7 @@
         font-weight: 700;
         font-size: 1rem;
         color: #fff;
-        background: linear-gradient(120deg, var(--team-deep), var(--team));
+        background: linear-gradient(120deg, var(--team-deep), var(--team-button));
         transition: transform 0.15s ease, filter 0.15s ease;
       }
 
