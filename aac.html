@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AAC Game Sign-Up · Banditos vs Wolves</title>
+    <meta
+      name="description"
+      content="Sign up to play in the AAC game on November 23, 2026 — Banditos vs Wolves."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07131f;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel-strong: rgba(255, 255, 255, 0.1);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: #f1f5f9;
+        --muted: #9fb0c3;
+        --stars: #00a862;
+        --stars-deep: #006847;
+        --banditos: #ff7a2f;
+        --banditos-deep: #c2410c;
+        --wolves: #6aa8ff;
+        --wolves-deep: #2c5fb3;
+        --danger: #f87171;
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 12% 8%, rgba(255, 122, 47, 0.22), transparent 38%),
+          radial-gradient(circle at 88% 10%, rgba(106, 168, 255, 0.22), transparent 38%),
+          radial-gradient(circle at 50% 110%, rgba(0, 168, 98, 0.2), transparent 45%),
+          var(--bg);
+        line-height: 1.5;
+        padding: 0 16px 64px;
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 56px 0 28px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      h1 {
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.6rem, 6vw + 1rem, 4.75rem);
+        line-height: 1;
+        margin: 18px 0 10px;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+
+      h1 .banditos {
+        color: var(--banditos);
+      }
+
+      h1 .wolves {
+        color: var(--wolves);
+      }
+
+      h1 .vs {
+        font-size: 0.55em;
+        color: var(--muted);
+        vertical-align: middle;
+        margin: 0 0.25em;
+      }
+
+      .when {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .when span {
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .roster-meter {
+        margin: 24px auto 0;
+        max-width: 420px;
+      }
+
+      .roster-meter .label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .roster-meter .label strong {
+        color: var(--text);
+      }
+
+      .bar {
+        height: 10px;
+        border-radius: 999px;
+        background: var(--panel-strong);
+        overflow: hidden;
+        display: flex;
+      }
+
+      .bar .b {
+        background: linear-gradient(90deg, var(--banditos-deep), var(--banditos));
+        transition: width 0.4s ease;
+      }
+
+      .bar .w {
+        background: linear-gradient(90deg, var(--wolves), var(--wolves-deep));
+        transition: width 0.4s ease;
+      }
+
+      .tickets {
+        margin: 0 auto 28px;
+        max-width: 780px;
+        padding: 18px 22px;
+        border-radius: var(--radius);
+        background: linear-gradient(135deg, rgba(0, 104, 71, 0.45), rgba(0, 168, 98, 0.12));
+        border: 1px solid rgba(0, 168, 98, 0.45);
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      .tickets .star {
+        flex: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: var(--stars-deep);
+        font-size: 1.3rem;
+      }
+
+      .tickets h2 {
+        margin: 0 0 4px;
+        font-size: 1.05rem;
+      }
+
+      .tickets p {
+        margin: 0 0 8px;
+        color: #cfe9dc;
+        font-size: 0.95rem;
+      }
+
+      .tickets ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 4px;
+        font-size: 0.92rem;
+      }
+
+      .tickets li strong {
+        display: inline-block;
+        min-width: 92px;
+      }
+
+      .teams {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
+
+      @media (max-width: 760px) {
+        .teams {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .team {
+        --team: var(--banditos);
+        --team-deep: var(--banditos-deep);
+        border-radius: var(--radius);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-top: 4px solid var(--team);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .team.wolves {
+        --team: var(--wolves);
+        --team-deep: var(--wolves-deep);
+      }
+
+      .team-head {
+        padding: 20px 22px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+      }
+
+      .team-head h2 {
+        margin: 0;
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-size: 2.1rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        color: var(--team);
+      }
+
+      .team-count {
+        font-size: 0.9rem;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      form {
+        margin: 0 16px;
+        padding: 16px;
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.22);
+        border: 1px solid var(--border);
+        display: grid;
+        gap: 12px;
+      }
+
+      label {
+        display: grid;
+        gap: 5px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+      }
+
+      input,
+      select {
+        width: 100%;
+        font: inherit;
+        font-size: 1rem;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 11px 12px;
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      select option {
+        color: #0b1224;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--team);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--team) 30%, transparent);
+      }
+
+      input::placeholder {
+        color: rgba(159, 176, 195, 0.7);
+      }
+
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: none;
+      }
+
+      .join {
+        margin-top: 4px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #fff;
+        background: linear-gradient(120deg, var(--team-deep), var(--team));
+        transition: transform 0.15s ease, filter 0.15s ease;
+      }
+
+      .join:hover:not(:disabled) {
+        transform: translateY(-1px);
+        filter: brightness(1.08);
+      }
+
+      .join:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .msg {
+        min-height: 1.2em;
+        margin: 0;
+        font-size: 0.88rem;
+      }
+
+      .msg.error {
+        color: var(--danger);
+      }
+
+      .msg.ok {
+        color: #6ee7b7;
+      }
+
+      .players {
+        list-style: none;
+        margin: 0;
+        padding: 16px 16px 20px;
+        display: grid;
+        gap: 8px;
+        counter-reset: player;
+      }
+
+      .players li {
+        counter-increment: player;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .players li::before {
+        content: counter(player);
+        flex: none;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #fff;
+        background: var(--team-deep);
+      }
+
+      .players .who {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      .players .name {
+        font-weight: 600;
+        overflow-wrap: anywhere;
+      }
+
+      .players .contact {
+        display: block;
+        font-size: 0.82rem;
+        color: var(--muted);
+        overflow-wrap: anywhere;
+      }
+
+      .game-tag {
+        flex: none;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 3px 9px;
+        border-radius: 999px;
+        color: #c9f5df;
+        background: rgba(0, 168, 98, 0.18);
+        border: 1px solid rgba(0, 168, 98, 0.35);
+        white-space: nowrap;
+      }
+
+      .remove {
+        flex: none;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        color: var(--danger);
+        background: rgba(248, 113, 113, 0.12);
+      }
+
+      @media (max-width: 480px) {
+        .players li:has(.remove) .who {
+          flex-basis: calc(100% - 40px);
+        }
+
+        .players li:has(.remove) .game-tag {
+          margin-left: 40px;
+        }
+      }
+
+      .empty {
+        color: var(--muted);
+        font-size: 0.92rem;
+        text-align: center;
+        padding: 14px;
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+      }
+
+      .players li.empty::before {
+        display: none;
+      }
+
+      .status {
+        text-align: center;
+        color: var(--muted);
+        margin: 0 0 20px;
+        font-size: 0.95rem;
+      }
+
+      .status.error {
+        color: var(--danger);
+      }
+
+      .admin {
+        margin-top: 32px;
+        padding: 18px 22px;
+        border-radius: var(--radius);
+        background: var(--panel);
+        border: 1px solid var(--border);
+      }
+
+      .admin h2 {
+        margin: 0 0 10px;
+        font-size: 1.1rem;
+      }
+
+      .admin-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .admin-row input {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .admin-btn {
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 600;
+        color: #fff;
+        background: var(--stars-deep);
+      }
+
+      .admin-btn.secondary {
+        background: var(--panel-strong);
+      }
+
+      .summary {
+        margin: 14px 0 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .summary div {
+        padding: 8px 12px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.25);
+        font-size: 0.9rem;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">🏒 AAC Game Sign-Up</span>
+        <h1>
+          <span class="banditos">Banditos</span><span class="vs">vs</span
+          ><span class="wolves">Wolves</span>
+        </h1>
+        <p class="when">Monday, November 23, 2026 <span>· 3:00 – 4:00 PM</span></p>
+        <div class="roster-meter" aria-live="polite">
+          <div class="label">
+            <span>Roster</span>
+            <span><strong id="total-count">0</strong> / <span id="max-count">26</span> players</span>
+          </div>
+          <div class="bar"><div class="b" id="bar-b" style="width: 0"></div><div class="w" id="bar-w" style="width: 0"></div></div>
+        </div>
+      </header>
+
+      <section class="tickets" aria-labelledby="tickets-title">
+        <div class="star" aria-hidden="true">⭐</div>
+        <div>
+          <h2 id="tickets-title">Dallas Stars tickets</h2>
+          <p>Players get Dallas Stars tickets. When you sign up, pick the game you'd like tickets for.</p>
+          <ul>
+            <li><strong>Thu, Feb 18</strong> Stars vs Flyers · Section 314</li>
+            <li><strong>Tue, Mar 30</strong> Stars vs Flames · Section 314</li>
+            <li><strong>Mon, Apr 5</strong> Stars vs Kraken · Section 314</li>
+          </ul>
+        </div>
+      </section>
+
+      <p class="status" id="status">Loading roster…</p>
+
+      <main class="teams">
+        <section class="team banditos" data-team="banditos" aria-labelledby="banditos-title">
+          <div class="team-head">
+            <h2 id="banditos-title">Banditos</h2>
+            <span class="team-count" data-count>0 players</span>
+          </div>
+          <form data-team="banditos" novalidate></form>
+          <ul class="players" data-list></ul>
+        </section>
+
+        <section class="team wolves" data-team="wolves" aria-labelledby="wolves-title">
+          <div class="team-head">
+            <h2 id="wolves-title">Wolves</h2>
+            <span class="team-count" data-count>0 players</span>
+          </div>
+          <form data-team="wolves" novalidate></form>
+          <ul class="players" data-list></ul>
+        </section>
+      </main>
+
+      <section class="admin" id="admin" hidden>
+        <h2>Organizer view</h2>
+        <div class="admin-row" id="admin-login">
+          <input type="password" id="admin-key" placeholder="Admin key" autocomplete="current-password" />
+          <button class="admin-btn" id="admin-unlock" type="button">Unlock</button>
+        </div>
+        <div id="admin-tools" hidden>
+          <div class="admin-row">
+            <button class="admin-btn" id="admin-csv" type="button">Download CSV</button>
+            <button class="admin-btn secondary" id="admin-lock" type="button">Lock</button>
+          </div>
+          <div class="summary" id="admin-summary"></div>
+        </div>
+        <p class="msg" id="admin-msg"></p>
+      </section>
+    </div>
+
+    <template id="form-template">
+      <label>
+        Player name
+        <input name="name" type="text" maxlength="60" autocomplete="name" placeholder="First and last name" required />
+      </label>
+      <label>
+        Email or phone (for tickets)
+        <input name="contact" type="text" maxlength="100" autocomplete="email" placeholder="you@email.com or 214-555-0123" required />
+      </label>
+      <label>
+        Stars game
+        <select name="game" required>
+          <option value="" selected disabled>Choose a game…</option>
+          <option value="flyers">Thu, Feb 18 – Stars vs Flyers · Sec 314</option>
+          <option value="flames">Tue, Mar 30 – Stars vs Flames · Sec 314</option>
+          <option value="kraken">Mon, Apr 5 – Stars vs Kraken · Sec 314</option>
+        </select>
+      </label>
+      <button class="join" type="submit">Add me to the team</button>
+      <p class="msg" data-msg role="status"></p>
+    </template>
+
+    <script>
+      const API = "/api/aac";
+      const ADMIN_STORAGE = "aac-admin-key";
+      const TEAM_NAMES = { banditos: "Banditos", wolves: "Wolves" };
+      const GAME_LABELS = {
+        flyers: "Feb 18 · Flyers",
+        flames: "Mar 30 · Flames",
+        kraken: "Apr 5 · Kraken",
+      };
+      const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      const state = {
+        players: [],
+        maxPlayers: 26,
+        adminKey: sessionStorage.getItem(ADMIN_STORAGE) || "",
+        isAdmin: false,
+      };
+
+      const statusEl = document.getElementById("status");
+      const teams = [...document.querySelectorAll(".team")];
+      const formTemplate = document.getElementById("form-template");
+
+      teams.forEach((section) => {
+        const form = section.querySelector("form");
+        form.appendChild(formTemplate.content.cloneNode(true));
+        form.addEventListener("submit", (event) => onSubmit(event, section.dataset.team));
+      });
+
+      function setStatus(text, isError = false) {
+        statusEl.textContent = text;
+        statusEl.classList.toggle("error", isError);
+        statusEl.hidden = !text;
+      }
+
+      function el(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      }
+
+      function render() {
+        const total = state.players.length;
+        const full = total >= state.maxPlayers;
+        document.getElementById("total-count").textContent = total;
+        document.getElementById("max-count").textContent = state.maxPlayers;
+
+        teams.forEach((section) => {
+          const team = section.dataset.team;
+          const roster = state.players.filter((p) => p.team === team);
+          const list = section.querySelector("[data-list]");
+          section.querySelector("[data-count]").textContent =
+            `${roster.length} player${roster.length === 1 ? "" : "s"}`;
+          document.getElementById(team === "banditos" ? "bar-b" : "bar-w").style.width =
+            `${(roster.length / state.maxPlayers) * 100}%`;
+
+          list.replaceChildren();
+          if (!roster.length) {
+            list.appendChild(el("li", "empty", `No ${TEAM_NAMES[team]} yet — be the first!`));
+          }
+          roster.forEach((player) => {
+            const li = el("li");
+            const who = el("div", "who");
+            who.appendChild(el("span", "name", player.name));
+            if (state.isAdmin && player.contact) {
+              who.appendChild(el("span", "contact", player.contact));
+            }
+            li.appendChild(who);
+            li.appendChild(el("span", "game-tag", GAME_LABELS[player.game] || player.game));
+            if (state.isAdmin) {
+              const remove = el("button", "remove", "Remove");
+              remove.type = "button";
+              remove.addEventListener("click", () => removePlayer(player));
+              li.appendChild(remove);
+            }
+            list.appendChild(li);
+          });
+
+          const button = section.querySelector(".join");
+          button.disabled = full;
+          button.textContent = full ? "Roster is full" : `Add me to the ${TEAM_NAMES[team]}`;
+        });
+
+        if (state.isAdmin) renderSummary();
+      }
+
+      function renderSummary() {
+        const summary = document.getElementById("admin-summary");
+        summary.replaceChildren();
+        Object.entries(GAME_LABELS).forEach(([game, label]) => {
+          const count = state.players.filter((p) => p.game === game).length;
+          summary.appendChild(el("div", "", `${label}: ${count} player${count === 1 ? "" : "s"}`));
+        });
+      }
+
+      async function api(method, { query = "", body, admin = false } = {}) {
+        const headers = {};
+        if (body) headers["content-type"] = "application/json";
+        if (admin) headers["x-admin-key"] = state.adminKey;
+        const res = await fetch(API + query, {
+          method,
+          headers,
+          body: body ? JSON.stringify(body) : undefined,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const error = new Error(data.error || "Something went wrong. Please try again.");
+          error.status = res.status;
+          throw error;
+        }
+        return data;
+      }
+
+      async function load() {
+        try {
+          const data = state.isAdmin
+            ? await api("GET", { query: "?admin=1", admin: true })
+            : await api("GET");
+          state.players = data.players || [];
+          state.maxPlayers = data.maxPlayers || state.maxPlayers;
+          setStatus("");
+          render();
+        } catch (error) {
+          if (state.isAdmin && error.status === 401) {
+            lockAdmin("That admin key didn't work.");
+            return load();
+          }
+          setStatus("Couldn't load the roster. Please refresh the page.", true);
+        }
+      }
+
+      async function onSubmit(event, team) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const msg = form.querySelector("[data-msg]");
+        const button = form.querySelector(".join");
+        const fields = form.elements;
+        const name = fields.name.value.trim();
+        const contact = fields.contact.value.trim();
+        const game = fields.game.value;
+
+        const showError = (text, field) => {
+          msg.textContent = text;
+          msg.className = "msg error";
+          if (field) fields[field].focus();
+        };
+
+        if (!name) return showError("Please enter your name.", "name");
+        if (!EMAIL_RE.test(contact) && contact.replace(/\D/g, "").length < 10) {
+          return showError("Please enter a valid email or phone number.", "contact");
+        }
+        if (!game) return showError("Please pick a Stars game.", "game");
+
+        button.disabled = true;
+        msg.textContent = "Saving…";
+        msg.className = "msg";
+        try {
+          await api("POST", { body: { name, contact, team, game } });
+          form.reset();
+          msg.textContent = `You're on the ${TEAM_NAMES[team]}, ${name}! See you on the ice.`;
+          msg.className = "msg ok";
+        } catch (error) {
+          showError(error.message);
+        } finally {
+          await load();
+        }
+      }
+
+      async function removePlayer(player) {
+        if (!confirm(`Remove ${player.name} from the ${TEAM_NAMES[player.team]}?`)) return;
+        try {
+          await api("DELETE", { query: `?id=${encodeURIComponent(player.id)}`, admin: true });
+        } catch (error) {
+          alert(error.message);
+        }
+        await load();
+      }
+
+      function downloadCsv() {
+        const rows = [["Team", "Name", "Email or phone", "Stars game", "Signed up"]];
+        state.players.forEach((p) =>
+          rows.push([TEAM_NAMES[p.team], p.name, p.contact, GAME_LABELS[p.game], p.createdAt])
+        );
+        const csv = rows
+          .map((row) => row.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(","))
+          .join("\n");
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+        link.download = "aac-signups.csv";
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
+      function lockAdmin(message = "") {
+        state.isAdmin = false;
+        state.adminKey = "";
+        sessionStorage.removeItem(ADMIN_STORAGE);
+        document.getElementById("admin-login").hidden = false;
+        document.getElementById("admin-tools").hidden = true;
+        document.getElementById("admin-msg").textContent = message;
+        document.getElementById("admin-msg").className = message ? "msg error" : "msg";
+      }
+
+      async function unlockAdmin(key) {
+        state.adminKey = key;
+        try {
+          await api("GET", { query: "?admin=1", admin: true });
+        } catch (error) {
+          lockAdmin(error.status === 401 ? "That admin key didn't work." : error.message);
+          return;
+        }
+        state.isAdmin = true;
+        sessionStorage.setItem(ADMIN_STORAGE, key);
+        document.getElementById("admin-login").hidden = true;
+        document.getElementById("admin-tools").hidden = false;
+        document.getElementById("admin-msg").textContent = "";
+        await load();
+      }
+
+      if (new URLSearchParams(location.search).has("admin")) {
+        document.getElementById("admin").hidden = false;
+        document.getElementById("admin-unlock").addEventListener("click", () => {
+          const key = document.getElementById("admin-key").value.trim();
+          if (key) unlockAdmin(key);
+        });
+        document.getElementById("admin-key").addEventListener("keydown", (event) => {
+          if (event.key === "Enter") document.getElementById("admin-unlock").click();
+        });
+        document.getElementById("admin-lock").addEventListener("click", () => {
+          lockAdmin();
+          load();
+        });
+        document.getElementById("admin-csv").addEventListener("click", downloadCsv);
+      }
+
+      if (state.adminKey && new URLSearchParams(location.search).has("admin")) {
+        unlockAdmin(state.adminKey);
+      } else {
+        load();
+      }
+      setInterval(() => {
+        if (!document.hidden) load();
+      }, 20000);
+    </script>
+  </body>
+</html>

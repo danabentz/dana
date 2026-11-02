@@ -3,3 +3,6 @@ dist
 .DS_Store
 *.log
 captions-frontend/.env.local
+
+# Local Netlify folder
+.netlify
