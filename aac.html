@@ -25,10 +25,12 @@
         --muted: #9fb0c3;
         --stars: #00a862;
         --stars-deep: #006847;
-        --banditos: #ff7a2f;
-        --banditos-deep: #c2410c;
-        --wolves: #6aa8ff;
-        --wolves-deep: #2c5fb3;
+        --banditos: #ff5c5c;
+        --banditos-deep: #b91c1c;
+        --banditos-text: #ff5c5c;
+        --wolves-text: #ffffff;
+        --wolves: #ffffff;
+        --wolves-deep: #d5dbe3;
         --danger: #f87171;
         --radius: 18px;
       }
@@ -43,8 +45,8 @@
         font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(circle at 12% 8%, rgba(255, 122, 47, 0.22), transparent 38%),
-          radial-gradient(circle at 88% 10%, rgba(106, 168, 255, 0.22), transparent 38%),
+          radial-gradient(circle at 12% 8%, rgba(255, 92, 92, 0.2), transparent 38%),
+          radial-gradient(circle at 88% 10%, rgba(255, 255, 255, 0.1), transparent 38%),
           radial-gradient(circle at 50% 110%, rgba(0, 168, 98, 0.2), transparent 45%),
           var(--bg);
         line-height: 1.5;
@@ -87,11 +89,11 @@
       }
 
       h1 .banditos {
-        color: var(--banditos);
+        color: var(--banditos-text);
       }
 
       h1 .wolves {
-        color: var(--wolves);
+        color: var(--wolves-text);
       }
 
       h1 .vs {
@@ -210,6 +212,9 @@
       .team {
         --team: var(--banditos);
         --team-deep: var(--banditos-deep);
+        --team-text: var(--banditos-text);
+        --team-button: #dc2626;
+        --team-on: #ffffff;
         border-radius: var(--radius);
         background: var(--panel);
         border: 1px solid var(--border);
@@ -222,6 +227,9 @@
       .team.wolves {
         --team: var(--wolves);
         --team-deep: var(--wolves-deep);
+        --team-text: var(--wolves-text);
+        --team-button: var(--wolves);
+        --team-on: #0b1224;
       }
 
       .team-head {
@@ -239,7 +247,7 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.02em;
-        color: var(--team);
+        color: var(--team-text);
       }
 
       .team-count {
@@ -307,8 +315,8 @@
         border-radius: 10px;
         font-weight: 700;
         font-size: 1rem;
-        color: #fff;
-        background: linear-gradient(120deg, var(--team-deep), var(--team));
+        color: var(--team-on);
+        background: linear-gradient(120deg, var(--team-deep), var(--team-button));
         transition: transform 0.15s ease, filter 0.15s ease;
       }
 
@@ -367,7 +375,7 @@
         place-items: center;
         font-size: 0.8rem;
         font-weight: 700;
-        color: #fff;
+        color: var(--team-on);
         background: var(--team-deep);
       }
 
@@ -398,6 +406,49 @@
         background: rgba(0, 168, 98, 0.18);
         border: 1px solid rgba(0, 168, 98, 0.35);
         white-space: nowrap;
+      }
+
+      .game-tag.tbd {
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px dashed var(--border);
+      }
+
+      .pick {
+        flex: none;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #fff;
+        background: var(--stars-deep);
+      }
+
+      .pick-form {
+        flex-basis: 100%;
+        margin: 4px 0 0;
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .pick-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .pick-actions .join {
+        flex: 1;
+        margin: 0;
+        padding: 10px 12px;
+        font-size: 0.92rem;
+      }
+
+      .pick-actions .cancel {
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 600;
+        color: var(--text);
+        background: var(--panel-strong);
       }
 
       .remove {
@@ -521,7 +572,10 @@
         <div class="star" aria-hidden="true">⭐</div>
         <div>
           <h2 id="tickets-title">Dallas Stars tickets</h2>
-          <p>Players get Dallas Stars tickets. When you sign up, pick the game you'd like tickets for.</p>
+          <p>
+            Players get Dallas Stars tickets. Pick the game you'd like tickets for when you sign up,
+            or come back later and tap <strong>Pick game</strong> next to your name.
+          </p>
           <ul>
             <li><strong>Thu, Feb 18</strong> Stars vs Flyers · Section 314</li>
             <li><strong>Tue, Mar 30</strong> Stars vs Flames · Section 314</li>
@@ -572,7 +626,7 @@
     <template id="form-template">
       <label>
         Player name
-        <input name="name" type="text" maxlength="60" autocomplete="name" placeholder="First and last name" required />
+        <input name="name" type="text" maxlength="60" autocomplete="name" placeholder="Your name" required />
       </label>
       <label>
         Email or phone (for tickets)
@@ -585,10 +639,36 @@
           <option value="flyers">Thu, Feb 18 – Stars vs Flyers · Sec 314</option>
           <option value="flames">Tue, Mar 30 – Stars vs Flames · Sec 314</option>
           <option value="kraken">Mon, Apr 5 – Stars vs Kraken · Sec 314</option>
+          <option value="any">Any game – I don't care</option>
+          <option value="later">I'll pick later</option>
         </select>
       </label>
       <button class="join" type="submit">Add me to the team</button>
       <p class="msg" data-msg role="status"></p>
+    </template>
+
+    <template id="pick-template">
+      <form class="pick-form" novalidate>
+        <label>
+          Email or phone you signed up with
+          <input name="contact" type="text" maxlength="100" autocomplete="email" placeholder="you@email.com or 214-555-0123" required />
+        </label>
+        <label>
+          Stars game
+          <select name="game" required>
+            <option value="" selected disabled>Choose a game…</option>
+            <option value="flyers">Thu, Feb 18 – Stars vs Flyers · Sec 314</option>
+            <option value="flames">Tue, Mar 30 – Stars vs Flames · Sec 314</option>
+            <option value="kraken">Mon, Apr 5 – Stars vs Kraken · Sec 314</option>
+            <option value="any">Any game – I don't care</option>
+          </select>
+        </label>
+        <div class="pick-actions">
+          <button class="join" type="submit">Save my game</button>
+          <button class="cancel" type="button">Cancel</button>
+        </div>
+        <p class="msg" data-msg role="status"></p>
+      </form>
     </template>
 
     <script>
@@ -599,15 +679,36 @@
         flyers: "Feb 18 · Flyers",
         flames: "Mar 30 · Flames",
         kraken: "Apr 5 · Kraken",
+        any: "Any game",
       };
+      const NO_GAME_LABEL = "Game TBD";
       const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const MINE_STORAGE = "aac-my-signups";
+
+      const readMine = () => {
+        try {
+          return JSON.parse(localStorage.getItem(MINE_STORAGE)) || {};
+        } catch {
+          return {};
+        }
+      };
 
       const state = {
         players: [],
         maxPlayers: 26,
         adminKey: sessionStorage.getItem(ADMIN_STORAGE) || "",
         isAdmin: false,
+        pickingId: null,
+        mine: readMine(),
       };
+
+      function rememberMine(id, contact) {
+        state.mine[id] = contact;
+        localStorage.setItem(MINE_STORAGE, JSON.stringify(state.mine));
+      }
+
+      const isValidContact = (contact) =>
+        EMAIL_RE.test(contact) || contact.replace(/\D/g, "").length >= 10;
 
       const statusEl = document.getElementById("status");
       const teams = [...document.querySelectorAll(".team")];
@@ -659,12 +760,28 @@
               who.appendChild(el("span", "contact", player.contact));
             }
             li.appendChild(who);
-            li.appendChild(el("span", "game-tag", GAME_LABELS[player.game] || player.game));
+            if (player.game) {
+              li.appendChild(el("span", "game-tag", GAME_LABELS[player.game] || player.game));
+            } else {
+              li.appendChild(el("span", "game-tag tbd", NO_GAME_LABEL));
+              if (state.pickingId !== player.id) {
+                const pick = el("button", "pick", "Pick game");
+                pick.type = "button";
+                pick.addEventListener("click", () => {
+                  state.pickingId = player.id;
+                  render();
+                });
+                li.appendChild(pick);
+              }
+            }
             if (state.isAdmin) {
               const remove = el("button", "remove", "Remove");
               remove.type = "button";
               remove.addEventListener("click", () => removePlayer(player));
               li.appendChild(remove);
+            }
+            if (!player.game && state.pickingId === player.id) {
+              li.appendChild(buildPickForm(player));
             }
             list.appendChild(li);
           });
@@ -680,10 +797,57 @@
       function renderSummary() {
         const summary = document.getElementById("admin-summary");
         summary.replaceChildren();
-        Object.entries(GAME_LABELS).forEach(([game, label]) => {
-          const count = state.players.filter((p) => p.game === game).length;
+        [...Object.entries(GAME_LABELS), ["", "No game yet"]].forEach(([game, label]) => {
+          const count = state.players.filter((p) => (p.game || "") === game).length;
           summary.appendChild(el("div", "", `${label}: ${count} player${count === 1 ? "" : "s"}`));
         });
+      }
+
+      function buildPickForm(player) {
+        const form = document
+          .getElementById("pick-template")
+          .content.firstElementChild.cloneNode(true);
+        const fields = form.elements;
+        const msg = form.querySelector("[data-msg]");
+        fields.contact.value = state.mine[player.id] || "";
+
+        form.querySelector(".cancel").addEventListener("click", () => {
+          state.pickingId = null;
+          render();
+        });
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const contact = fields.contact.value.trim();
+          const game = fields.game.value;
+          const showError = (text, field) => {
+            msg.textContent = text;
+            msg.className = "msg error";
+            if (field) fields[field].focus();
+          };
+
+          if (!isValidContact(contact)) {
+            return showError("Enter the email or phone you signed up with.", "contact");
+          }
+          if (!game) return showError("Please pick a Stars game.", "game");
+
+          const button = form.querySelector(".join");
+          button.disabled = true;
+          msg.textContent = "Saving…";
+          msg.className = "msg";
+          try {
+            await api("PATCH", { body: { id: player.id, contact, game } });
+            rememberMine(player.id, contact);
+            state.pickingId = null;
+            await load();
+          } catch (error) {
+            button.disabled = false;
+            showError(error.message);
+          }
+        });
+
+        requestAnimationFrame(() => (fields.contact.value ? fields.game : fields.contact).focus());
+        return form;
       }
 
       async function api(method, { query = "", body, admin = false } = {}) {
@@ -739,18 +903,24 @@
         };
 
         if (!name) return showError("Please enter your name.", "name");
-        if (!EMAIL_RE.test(contact) && contact.replace(/\D/g, "").length < 10) {
+        if (!isValidContact(contact)) {
           return showError("Please enter a valid email or phone number.", "contact");
         }
-        if (!game) return showError("Please pick a Stars game.", "game");
+        if (!game) return showError("Pick a Stars game, or choose “I'll pick later”.", "game");
 
         button.disabled = true;
         msg.textContent = "Saving…";
         msg.className = "msg";
         try {
-          await api("POST", { body: { name, contact, team, game } });
+          const { player } = await api("POST", {
+            body: { name, contact, team, game: game === "later" ? "" : game },
+          });
+          rememberMine(player.id, contact);
           form.reset();
-          msg.textContent = `You're on the ${TEAM_NAMES[team]}, ${name}! See you on the ice.`;
+          msg.textContent =
+            game === "later"
+              ? `You're on the ${TEAM_NAMES[team]}, ${name}! Come back anytime and tap “Pick game” next to your name.`
+              : `You're on the ${TEAM_NAMES[team]}, ${name}! See you on the ice.`;
           msg.className = "msg ok";
         } catch (error) {
           showError(error.message);
@@ -772,7 +942,13 @@
       function downloadCsv() {
         const rows = [["Team", "Name", "Email or phone", "Stars game", "Signed up"]];
         state.players.forEach((p) =>
-          rows.push([TEAM_NAMES[p.team], p.name, p.contact, GAME_LABELS[p.game], p.createdAt])
+          rows.push([
+            TEAM_NAMES[p.team],
+            p.name,
+            p.contact,
+            GAME_LABELS[p.game] || "No game yet",
+            p.createdAt,
+          ])
         );
         const csv = rows
           .map((row) => row.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(","))
@@ -832,7 +1008,7 @@
         load();
       }
       setInterval(() => {
-        if (!document.hidden) load();
+        if (!document.hidden && !state.pickingId) load();
       }, 20000);
     </script>
   </body>
