@@ -2,7 +2,7 @@ import { getStore } from "@netlify/blobs";
 
 const MAX_PLAYERS = 26;
 const TEAMS = ["banditos", "wolves"];
-const GAMES = ["flyers", "flames", "kraken"];
+const GAMES = ["flyers", "flames", "kraken", "any"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const json = (body, status = 200) =>
@@ -19,6 +19,19 @@ const clean = (value, max) =>
 
 const isContact = (value) =>
   EMAIL_RE.test(value) || value.replace(/\D/g, "").length >= 10;
+
+const normalizeContact = (value) => {
+  const text = String(value ?? "").trim().toLowerCase();
+  return EMAIL_RE.test(text) ? text : text.replace(/\D/g, "").slice(-10);
+};
+
+const readBody = async (req) => {
+  try {
+    return await req.json();
+  } catch {
+    return null;
+  }
+};
 
 const isAdmin = (req) => {
   const key = process.env.AAC_ADMIN_KEY;
@@ -53,12 +66,8 @@ export default async (req, context) => {
   }
 
   if (req.method === "POST") {
-    let body;
-    try {
-      body = await req.json();
-    } catch {
-      return json({ error: "Invalid request." }, 400);
-    }
+    const body = await readBody(req);
+    if (!body) return json({ error: "Invalid request." }, 400);
 
     const name = clean(body.name, 60);
     const contact = clean(body.contact, 100);
@@ -69,7 +78,7 @@ export default async (req, context) => {
     if (!isContact(contact))
       return json({ error: "Please enter a valid email or phone number." }, 400);
     if (!TEAMS.includes(team)) return json({ error: "Please pick a team." }, 400);
-    if (!GAMES.includes(game))
+    if (game && !GAMES.includes(game))
       return json({ error: "Please pick a Stars game." }, 400);
 
     const players = await loadPlayers(store);
@@ -83,6 +92,30 @@ export default async (req, context) => {
     const player = { id, name, contact, team, game, createdAt };
     await store.setJSON(id, player);
     return json({ player: publicView(player) }, 201);
+  }
+
+  if (req.method === "PATCH") {
+    const body = await readBody(req);
+    if (!body) return json({ error: "Invalid request." }, 400);
+
+    const id = clean(body.id, 80);
+    const game = clean(body.game, 20).toLowerCase();
+    if (!GAMES.includes(game))
+      return json({ error: "Please pick a Stars game." }, 400);
+
+    const player = id ? await store.get(id, { type: "json" }) : null;
+    if (!player) return json({ error: "We couldn't find that player." }, 404);
+    if (player.game)
+      return json({ error: `${player.name} already picked a game.` }, 409);
+    if (normalizeContact(body.contact) !== normalizeContact(player.contact))
+      return json(
+        { error: `That doesn't match the email or phone ${player.name} signed up with.` },
+        403
+      );
+
+    const updated = { ...player, game, gamePickedAt: new Date().toISOString() };
+    await store.setJSON(id, updated);
+    return json({ player: publicView(updated) });
   }
 
   if (req.method === "DELETE") {
