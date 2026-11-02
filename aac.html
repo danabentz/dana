@@ -29,8 +29,8 @@
         --banditos-deep: #b91c1c;
         --banditos-text: #ff5c5c;
         --wolves-text: #ffffff;
-        --wolves: #6aa8ff;
-        --wolves-deep: #2c5fb3;
+        --wolves: #ffffff;
+        --wolves-deep: #d5dbe3;
         --danger: #f87171;
         --radius: 18px;
       }
@@ -46,7 +46,7 @@
         color: var(--text);
         background:
           radial-gradient(circle at 12% 8%, rgba(255, 92, 92, 0.2), transparent 38%),
-          radial-gradient(circle at 88% 10%, rgba(106, 168, 255, 0.22), transparent 38%),
+          radial-gradient(circle at 88% 10%, rgba(255, 255, 255, 0.1), transparent 38%),
           radial-gradient(circle at 50% 110%, rgba(0, 168, 98, 0.2), transparent 45%),
           var(--bg);
         line-height: 1.5;
@@ -214,6 +214,7 @@
         --team-deep: var(--banditos-deep);
         --team-text: var(--banditos-text);
         --team-button: #dc2626;
+        --team-on: #ffffff;
         border-radius: var(--radius);
         background: var(--panel);
         border: 1px solid var(--border);
@@ -228,6 +229,7 @@
         --team-deep: var(--wolves-deep);
         --team-text: var(--wolves-text);
         --team-button: var(--wolves);
+        --team-on: #0b1224;
       }
 
       .team-head {
@@ -313,7 +315,7 @@
         border-radius: 10px;
         font-weight: 700;
         font-size: 1rem;
-        color: #fff;
+        color: var(--team-on);
         background: linear-gradient(120deg, var(--team-deep), var(--team-button));
         transition: transform 0.15s ease, filter 0.15s ease;
       }
@@ -373,7 +375,7 @@
         place-items: center;
         font-size: 0.8rem;
         font-weight: 700;
-        color: #fff;
+        color: var(--team-on);
         background: var(--team-deep);
       }
 
