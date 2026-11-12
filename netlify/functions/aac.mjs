@@ -20,11 +20,6 @@ const clean = (value, max) =>
 const isContact = (value) =>
   EMAIL_RE.test(value) || value.replace(/\D/g, "").length >= 10;
 
-const normalizeContact = (value) => {
-  const text = String(value ?? "").trim().toLowerCase();
-  return EMAIL_RE.test(text) ? text : text.replace(/\D/g, "").slice(-10);
-};
-
 const readBody = async (req) => {
   try {
     return await req.json();
@@ -75,7 +70,7 @@ export default async (req, context) => {
     const game = clean(body.game, 20).toLowerCase();
 
     if (!name) return json({ error: "Please enter your name." }, 400);
-    if (!isContact(contact))
+    if (contact && !isContact(contact))
       return json({ error: "Please enter a valid email or phone number." }, 400);
     if (!TEAMS.includes(team)) return json({ error: "Please pick a team." }, 400);
     if (game && !GAMES.includes(game))
@@ -99,21 +94,49 @@ export default async (req, context) => {
     if (!body) return json({ error: "Invalid request." }, 400);
 
     const id = clean(body.id, 80);
-    const game = clean(body.game, 20).toLowerCase();
-    if (!GAMES.includes(game))
-      return json({ error: "Please pick a Stars game." }, 400);
-
     const player = id ? await store.get(id, { type: "json" }) : null;
     if (!player) return json({ error: "We couldn't find that player." }, 404);
-    if (player.game)
-      return json({ error: `${player.name} already picked a game.` }, 409);
-    if (normalizeContact(body.contact) !== normalizeContact(player.contact))
-      return json(
-        { error: `That doesn't match the email or phone ${player.name} signed up with.` },
-        403
-      );
 
-    const updated = { ...player, game, gamePickedAt: new Date().toISOString() };
+    const updated = { ...player };
+    let changed = false;
+
+    if (body.name !== undefined) {
+      const name = clean(body.name, 60);
+      if (!name) return json({ error: "Please enter your name." }, 400);
+      const players = await loadPlayers(store);
+      if (
+        players.some(
+          (p) => p.id !== player.id && p.name.toLowerCase() === name.toLowerCase()
+        )
+      ) {
+        return json({ error: `${name} is already signed up.` }, 409);
+      }
+      updated.name = name;
+      changed = true;
+    }
+
+    // Contact is only written on a profile edit (which always includes a name).
+    // Picking a game does not require, or change, contact info.
+    if (body.name !== undefined && clean(body.contact, 100)) {
+      const contact = clean(body.contact, 100);
+      if (!isContact(contact))
+        return json({ error: "Please enter a valid email or phone number." }, 400);
+      updated.contact = contact;
+      changed = true;
+    }
+
+    if (body.game !== undefined) {
+      const game = clean(body.game, 20).toLowerCase();
+      if (game && !GAMES.includes(game))
+        return json({ error: "Please pick a Stars game." }, 400);
+      updated.game = game;
+      if (game) updated.gamePickedAt = new Date().toISOString();
+      else delete updated.gamePickedAt;
+      changed = true;
+    }
+
+    if (!changed) return json({ error: "Nothing to update." }, 400);
+
     await store.setJSON(id, updated);
     return json({ player: publicView(updated) });
   }

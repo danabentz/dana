@@ -11,5 +11,5 @@ Dana's about me page
 
 Sign-ups are saved by the `netlify/functions/aac.mjs` function in Netlify Blobs (no database setup needed). Deploy previews use a separate store from production.
 
-- Contact info is never shown publicly. To see it, set an `AAC_ADMIN_KEY` environment variable in Netlify (Site configuration → Environment variables), redeploy, then open `/aac?admin` and enter that key. The organizer view shows contact info, per-game counts, a CSV download, and remove buttons.
+- Email or phone is optional at sign-up. Anyone on the roster can add or change their name, email, or phone, and can pick or change a Stars game, without re-entering contact info. Contact info is never shown on the public roster. To see it, set an `AAC_ADMIN_KEY` environment variable in Netlify (Site configuration → Environment variables), redeploy, then open `/aac?admin` and enter that key. The organizer view shows contact info, per-game counts, a CSV download, and remove buttons.
 - Local testing: `npx netlify-cli dev --dir .` from the repository root.
