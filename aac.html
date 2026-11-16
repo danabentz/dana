@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AAC Game Sign-Up · Banditos vs Wolves</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏒</text></svg>"
+    />
     <meta
       name="description"
       content="Sign up to play in the AAC game on November 23, 2026 — Banditos vs Wolves."
@@ -821,6 +825,85 @@
         font-size: 0.9rem;
       }
 
+      .crew {
+        margin: 36px auto 8px;
+        max-width: 780px;
+      }
+
+      .crew h2 {
+        margin: 0 0 4px;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .crew > p {
+        margin: 0 0 14px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .crew-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      @media (max-width: 640px) {
+        .crew-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .bio {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        border-radius: var(--radius);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .bio:hover {
+        border-color: rgba(0, 168, 98, 0.55);
+      }
+
+      .bio img {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex: none;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .bio .role {
+        margin: 0;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--stars);
+      }
+
+      .bio h3 {
+        margin: 2px 0 0;
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-size: 1.7rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        line-height: 1;
+      }
+
+      .bio .handle {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -906,6 +989,39 @@
           <div class="summary" id="admin-summary"></div>
         </div>
         <p class="msg" id="admin-msg"></p>
+      </section>
+
+      <section class="crew" aria-labelledby="crew-title">
+        <h2 id="crew-title">Recording the game</h2>
+        <p>Dakota and Blaine will be there with a camera.</p>
+        <div class="crew-grid">
+          <a
+            class="bio"
+            href="https://www.instagram.com/faceoffphotography_/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/crew/dakota.jpg" alt="Dakota at the rink with a camera" width="150" height="150" />
+            <div>
+              <p class="role">Photographer</p>
+              <h3>Dakota</h3>
+              <p class="handle">@faceoffphotography_</p>
+            </div>
+          </a>
+          <a
+            class="bio"
+            href="https://www.instagram.com/blaine.w_films/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/crew/blaine.jpg" alt="Blaine filming at the rink" width="150" height="150" />
+            <div>
+              <p class="role">Videographer</p>
+              <h3>Blaine</h3>
+              <p class="handle">@blaine.w_films</p>
+            </div>
+          </a>
+        </div>
       </section>
     </div>
 
