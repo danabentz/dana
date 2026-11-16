@@ -69,7 +69,7 @@ function gameStatus(players) {
 
 function parseTickets(raw) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
-    return { error: "Assign all 4 tickets. You can split them across games." };
+    return { error: "Tell us how many tickets you want, up to 4." };
   }
   const tickets = emptyTickets();
   for (const key of Object.keys(raw)) {
@@ -88,7 +88,7 @@ function parseTickets(raw) {
   return { tickets };
 }
 
-// Exactly 4 tickets, split however they like, or none yet ("later" / "any").
+// 1 to 4 tickets, split however they like, or none yet ("later" / "any").
 function resolveChoice(body) {
   if (body.tickets !== undefined && body.tickets !== null) {
     const parsed = parseTickets(body.tickets);
@@ -99,10 +99,8 @@ function resolveChoice(body) {
       if (game === "any") return { game: "any", tickets: emptyTickets() };
       return { game: "", tickets: emptyTickets() };
     }
-    if (sum !== TICKETS_PER_PLAYER) {
-      return {
-        error: `Assign all ${TICKETS_PER_PLAYER} tickets. You can put them on one game or split them.`,
-      };
+    if (sum > TICKETS_PER_PLAYER) {
+      return { error: `You only get ${TICKETS_PER_PLAYER} tickets.` };
     }
     const chosen = CAP_GAMES.filter((game) => parsed.tickets[game] > 0);
     return {

@@ -1100,6 +1100,110 @@
         background: #fff;
       }
 
+      .goal-celly {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+        animation: celly-fade 2.8s ease forwards;
+      }
+
+      .goal-scene {
+        position: relative;
+        width: calc(100vw - 28px);
+        height: 176px;
+      }
+
+      .stick,
+      .net-emoji {
+        position: absolute;
+        top: 8px;
+        font-size: 4.6rem;
+        line-height: 1;
+      }
+
+      .stick {
+        left: 0;
+        transform-origin: 70% 80%;
+        animation: stick-swing 2.8s ease forwards;
+      }
+
+      .net-emoji {
+        right: 0;
+        animation: net-catch 2.8s ease forwards;
+      }
+
+      .dot {
+        position: absolute;
+        top: 36px;
+        left: 18%;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #111;
+        box-shadow: 0 0 0 2px #fff;
+        animation: dot-fly 2.8s linear forwards;
+      }
+
+      .goal-msg {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        bottom: 0;
+        margin: 0;
+        text-align: center;
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-weight: 800;
+        font-size: clamp(1.35rem, 4.5vw, 2.1rem);
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        line-height: 1.05;
+        color: #fff;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+        animation: goal-msg 2.8s ease forwards;
+      }
+
+      @media (max-width: 640px) {
+        .goal-scene { height: 156px; }
+        .stick,
+        .net-emoji { font-size: 3rem; top: 2px; }
+        .dot { top: 20px; width: 12px; height: 12px; }
+      }
+
+      @keyframes stick-swing {
+        0% { transform: rotate(-30deg); }
+        16% { transform: rotate(16deg); }
+        100% { transform: rotate(6deg); }
+      }
+
+      @keyframes dot-fly {
+        0%, 14% { left: 16%; opacity: 0; }
+        18% { left: 18%; opacity: 1; }
+        58% { left: calc(100% - 4.4rem); opacity: 1; }
+        66%, 100% { left: calc(100% - 3.6rem); opacity: 0; }
+      }
+
+      @keyframes net-catch {
+        0%, 54% { transform: scale(1); }
+        62% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+      }
+
+      @keyframes goal-msg {
+        0%, 52% { opacity: 0; transform: translateY(8px); }
+        66%, 90% { opacity: 1; transform: none; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes celly-fade {
+        0% { opacity: 0; }
+        5% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -1152,8 +1256,8 @@
         <div>
           <h2 id="tickets-title">Dallas Stars tickets</h2>
           <p>
-            Each player gets <strong>4 tickets</strong>. Put all 4 on one game, or split them across
-            games — for example, 2 and 2.
+            Each player gets up to <strong>4 tickets</strong>. Use 1, 2, 3, or all 4. Put them on
+            one game, or split them — for example, 2 and 2.
           </p>
           <ul id="game-availability">
             <li data-game="flyers"><strong>Thu, Feb 18</strong> Stars vs Flyers · Section 314 · 40 seats</li>
@@ -1780,9 +1884,10 @@
         if (blocked && mode === "tickets") summary.textContent = blocked;
         else if (mode === "later") summary.textContent = "You'll pick a game later. No seats held.";
         else if (mode === "any") summary.textContent = "4 tickets on whichever game has room. No section held yet.";
-        else if (sum === 0) summary.textContent = "Put all 4 on one game, or split them — for example, 2 and 2.";
+        else if (sum === 0) summary.textContent = "Use 1 to 4 tickets. One game, or a split — for example, 2 and 2.";
         else if (sum < TICKETS_PER_PLAYER) {
-          summary.textContent = `${choiceSummary(counts)}. Assign ${TICKETS_PER_PLAYER - sum} more.`;
+          const spare = TICKETS_PER_PLAYER - sum;
+          summary.textContent = `${choiceSummary(counts)}. You can add up to ${spare} more.`;
         } else summary.textContent = choiceSummary(counts);
       }
 
@@ -1796,11 +1901,12 @@
         if (mode === "any") {
           return { ok: true, body: { game: "any", tickets: emptyTickets() }, label: "any game" };
         }
-        if (ticketSum(counts) !== TICKETS_PER_PLAYER) {
-          return {
-            ok: false,
-            error: "Assign all 4 tickets. You can put them on one game or split them.",
-          };
+        const sum = ticketSum(counts);
+        if (sum === 0) {
+          return { ok: false, error: "Pick at least 1 ticket, or choose I'll pick later." };
+        }
+        if (sum > TICKETS_PER_PLAYER) {
+          return { ok: false, error: "You only get 4 tickets." };
         }
         for (const game of GAMES) {
           const count = counts[game.id];
@@ -1817,6 +1923,24 @@
           }
         }
         return { ok: true, body: { tickets: counts }, label: choiceSummary(counts) };
+      }
+
+      function playGoal(label) {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        document.getElementById("goal-celly")?.remove();
+        const celly = document.createElement("div");
+        celly.id = "goal-celly";
+        celly.className = "goal-celly";
+        celly.innerHTML = `
+          <div class="goal-scene">
+            <span class="stick" aria-hidden="true">🏒</span>
+            <span class="dot" aria-hidden="true"></span>
+            <span class="net-emoji" aria-hidden="true">🥅</span>
+            <p class="goal-msg" role="status"></p>
+          </div>`;
+        celly.querySelector(".goal-msg").textContent = label ? `Saved · ${label}` : "Saved";
+        document.body.appendChild(celly);
+        setTimeout(() => celly.remove(), 2800);
       }
 
       function closeEditor() {
@@ -1847,6 +1971,7 @@
           msg.className = "msg";
           try {
             await api("PATCH", { body: { id: player.id, ...choice.body } });
+            if (ticketSum(choice.body.tickets || {}) > 0) playGoal(choice.label);
             state.editor = null;
             await load();
           } catch (error) {
@@ -1902,6 +2027,7 @@
           try {
             await api("PATCH", { body });
             if (body.contact) rememberMine(player.id, body.contact);
+            if (ticketSum(choice.body.tickets || {}) > 0) playGoal(choice.label);
             state.editor = null;
             await load();
           } catch (error) {
