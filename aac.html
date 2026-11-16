@@ -342,6 +342,50 @@
         min-width: 92px;
       }
 
+      @media (max-width: 640px) {
+        .tickets {
+          display: grid;
+          grid-template-columns: 32px minmax(0, 1fr);
+          align-items: center;
+        }
+
+        .tickets > div {
+          display: contents;
+        }
+
+        .tickets .star {
+          grid-row: 1;
+          width: 32px;
+          height: 32px;
+          font-size: 1.05rem;
+        }
+
+        .tickets h2 {
+          grid-column: 2;
+          grid-row: 1;
+        }
+
+        .tickets p,
+        .tickets ul {
+          grid-column: 1 / -1;
+        }
+
+        .tickets li {
+          display: block;
+        }
+
+        .tickets li strong {
+          display: block;
+          min-width: 0;
+          margin: 0 0 1px;
+        }
+
+        .tickets ul {
+          font-size: 0.88rem;
+          gap: 8px;
+        }
+      }
+
       .tickets li.is-full {
         color: rgba(207, 233, 220, 0.55);
       }
@@ -742,6 +786,10 @@
         min-width: 8rem;
       }
 
+      .players .meta {
+        display: contents;
+      }
+
       .players .name {
         font-weight: 600;
         overflow-wrap: break-word;
@@ -827,13 +875,79 @@
         background: rgba(248, 113, 113, 0.12);
       }
 
-      @media (max-width: 480px) {
-        .players li:has(.remove) .who {
-          flex-basis: calc(100% - 40px);
+      @media (max-width: 640px) {
+        body {
+          padding: 0 12px 128px;
         }
 
-        .players li:has(.remove) .game-tag {
-          margin-left: 40px;
+        header {
+          padding: 28px 0 18px;
+        }
+
+        .when span {
+          white-space: nowrap;
+        }
+
+        .tickets {
+          padding: 14px;
+          gap: 12px;
+          margin-bottom: 20px;
+        }
+
+        .players {
+          padding: 4px 10px 2px;
+          gap: 10px;
+        }
+
+        .players li {
+          display: grid;
+          grid-template-columns: 28px minmax(0, 1fr);
+          align-items: center;
+          column-gap: 10px;
+          row-gap: 8px;
+          padding: 12px;
+        }
+
+        .players li::before {
+          grid-row: 1;
+        }
+
+        .players .who {
+          grid-column: 2;
+          grid-row: 1;
+          min-width: 0;
+        }
+
+        .players .meta {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 6px;
+          grid-column: 2;
+          grid-row: 2;
+        }
+
+        .players li > form {
+          grid-column: 1 / -1;
+        }
+
+        .players li.empty {
+          display: block;
+        }
+
+        .new-player {
+          scroll-margin-bottom: 128px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .pick,
+        .edit {
+          padding: 4px 8px;
+        }
+
+        .players .meta {
+          gap: 5px;
         }
       }
 
@@ -920,6 +1034,38 @@
         font-variant-numeric: tabular-nums;
         color: var(--text);
         line-height: 1;
+      }
+
+      @media (max-width: 640px) {
+        .seat-bar {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 6px;
+          padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+        }
+
+        .seat-bar .label {
+          grid-column: 1 / -1;
+          text-align: center;
+        }
+
+        .seat-bar [data-game] {
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1px;
+          padding: 6px 4px 7px;
+          font-size: 0.68rem;
+          line-height: 1.15;
+          text-align: center;
+          white-space: normal;
+          background: rgba(255, 255, 255, 0.07);
+          border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .seat-bar strong {
+          font-size: 1.2rem;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -1560,9 +1706,11 @@
             if (state.isAdmin && player.contact) {
               who.appendChild(el("span", "contact", player.contact));
             }
+            const meta = el("div", "meta");
             li.appendChild(who);
+            li.appendChild(meta);
             const editing = state.editor?.id === player.id ? state.editor.mode : null;
-            appendGameTags(li, player);
+            appendGameTags(meta, player);
             if (!editing) {
               if (!hasChoice(player)) {
                 const pick = el("button", "pick", "Pick game");
@@ -1571,7 +1719,7 @@
                   state.editor = { id: player.id, mode: "pick" };
                   render();
                 });
-                li.appendChild(pick);
+                meta.appendChild(pick);
               }
               const edit = el("button", "edit", "Edit");
               edit.type = "button";
@@ -1579,13 +1727,13 @@
                 state.editor = { id: player.id, mode: "edit" };
                 render();
               });
-              li.appendChild(edit);
+              meta.appendChild(edit);
             }
             if (state.isAdmin) {
               const remove = el("button", "remove", "Remove");
               remove.type = "button";
               remove.addEventListener("click", () => removePlayer(player));
-              li.appendChild(remove);
+              meta.appendChild(remove);
             }
             if (editing === "pick" && !hasChoice(player)) li.appendChild(buildPickForm(player));
             if (editing === "edit") li.appendChild(buildEditForm(player));
@@ -1683,7 +1831,7 @@
           chip.classList.toggle("is-full", remaining === 0);
           chip.classList.toggle("is-over", remaining < 0);
           label.textContent =
-            remaining < 0 ? ` ${game.short} · Overbooked` : remaining === 0 ? ` ${game.short} · Full` : ` ${game.short}`;
+            remaining < 0 ? `${game.short} · Overbooked` : remaining === 0 ? `${game.short} · Full` : game.short;
           chip.setAttribute(
             "aria-label",
             remaining < 0 ? `${game.short} is overbooked` : `${left} tickets left for ${game.short}`
