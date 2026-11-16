@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AAC Game Sign-Up · Banditos vs Wolves</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏒</text></svg>"
+    />
     <meta
       name="description"
       content="Sign up to play in the AAC game on November 23, 2026 — Banditos vs Wolves."
@@ -50,7 +54,7 @@
           radial-gradient(circle at 50% 110%, rgba(0, 168, 98, 0.2), transparent 45%),
           var(--bg);
         line-height: 1.5;
-        padding: 0 16px 64px;
+        padding: 0 16px 108px;
       }
 
       .wrap {
@@ -112,6 +116,87 @@
       .when span {
         color: var(--muted);
         font-weight: 500;
+      }
+
+      .countdown {
+        margin: 18px auto 0;
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+      }
+
+      .countdown-label {
+        margin: 0;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .countdown.is-live .countdown-label,
+      .countdown.is-over .countdown-label {
+        font-size: 1rem;
+        letter-spacing: 0.12em;
+        color: var(--text);
+      }
+
+      .countdown-clock {
+        display: flex;
+        gap: 8px;
+      }
+
+      .countdown-clock > span {
+        min-width: 64px;
+        padding: 8px 10px 6px;
+        border-radius: 12px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        display: grid;
+        justify-items: center;
+      }
+
+      .countdown-clock strong {
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .countdown-clock small {
+        font-size: 0.68rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      @media (max-width: 420px) {
+        .countdown-clock > span {
+          min-width: 56px;
+          padding: 8px 6px 6px;
+        }
+
+        .countdown-clock strong {
+          font-size: 1.7rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .countdown-clock strong.tick {
+          animation: countdown-tick 0.35s ease;
+        }
+      }
+
+      @keyframes countdown-tick {
+        from {
+          transform: translateY(-4px);
+          opacity: 0.35;
+        }
+        to {
+          transform: none;
+          opacity: 1;
+        }
       }
 
       .roster-meter {
@@ -192,9 +277,187 @@
         font-size: 0.92rem;
       }
 
+      .tickets li {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 6px 10px;
+      }
+
       .tickets li strong {
         display: inline-block;
         min-width: 92px;
+      }
+
+      .tickets li.is-full {
+        color: rgba(207, 233, 220, 0.55);
+      }
+
+      .tickets li.is-over {
+        color: #fecaca;
+      }
+
+      .seat-pill {
+        display: inline-block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 1px 7px;
+        border-radius: 999px;
+        vertical-align: 1px;
+      }
+
+      .seat-pill.full {
+        color: #fecaca;
+        background: rgba(248, 113, 113, 0.16);
+        border: 1px solid rgba(248, 113, 113, 0.45);
+      }
+
+      .seat-pill.over {
+        color: #fff;
+        background: rgba(185, 28, 28, 0.85);
+      }
+
+      .ticket-field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .ticket-field > span {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+      }
+
+      [data-ticket-picker] {
+        display: grid;
+        gap: 6px;
+      }
+
+      .ticket-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px 10px;
+        padding: 5px 8px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+      }
+
+      .ticket-row.is-full {
+        background: rgba(255, 255, 255, 0.02);
+        border-style: dashed;
+      }
+
+      .ticket-row.is-full .ticket-name,
+      .ticket-row.is-full .ticket-meta {
+        color: rgba(159, 176, 195, 0.55);
+      }
+
+      .ticket-copy {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 4px 8px;
+        min-width: 0;
+      }
+
+      .ticket-name {
+        font-size: 0.86rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .ticket-meta {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      .ticket-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: none;
+      }
+
+      .take-all {
+        padding: 0;
+        background: none;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .take-all:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      .stepper {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: none;
+      }
+
+      .stepper button {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: var(--panel-strong);
+        color: var(--text);
+        font-size: 1.15rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .stepper button:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .stepper .count {
+        min-width: 1.4ch;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .mode-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .mode-row button {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--muted);
+        border: 1px dashed var(--border);
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+
+      .mode-row button[aria-pressed="true"] {
+        color: var(--text);
+        border-style: solid;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .ticket-summary {
+        margin: 4px 0 0;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #cfe9dc;
       }
 
       .teams {
@@ -233,7 +496,7 @@
       }
 
       .team-head {
-        padding: 20px 22px 14px;
+        padding: 16px 18px 6px;
         display: flex;
         justify-content: space-between;
         align-items: baseline;
@@ -257,13 +520,55 @@
       }
 
       form {
-        margin: 0 16px;
-        padding: 16px;
-        border-radius: 14px;
+        margin: 0 12px 12px;
+        padding: 12px;
+        border-radius: 12px;
         background: rgba(0, 0, 0, 0.22);
         border: 1px solid var(--border);
         display: grid;
-        gap: 12px;
+        gap: 8px;
+      }
+
+      form.signup input {
+        padding: 8px 10px;
+      }
+
+      .new-player {
+        padding: 4px 12px 14px;
+        scroll-margin-bottom: 72px;
+      }
+
+      .new-player-toggle {
+        width: 100%;
+        padding: 9px 12px;
+        border-radius: 10px;
+        border: 1px dashed var(--border);
+        background: transparent;
+        color: var(--team-text);
+        font-weight: 700;
+        font-size: 0.92rem;
+        text-align: left;
+      }
+
+      .new-player-toggle::before {
+        content: "+ ";
+      }
+
+      .new-player-toggle[aria-expanded="true"]::before {
+        content: "– ";
+      }
+
+      .new-player-toggle:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .new-player-toggle:disabled::before {
+        content: "";
+      }
+
+      form.signup {
+        margin: 8px 0 0;
       }
 
       label {
@@ -347,7 +652,7 @@
       .players {
         list-style: none;
         margin: 0;
-        padding: 16px 16px 20px;
+        padding: 8px 12px 4px;
         display: grid;
         gap: 8px;
         counter-reset: player;
@@ -503,6 +808,53 @@
         color: var(--danger);
       }
 
+      .seat-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 20;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 8px 18px;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        background: rgba(7, 19, 31, 0.94);
+        border-top: 1px solid rgba(0, 168, 98, 0.45);
+        backdrop-filter: blur(12px);
+        font-size: 0.88rem;
+      }
+
+      .seat-bar .label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .seat-bar [data-game] {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 6px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .seat-bar strong {
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-size: 1.45rem;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1;
+      }
+
+      .seat-bar [data-game].is-full strong,
+      .seat-bar [data-game].is-over strong {
+        color: #fecaca;
+      }
+
       .admin {
         margin-top: 32px;
         padding: 18px 22px;
@@ -554,6 +906,122 @@
         font-size: 0.9rem;
       }
 
+      .crew {
+        margin: 36px auto 8px;
+        max-width: 780px;
+      }
+
+      .crew h2 {
+        margin: 0 0 4px;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .crew > p {
+        margin: 0 0 14px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .crew-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      @media (max-width: 640px) {
+        .crew-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .bio {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        border-radius: var(--radius);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .bio:hover {
+        border-color: rgba(0, 168, 98, 0.55);
+      }
+
+      .bio img {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex: none;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .bio .role {
+        margin: 0;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--stars);
+      }
+
+      .bio h3 {
+        margin: 2px 0 0;
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-size: 1.7rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        line-height: 1;
+      }
+
+      .bio .handle {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .parking {
+        margin: 28px auto 8px;
+        max-width: 780px;
+      }
+
+      .parking h2 {
+        margin: 0 0 8px;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .parking ul {
+        margin: 0 0 14px;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 6px;
+        text-align: center;
+      }
+
+      .parking li {
+        color: var(--text);
+      }
+
+      .parking a {
+        color: #cfe9dc;
+      }
+
+      .parking img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -568,6 +1036,15 @@
           ><span class="wolves">Wolves</span>
         </h1>
         <p class="when">Monday, November 23, 2026 <span>· 3:00 – 4:00 PM</span></p>
+        <p class="countdown" id="countdown">
+          <span class="countdown-label">Faceoff in</span>
+          <span class="countdown-clock">
+            <span><strong data-unit="days">–</strong><small>days</small></span>
+            <span><strong data-unit="hours">–</strong><small>hrs</small></span>
+            <span><strong data-unit="minutes">–</strong><small>min</small></span>
+            <span><strong data-unit="seconds">–</strong><small>sec</small></span>
+          </span>
+        </p>
         <div class="roster-meter" aria-live="polite">
           <div class="label">
             <span>Roster</span>
@@ -582,14 +1059,13 @@
         <div>
           <h2 id="tickets-title">Dallas Stars tickets</h2>
           <p>
-            Players get Dallas Stars tickets. You can join with just your name, then tap
-            <strong>Edit</strong> to add or change your email or phone. Pick a game when you sign up,
-            or tap <strong>Pick game</strong> next to your name later.
+            Each player gets <strong>4 tickets</strong>. Put all 4 on one game, or split them across
+            games — for example, 2 and 2.
           </p>
-          <ul>
-            <li><strong>Thu, Feb 18</strong> Stars vs Flyers · Section 314</li>
-            <li><strong>Tue, Mar 30</strong> Stars vs Flames · Section 314</li>
-            <li><strong>Mon, Apr 5</strong> Stars vs Kraken · Section 314</li>
+          <ul id="game-availability">
+            <li data-game="flyers"><strong>Thu, Feb 18</strong> Stars vs Flyers · Section 314 · 40 seats</li>
+            <li data-game="flames"><strong>Tue, Mar 30</strong> Stars vs Flames · Section 314 · 30 seats</li>
+            <li data-game="kraken"><strong>Mon, Apr 5</strong> Stars vs Kraken · Section 314 · 30 seats</li>
           </ul>
         </div>
       </section>
@@ -602,8 +1078,13 @@
             <h2 id="banditos-title">Banditos</h2>
             <span class="team-count" data-count>0 players</span>
           </div>
-          <form data-team="banditos" novalidate></form>
           <ul class="players" data-list></ul>
+          <div class="new-player">
+            <button class="new-player-toggle" type="button" aria-expanded="false" aria-controls="banditos-signup">
+              New player
+            </button>
+            <form class="signup" id="banditos-signup" data-team="banditos" hidden novalidate></form>
+          </div>
         </section>
 
         <section class="team wolves" data-team="wolves" aria-labelledby="wolves-title">
@@ -611,8 +1092,13 @@
             <h2 id="wolves-title">Wolves</h2>
             <span class="team-count" data-count>0 players</span>
           </div>
-          <form data-team="wolves" novalidate></form>
           <ul class="players" data-list></ul>
+          <div class="new-player">
+            <button class="new-player-toggle" type="button" aria-expanded="false" aria-controls="wolves-signup">
+              New player
+            </button>
+            <form class="signup" id="wolves-signup" data-team="wolves" hidden novalidate></form>
+          </div>
         </section>
       </main>
 
@@ -631,44 +1117,86 @@
         </div>
         <p class="msg" id="admin-msg"></p>
       </section>
+
+      <section class="crew" aria-labelledby="crew-title">
+        <h2 id="crew-title">Recording the game</h2>
+        <p>Dakota and Blaine will be there with a camera.</p>
+        <div class="crew-grid">
+          <a
+            class="bio"
+            href="https://www.instagram.com/faceoffphotography_/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/crew/dakota.jpg" alt="Dakota at the rink with a camera" width="150" height="150" />
+            <div>
+              <p class="role">Photographer</p>
+              <h3>Dakota</h3>
+              <p class="handle">@faceoffphotography_</p>
+            </div>
+          </a>
+          <a
+            class="bio"
+            href="https://www.instagram.com/blaine.w_films/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src="/crew/blaine.jpg" alt="Blaine filming at the rink" width="150" height="150" />
+            <div>
+              <p class="role">Videographer</p>
+              <h3>Blaine</h3>
+              <p class="handle">@blaine.w_films</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="parking" aria-labelledby="parking-title">
+        <h2 id="parking-title">Parking and entrance</h2>
+        <ul>
+          <li>
+            Free parking on the 1st floor of the Lexus Garage,
+            <a href="https://maps.google.com/?q=2620+North+Houston+Street+Dallas+TX" target="_blank" rel="noopener noreferrer">2620 North Houston Street</a>.
+          </li>
+          <li>Enter through the Employee Entrance on the west side of the arena.</li>
+        </ul>
+        <img
+          src="/crew/parking-map.jpg"
+          alt="Map showing free parking on the 1st floor of the Lexus Garage at 2620 North Houston Street, and the Employee Entrance on the west side of the American Airlines Center."
+        />
+      </section>
+    </div>
+
+    <div class="seat-bar" id="seat-bar" aria-live="polite" aria-label="Tickets left">
+      <span class="label">Tickets left</span>
+      <span data-game="flyers"><strong>40</strong> Feb 18 · Flyers</span>
+      <span data-game="flames"><strong>30</strong> Mar 30 · Flames</span>
+      <span data-game="kraken"><strong>30</strong> Apr 5 · Kraken</span>
     </div>
 
     <template id="form-template">
       <label>
-        Player name
+        Name
         <input name="name" type="text" maxlength="60" autocomplete="name" placeholder="Your name" required />
       </label>
       <label>
-        Email or phone (optional, for tickets)
+        Email or phone, optional
         <input name="contact" type="text" maxlength="100" autocomplete="email" placeholder="Add this later if you want" />
       </label>
-      <label>
-        Stars game
-        <select name="game" required>
-          <option value="" selected disabled>Choose a game…</option>
-          <option value="flyers">Thu, Feb 18 – Stars vs Flyers · Sec 314</option>
-          <option value="flames">Tue, Mar 30 – Stars vs Flames · Sec 314</option>
-          <option value="kraken">Mon, Apr 5 – Stars vs Kraken · Sec 314</option>
-          <option value="any">Any game – I don't care</option>
-          <option value="later">I'll pick later</option>
-        </select>
-      </label>
+      <div class="ticket-field">
+        <span>Your 4 tickets</span>
+        <div data-ticket-picker></div>
+      </div>
       <button class="join" type="submit">Add me to the team</button>
       <p class="msg" data-msg role="status"></p>
     </template>
 
     <template id="pick-template">
       <form class="pick-form" novalidate>
-        <label>
-          Stars game
-          <select name="game" required>
-            <option value="" selected disabled>Choose a game…</option>
-            <option value="flyers">Thu, Feb 18 – Stars vs Flyers · Sec 314</option>
-            <option value="flames">Tue, Mar 30 – Stars vs Flames · Sec 314</option>
-            <option value="kraken">Mon, Apr 5 – Stars vs Kraken · Sec 314</option>
-            <option value="any">Any game – I don't care</option>
-          </select>
-        </label>
+        <div class="ticket-field">
+          <span>Your 4 tickets</span>
+          <div data-ticket-picker></div>
+        </div>
         <div class="pick-actions">
           <button class="join" type="submit">Save my game</button>
           <button class="cancel" type="button">Cancel</button>
@@ -687,16 +1215,10 @@
           Email or phone
           <input name="contact" type="text" maxlength="100" autocomplete="email" placeholder="Leave blank to keep your current one" />
         </label>
-        <label>
-          Stars game
-          <select name="game">
-            <option value="flyers">Thu, Feb 18 – Stars vs Flyers · Sec 314</option>
-            <option value="flames">Tue, Mar 30 – Stars vs Flames · Sec 314</option>
-            <option value="kraken">Mon, Apr 5 – Stars vs Kraken · Sec 314</option>
-            <option value="any">Any game – I don't care</option>
-            <option value="later">I'll pick later</option>
-          </select>
-        </label>
+        <div class="ticket-field">
+          <span>Your 4 tickets</span>
+          <div data-ticket-picker></div>
+        </div>
         <div class="pick-actions">
           <button class="join" type="submit">Save</button>
           <button class="cancel" type="button">Cancel</button>
@@ -709,12 +1231,12 @@
       const API = "/api/aac";
       const ADMIN_STORAGE = "aac-admin-key";
       const TEAM_NAMES = { banditos: "Banditos", wolves: "Wolves" };
-      const GAME_LABELS = {
-        flyers: "Feb 18 · Flyers",
-        flames: "Mar 30 · Flames",
-        kraken: "Apr 5 · Kraken",
-        any: "Any game",
-      };
+      const TICKETS_PER_PLAYER = 4;
+      const GAMES = [
+        { id: "flyers", date: "Thu, Feb 18", opponent: "Flyers", short: "Feb 18 · Flyers", cap: 40 },
+        { id: "flames", date: "Tue, Mar 30", opponent: "Flames", short: "Mar 30 · Flames", cap: 30 },
+        { id: "kraken", date: "Mon, Apr 5", opponent: "Kraken", short: "Apr 5 · Kraken", cap: 30 },
+      ];
       const NO_GAME_LABEL = "Game TBD";
       const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const MINE_STORAGE = "aac-my-signups";
@@ -729,6 +1251,7 @@
 
       const state = {
         players: [],
+        games: [],
         maxPlayers: 26,
         adminKey: sessionStorage.getItem(ADMIN_STORAGE) || "",
         isAdmin: false,
@@ -749,9 +1272,17 @@
       const formTemplate = document.getElementById("form-template");
 
       teams.forEach((section) => {
-        const form = section.querySelector("form");
+        const form = section.querySelector("form.signup");
+        const toggle = section.querySelector(".new-player-toggle");
         form.appendChild(formTemplate.content.cloneNode(true));
+        mountPicker(form.querySelector("[data-ticket-picker]"));
         form.addEventListener("submit", (event) => onSubmit(event, section.dataset.team));
+        toggle.addEventListener("click", () => {
+          if (toggle.disabled) return;
+          form.hidden = !form.hidden;
+          toggle.setAttribute("aria-expanded", String(!form.hidden));
+          if (!form.hidden) form.querySelector("[name=name]")?.focus();
+        });
       });
 
       function setStatus(text, isError = false) {
@@ -767,11 +1298,50 @@
         return node;
       }
 
+      function emptyTickets() {
+        return { flyers: 0, flames: 0, kraken: 0 };
+      }
+
+      function ticketSum(tickets) {
+        return GAMES.reduce((sum, game) => sum + (Number(tickets[game.id]) || 0), 0);
+      }
+
+      function seatsFor(gameId) {
+        const meta = GAMES.find((game) => game.id === gameId);
+        const fromApi = state.games.find((game) => game.id === gameId);
+        const cap = fromApi?.cap ?? meta.cap;
+        const used = state.players.reduce(
+          (sum, player) => sum + (Number(player.tickets?.[gameId]) || 0),
+          0
+        );
+        return { cap, used, remaining: cap - used };
+      }
+
+      // Seats this person can put on a game: whatever is left, and never fewer
+      // than the tickets they already hold so they can keep or move them.
+      function rowLimit(gameId, heldCount) {
+        const { cap, used } = seatsFor(gameId);
+        const room = cap - (used - heldCount);
+        return Math.max(heldCount, Math.min(TICKETS_PER_PLAYER, Math.max(0, room)));
+      }
+
+      function hasChoice(player) {
+        if (ticketSum(player.tickets || {}) > 0) return true;
+        return player.game === "any";
+      }
+
+      function choiceSummary(tickets) {
+        return GAMES.filter((game) => tickets[game.id] > 0)
+          .map((game) => `${tickets[game.id]} for ${game.short}`)
+          .join(" and ");
+      }
+
       function render() {
         const total = state.players.length;
         const full = total >= state.maxPlayers;
         document.getElementById("total-count").textContent = total;
         document.getElementById("max-count").textContent = state.maxPlayers;
+        renderAvailability();
 
         teams.forEach((section) => {
           const team = section.dataset.team;
@@ -795,13 +1365,9 @@
             }
             li.appendChild(who);
             const editing = state.editor?.id === player.id ? state.editor.mode : null;
-            if (player.game) {
-              li.appendChild(el("span", "game-tag", GAME_LABELS[player.game] || player.game));
-            } else {
-              li.appendChild(el("span", "game-tag tbd", NO_GAME_LABEL));
-            }
+            appendGameTags(li, player);
             if (!editing) {
-              if (!player.game) {
+              if (!hasChoice(player)) {
                 const pick = el("button", "pick", "Pick game");
                 pick.type = "button";
                 pick.addEventListener("click", () => {
@@ -824,26 +1390,286 @@
               remove.addEventListener("click", () => removePlayer(player));
               li.appendChild(remove);
             }
-            if (editing === "pick" && !player.game) li.appendChild(buildPickForm(player));
+            if (editing === "pick" && !hasChoice(player)) li.appendChild(buildPickForm(player));
             if (editing === "edit") li.appendChild(buildEditForm(player));
             list.appendChild(li);
           });
 
-          const button = section.querySelector(".join");
+          const signup = section.querySelector("form.signup");
+          const toggle = section.querySelector(".new-player-toggle");
+          const button = signup.querySelector(".join");
           button.disabled = full;
-          button.textContent = full ? "Roster is full" : `Add me to the ${TEAM_NAMES[team]}`;
+          button.textContent = `Add to the ${TEAM_NAMES[team]}`;
+          toggle.disabled = full;
+          toggle.textContent = full ? "Roster is full" : "New player";
+          if (full) {
+            signup.hidden = true;
+            toggle.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        document.querySelectorAll("form [data-ticket-picker]").forEach((picker) => {
+          if (!picker.closest(".players")) refreshPicker(picker);
         });
 
         if (state.isAdmin) renderSummary();
       }
 
+      function appendGameTags(li, player) {
+        const tickets = player.tickets || {};
+        const chosen = GAMES.filter((game) => (tickets[game.id] || 0) > 0);
+        if (chosen.length) {
+          chosen.forEach((game) => {
+            li.appendChild(el("span", "game-tag", `${tickets[game.id]} · ${game.short}`));
+          });
+          return;
+        }
+        if (player.game === "any") {
+          li.appendChild(el("span", "game-tag", "Any game · 4"));
+          return;
+        }
+        li.appendChild(el("span", "game-tag tbd", NO_GAME_LABEL));
+      }
+
+      function renderAvailability() {
+        const list = document.getElementById("game-availability");
+        const bar = document.getElementById("seat-bar");
+        GAMES.forEach((game) => {
+          const li = list.querySelector(`[data-game="${game.id}"]`);
+          const { cap, used, remaining } = seatsFor(game.id);
+          li.classList.toggle("is-full", remaining <= 0);
+          li.classList.toggle("is-over", remaining < 0);
+          li.replaceChildren(el("strong", "", game.date));
+          li.append(
+            document.createTextNode(` Stars vs ${game.opponent} · Section 314 · ${used} of ${cap} seats`)
+          );
+          if (remaining < 0) li.appendChild(el("span", "seat-pill over", "Overbooked"));
+          else if (remaining === 0) li.appendChild(el("span", "seat-pill full", "Full"));
+
+          const chip = bar.querySelector(`[data-game="${game.id}"]`);
+          const left = Math.max(0, remaining);
+          chip.classList.toggle("is-full", remaining === 0);
+          chip.classList.toggle("is-over", remaining < 0);
+          chip.replaceChildren(el("strong", "", String(left)));
+          chip.append(
+            document.createTextNode(
+              remaining < 0 ? ` ${game.short} · Overbooked` : remaining === 0 ? ` ${game.short} · Full` : ` ${game.short}`
+            )
+          );
+        });
+      }
+
       function renderSummary() {
         const summary = document.getElementById("admin-summary");
         summary.replaceChildren();
-        [...Object.entries(GAME_LABELS), ["", "No game yet"]].forEach(([game, label]) => {
-          const count = state.players.filter((p) => (p.game || "") === game).length;
-          summary.appendChild(el("div", "", `${label}: ${count} player${count === 1 ? "" : "s"}`));
+        GAMES.forEach((game) => {
+          const { cap, used, remaining } = seatsFor(game.id);
+          const holders = state.players.filter((player) => (player.tickets?.[game.id] || 0) > 0).length;
+          const flag = remaining < 0 ? " · Overbooked" : remaining === 0 ? " · Full" : "";
+          summary.appendChild(
+            el(
+              "div",
+              "",
+              `${game.short}: ${used} / ${cap} seats · ${holders} player${holders === 1 ? "" : "s"}${flag}`
+            )
+          );
         });
+        const anyCount = state.players.filter((player) => player.game === "any" && ticketSum(player.tickets || {}) === 0).length;
+        const laterCount = state.players.filter((player) => !hasChoice(player)).length;
+        summary.appendChild(el("div", "", `Any game: ${anyCount} player${anyCount === 1 ? "" : "s"}`));
+        summary.appendChild(el("div", "", `No game yet: ${laterCount} player${laterCount === 1 ? "" : "s"}`));
+      }
+
+      function mountPicker(picker, player) {
+        const held = emptyTickets();
+        let mode = "";
+        if (player) {
+          const tickets = player.tickets || {};
+          GAMES.forEach((game) => {
+            held[game.id] = Number(tickets[game.id]) || 0;
+          });
+          if (player.game === "any" && ticketSum(held) === 0) mode = "any";
+          else if (ticketSum(held) === 0) mode = "later";
+          else mode = "tickets";
+        }
+        picker.dataset.held = JSON.stringify(held);
+        picker.dataset.mode = mode;
+        picker.replaceChildren();
+
+        GAMES.forEach((game) => {
+          const row = el("div", "ticket-row");
+          row.dataset.game = game.id;
+          row.dataset.count = String(mode === "tickets" ? held[game.id] : 0);
+          const copy = el("div", "ticket-copy");
+          copy.appendChild(el("span", "ticket-name", game.short));
+          copy.appendChild(el("span", "ticket-meta", ""));
+          const controls = el("div", "ticket-controls");
+          const all = el("button", "take-all", "All 4");
+          all.type = "button";
+          all.addEventListener("click", () => takeAll(picker, game.id));
+          const stepper = el("div", "stepper");
+          const dec = el("button", "", "−");
+          dec.type = "button";
+          dec.setAttribute("aria-label", `Fewer ${game.opponent} tickets`);
+          const count = el("span", "count", row.dataset.count);
+          const inc = el("button", "", "+");
+          inc.type = "button";
+          inc.setAttribute("aria-label", `More ${game.opponent} tickets`);
+          dec.addEventListener("click", () => changeCount(picker, game.id, -1));
+          inc.addEventListener("click", () => changeCount(picker, game.id, 1));
+          stepper.append(dec, count, inc);
+          controls.append(all, stepper);
+          row.append(copy, controls);
+          picker.appendChild(row);
+        });
+
+        const modes = el("div", "mode-row");
+        [
+          ["later", "I'll pick later"],
+          ["any", "Any game"],
+        ].forEach(([id, label]) => {
+          const button = el("button", "", label);
+          button.type = "button";
+          button.dataset.mode = id;
+          button.addEventListener("click", () => setPickerMode(picker, id));
+          modes.appendChild(button);
+        });
+        picker.appendChild(modes);
+        picker.appendChild(el("p", "ticket-summary", ""));
+        refreshPicker(picker);
+      }
+
+      function heldOf(picker) {
+        try {
+          return { ...emptyTickets(), ...JSON.parse(picker.dataset.held) };
+        } catch {
+          return emptyTickets();
+        }
+      }
+
+      function countsOf(picker) {
+        const counts = emptyTickets();
+        picker.querySelectorAll(".ticket-row").forEach((row) => {
+          counts[row.dataset.game] = Number(row.dataset.count) || 0;
+        });
+        return counts;
+      }
+
+      function setPickerMode(picker, mode) {
+        picker.dataset.mode = picker.dataset.mode === mode ? "" : mode;
+        if (picker.dataset.mode !== "tickets") {
+          picker.querySelectorAll(".ticket-row").forEach((row) => {
+            row.dataset.count = "0";
+          });
+        }
+        refreshPicker(picker);
+      }
+
+      function takeAll(picker, gameId) {
+        const held = heldOf(picker);
+        if (rowLimit(gameId, Number(held[gameId]) || 0) < TICKETS_PER_PLAYER) return;
+        picker.dataset.mode = "tickets";
+        picker.querySelectorAll(".ticket-row").forEach((row) => {
+          row.dataset.count = row.dataset.game === gameId ? String(TICKETS_PER_PLAYER) : "0";
+        });
+        refreshPicker(picker);
+      }
+
+      function changeCount(picker, gameId, delta) {
+        const counts = countsOf(picker);
+        const held = heldOf(picker);
+        const next = counts[gameId] + delta;
+        if (next < 0) return;
+        if (delta > 0 && ticketSum(counts) >= TICKETS_PER_PLAYER) return;
+        if (delta > 0 && next > rowLimit(gameId, Number(held[gameId]) || 0)) return;
+        picker.dataset.mode = "tickets";
+        picker.querySelector(`[data-game="${gameId}"]`).dataset.count = String(next);
+        refreshPicker(picker);
+      }
+
+      function refreshPicker(picker) {
+        if (!picker?.querySelector(".ticket-row")) return;
+        const held = heldOf(picker);
+        const counts = countsOf(picker);
+        const mode = picker.dataset.mode || "";
+        const sum = ticketSum(counts);
+        let blocked = "";
+        picker.querySelectorAll(".ticket-row").forEach((row) => {
+          const game = GAMES.find((item) => item.id === row.dataset.game);
+          const count = Number(row.dataset.count) || 0;
+          const heldCount = Number(held[game.id]) || 0;
+          const limit = rowLimit(game.id, heldCount);
+          const { remaining } = seatsFor(game.id);
+          const left = Math.max(0, remaining);
+          row.classList.toggle("is-full", limit === 0);
+          row.setAttribute("aria-disabled", limit === 0 ? "true" : "false");
+          row.querySelector(".count").textContent = String(count);
+          const meta = row.querySelector(".ticket-meta");
+          meta.replaceChildren();
+          if (remaining < 0) {
+            meta.appendChild(el("span", "seat-pill over", "Overbooked"));
+          } else if (left === 0 && heldCount === 0) {
+            meta.appendChild(el("span", "seat-pill full", "Full"));
+          } else if (left === 0) {
+            meta.append(`Full · you have ${heldCount}`);
+          } else {
+            meta.append(`${left} left`);
+          }
+          row.querySelector('[aria-label^="Fewer"]').disabled = count <= 0;
+          row.querySelector('[aria-label^="More"]').disabled =
+            count >= limit || sum >= TICKETS_PER_PLAYER || limit === 0;
+          row.querySelector(".take-all").disabled = limit < TICKETS_PER_PLAYER;
+          if (count > limit && !blocked) {
+            blocked =
+              left === 0
+                ? `${game.short} is full.`
+                : `${game.short} only has ${left} seat${left === 1 ? "" : "s"} left.`;
+          }
+        });
+        picker.querySelectorAll(".mode-row button").forEach((button) => {
+          button.setAttribute("aria-pressed", button.dataset.mode === mode ? "true" : "false");
+        });
+        const summary = picker.querySelector(".ticket-summary");
+        if (blocked && mode === "tickets") summary.textContent = blocked;
+        else if (mode === "later") summary.textContent = "You'll pick a game later. No seats held.";
+        else if (mode === "any") summary.textContent = "4 tickets on whichever game has room. No section held yet.";
+        else if (sum === 0) summary.textContent = "Put all 4 on one game, or split them — for example, 2 and 2.";
+        else if (sum < TICKETS_PER_PLAYER) {
+          summary.textContent = `${choiceSummary(counts)}. Assign ${TICKETS_PER_PLAYER - sum} more.`;
+        } else summary.textContent = choiceSummary(counts);
+      }
+
+      function choiceFromPicker(picker) {
+        const mode = picker.dataset.mode || "";
+        const counts = countsOf(picker);
+        const held = heldOf(picker);
+        if (mode === "later") {
+          return { ok: true, body: { game: "", tickets: emptyTickets() }, label: "" };
+        }
+        if (mode === "any") {
+          return { ok: true, body: { game: "any", tickets: emptyTickets() }, label: "any game" };
+        }
+        if (ticketSum(counts) !== TICKETS_PER_PLAYER) {
+          return {
+            ok: false,
+            error: "Assign all 4 tickets. You can put them on one game or split them.",
+          };
+        }
+        for (const game of GAMES) {
+          const count = counts[game.id];
+          const limit = rowLimit(game.id, Number(held[game.id]) || 0);
+          if (count > limit) {
+            const left = Math.max(0, seatsFor(game.id).remaining);
+            return {
+              ok: false,
+              error:
+                left === 0
+                  ? `${game.short} is full.`
+                  : `${game.short} only has ${left} seat${left === 1 ? "" : "s"} left.`,
+            };
+          }
+        }
+        return { ok: true, body: { tickets: counts }, label: choiceSummary(counts) };
       }
 
       function closeEditor() {
@@ -855,28 +1681,25 @@
         const form = document
           .getElementById("pick-template")
           .content.firstElementChild.cloneNode(true);
-        const fields = form.elements;
         const msg = form.querySelector("[data-msg]");
-
+        mountPicker(form.querySelector("[data-ticket-picker]"));
         form.querySelector(".cancel").addEventListener("click", closeEditor);
 
         form.addEventListener("submit", async (event) => {
           event.preventDefault();
-          const game = fields.game.value;
-          const showError = (text, field) => {
+          const choice = choiceFromPicker(form.querySelector("[data-ticket-picker]"));
+          const showError = (text) => {
             msg.textContent = text;
             msg.className = "msg error";
-            if (field) fields[field].focus();
           };
-
-          if (!game) return showError("Please pick a Stars game.", "game");
+          if (!choice.ok) return showError(choice.error);
 
           const button = form.querySelector(".join");
           button.disabled = true;
           msg.textContent = "Saving…";
           msg.className = "msg";
           try {
-            await api("PATCH", { body: { id: player.id, game } });
+            await api("PATCH", { body: { id: player.id, ...choice.body } });
             state.editor = null;
             await load();
           } catch (error) {
@@ -885,7 +1708,6 @@
           }
         });
 
-        requestAnimationFrame(() => fields.game.focus());
         return form;
       }
 
@@ -901,7 +1723,7 @@
         fields.contact.placeholder = savedContact
           ? "Leave blank to keep your current one"
           : "you@email.com or 214-555-0123";
-        fields.game.value = player.game || "later";
+        mountPicker(form.querySelector("[data-ticket-picker]"), player);
 
         form.querySelector(".cancel").addEventListener("click", closeEditor);
 
@@ -909,7 +1731,7 @@
           event.preventDefault();
           const name = fields.name.value.trim();
           const contact = fields.contact.value.trim();
-          const game = fields.game.value;
+          const choice = choiceFromPicker(form.querySelector("[data-ticket-picker]"));
           const showError = (text, field) => {
             msg.textContent = text;
             msg.className = "msg error";
@@ -921,9 +1743,9 @@
           if (contact && !isValidContact(contact)) {
             return showError("Please enter a valid email or phone number.", "contact");
           }
-          if (!game) return showError("Pick a Stars game, or choose “I'll pick later”.", "game");
+          if (!choice.ok) return showError(choice.error);
 
-          const body = { id: player.id, name, game: game === "later" ? "" : game };
+          const body = { id: player.id, name, ...choice.body };
           if (contactChanged && contact) body.contact = contact;
 
           const button = form.querySelector(".join");
@@ -969,6 +1791,7 @@
             ? await api("GET", { query: "?admin=1", admin: true })
             : await api("GET");
           state.players = data.players || [];
+          state.games = data.games || [];
           state.maxPlayers = data.maxPlayers || state.maxPlayers;
           setStatus("");
           render();
@@ -989,7 +1812,8 @@
         const fields = form.elements;
         const name = fields.name.value.trim();
         const contact = fields.contact.value.trim();
-        const game = fields.game.value;
+        const picker = form.querySelector("[data-ticket-picker]");
+        const choice = choiceFromPicker(picker);
 
         const showError = (text, field) => {
           msg.textContent = text;
@@ -1001,21 +1825,21 @@
         if (contact && !isValidContact(contact)) {
           return showError("Please enter a valid email or phone number.", "contact");
         }
-        if (!game) return showError("Pick a Stars game, or choose “I'll pick later”.", "game");
+        if (!choice.ok) return showError(choice.error);
 
         button.disabled = true;
         msg.textContent = "Saving…";
         msg.className = "msg";
         try {
-          const body = { name, team, game: game === "later" ? "" : game };
+          const body = { name, team, ...choice.body };
           if (contact) body.contact = contact;
           const { player } = await api("POST", { body });
           if (contact) rememberMine(player.id, contact);
           form.reset();
-          msg.textContent =
-            game === "later"
-              ? `You're on the ${TEAM_NAMES[team]}, ${name}! Come back anytime and tap “Pick game” next to your name.`
-              : `You're on the ${TEAM_NAMES[team]}, ${name}! See you on the ice.`;
+          mountPicker(picker);
+          msg.textContent = choice.label
+            ? `You're on the ${TEAM_NAMES[team]}, ${name}! ${choice.label}.`
+            : `You're on the ${TEAM_NAMES[team]}, ${name}! Come back anytime and tap “Pick game” next to your name.`;
           msg.className = "msg ok";
         } catch (error) {
           showError(error.message);
@@ -1035,16 +1859,28 @@
       }
 
       function downloadCsv() {
-        const rows = [["Team", "Name", "Email or phone", "Stars game", "Signed up"]];
-        state.players.forEach((p) =>
+        const rows = [
+          ["Team", "Name", "Email or phone", "Feb 18", "Mar 30", "Apr 5", "Notes", "Signed up"],
+        ];
+        state.players.forEach((p) => {
+          const tickets = p.tickets || {};
+          const notes =
+            p.game === "any" && ticketSum(tickets) === 0
+              ? "Any game"
+              : ticketSum(tickets) === 0
+                ? "No game yet"
+                : "";
           rows.push([
             TEAM_NAMES[p.team],
             p.name,
             p.contact,
-            GAME_LABELS[p.game] || "No game yet",
+            tickets.flyers || 0,
+            tickets.flames || 0,
+            tickets.kraken || 0,
+            notes,
             p.createdAt,
-          ])
-        );
+          ]);
+        });
         const csv = rows
           .map((row) => row.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(","))
           .join("\n");
@@ -1096,6 +1932,51 @@
         });
         document.getElementById("admin-csv").addEventListener("click", downloadCsv);
       }
+
+      const FACEOFF = new Date("2026-11-23T15:00:00-06:00");
+      const GAME_END = new Date("2026-11-23T16:00:00-06:00");
+      const countdown = document.getElementById("countdown");
+
+      function renderCountdown() {
+        const now = Date.now();
+        const label = countdown.querySelector(".countdown-label");
+        const clock = countdown.querySelector(".countdown-clock");
+        countdown.classList.remove("is-live", "is-over");
+        if (now >= GAME_END.getTime()) {
+          countdown.classList.add("is-over");
+          label.textContent = "That's a wrap";
+          clock.hidden = true;
+          return;
+        }
+        if (now >= FACEOFF.getTime()) {
+          countdown.classList.add("is-live");
+          label.textContent = "They're on the ice";
+          clock.hidden = true;
+          return;
+        }
+        const totalSeconds = Math.floor((FACEOFF.getTime() - now) / 1000);
+        const parts = {
+          days: Math.floor(totalSeconds / 86400),
+          hours: String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, "0"),
+          minutes: String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0"),
+          seconds: String(totalSeconds % 60).padStart(2, "0"),
+        };
+        clock.hidden = false;
+        label.textContent = "Faceoff in";
+        for (const [unit, value] of Object.entries(parts)) {
+          const digit = clock.querySelector(`[data-unit="${unit}"]`);
+          const next = String(value);
+          if (digit.textContent !== next) {
+            digit.textContent = next;
+            digit.classList.remove("tick");
+            void digit.offsetWidth;
+            digit.classList.add("tick");
+          }
+        }
+      }
+
+      renderCountdown();
+      setInterval(renderCountdown, 1000);
 
       if (state.adminKey && new URLSearchParams(location.search).has("admin")) {
         unlockAdmin(state.adminKey);
