@@ -2,6 +2,7 @@
   "name": "dana",
   "private": true,
   "dependencies": {
-    "@netlify/blobs": "^11.1.7"
+    "@netlify/blobs": "^11.1.7",
+    "pdf-lib": "^1.17.1"
   }
 }
