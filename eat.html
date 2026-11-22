@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>What's for dinner</title>
+    <meta
+      name="description"
+      content="Spin Dana's dinner picker and get one meal. No debate."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,680&family=Outfit:wght@400;500;650;750&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #100e14;
+        --ink: #f7f2f8;
+        --muted: #b7a8bc;
+        --line: rgba(247, 242, 248, 0.12);
+        --pink: #ff6ec7;
+        --purple: #8b5cf6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Outfit", system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 50% 0%, rgba(255, 110, 199, 0.22), transparent 42%),
+          radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.22), transparent 36%),
+          var(--bg);
+      }
+
+      main {
+        min-height: 100vh;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 48px 22px 64px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .home {
+        align-self: flex-start;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .home:hover {
+        color: var(--ink);
+      }
+
+      .eyebrow {
+        margin: 36px 0 0;
+        font-size: 0.78rem;
+        font-weight: 650;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        background: linear-gradient(120deg, var(--pink), var(--purple));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      h1 {
+        margin: 10px 0 0;
+        font-family: "Fraunces", Georgia, serif;
+        font-weight: 560;
+        font-size: clamp(2.8rem, 8vw, 5rem);
+        letter-spacing: -0.03em;
+        line-height: 0.95;
+      }
+
+      .status {
+        margin: 28px 0 0;
+        height: 1.6em;
+        display: grid;
+        place-items: center;
+      }
+
+      .status > * {
+        grid-area: 1 / 1;
+      }
+
+      .kicker {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 650;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      button.kicker {
+        padding: 0;
+        border: none;
+        background: none;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 650;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 0.28em;
+      }
+
+      button.kicker:hover {
+        color: var(--ink);
+      }
+
+      .oven {
+        position: relative;
+        display: block;
+        width: min(100%, 420px);
+        height: 384px;
+        margin-top: 16px;
+        padding: 0;
+        border-radius: 46px;
+        overflow: hidden;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(255, 110, 199, 0.16), transparent 42%),
+          radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.16), transparent 40%),
+          #0c0a10;
+        border: 1px solid var(--line);
+        box-shadow:
+          inset 0 0 80px rgba(0, 0, 0, 0.45),
+          0 30px 70px rgba(0, 0, 0, 0.35);
+      }
+
+      .oven:hover:not(:disabled) .notch,
+      .oven:focus-visible .notch {
+        box-shadow: 0 0 64px rgba(255, 110, 199, 0.45);
+      }
+
+      .oven:focus-visible {
+        outline: 2px solid var(--pink);
+        outline-offset: 4px;
+      }
+
+      .oven:disabled {
+        cursor: wait;
+      }
+
+      .oven::before,
+      .oven::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 28px;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .oven::before {
+        top: 0;
+        background: linear-gradient(#0c0a10, transparent);
+      }
+
+      .oven::after {
+        bottom: 0;
+        background: linear-gradient(transparent, #0c0a10);
+      }
+
+      .notch {
+        position: absolute;
+        left: 22px;
+        right: 22px;
+        top: 50%;
+        height: 128px;
+        transform: translateY(-50%);
+        border-radius: 32px;
+        box-shadow: 0 0 48px rgba(168, 85, 247, 0.35);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .notch::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1.5px;
+        background: linear-gradient(120deg, var(--pink), #c084fc 46%, var(--purple));
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .strip {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        will-change: transform;
+      }
+
+      .plate {
+        height: 128px;
+        display: grid;
+        justify-items: center;
+        align-content: center;
+        gap: 2px;
+      }
+
+      .emoji {
+        font-size: 3.8rem;
+        line-height: 1;
+        filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.4));
+      }
+
+      .name {
+        max-width: 17rem;
+        padding: 0 16px;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.15rem;
+        font-weight: 560;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+
+      .oven.landed .notch {
+        box-shadow: 0 0 64px rgba(255, 110, 199, 0.4);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .strip {
+          transition: none;
+        }
+      }
+
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="home" href="/">Dana</a>
+      <p class="eyebrow">Tonight</p>
+      <h1>What's for dinner</h1>
+      <div class="status">
+        <p class="kicker" id="kicker">ready</p>
+        <button class="kicker" id="again" type="button" hidden>Click to spin again</button>
+      </div>
+      <button class="oven" id="oven" type="button" aria-label="click to spin">
+        <span class="notch" aria-hidden="true"></span>
+        <span class="strip" id="strip"></span>
+      </button>
+    </main>
+    <script>
+      const meals = [
+        "Baked salmon with asparagus and quinoa",
+        "Grilled salmon with broccoli and brown rice",
+        "Blackened salmon with asparagus",
+        "Honey garlic salmon with green beans",
+        "Sheet pan salmon and broccoli",
+        "Salmon cakes with a green salad",
+        "Salmon poke bowl",
+        "Salmon and lentil salad",
+        "Teriyaki salmon with brown rice",
+        "Miso glazed cod with brown rice",
+        "Baked cod with lemon and lentils",
+        "Cod with tomatoes and white beans",
+        "White fish with fennel and lentils",
+        "Grilled mahi mahi with mango salsa and quinoa",
+        "Arctic char with roasted carrots",
+        "Trout with green beans",
+        "Seared scallops with asparagus",
+        "Tuna steak with cucumber salad",
+        "Niçoise salad",
+        "Sardines with white beans and tomatoes",
+        "Lemon garlic shrimp with zucchini",
+        "Shrimp and vegetable stir fry",
+        "Greek salad with grilled shrimp",
+        "Shrimp tacos with cabbage slaw",
+        "Sheet pan shrimp and asparagus",
+        "Shrimp and avocado salad",
+        "Shrimp and black bean bowl",
+        "Shrimp and farro with tomatoes",
+        "Mussels with a green salad",
+        "Lemon herb chicken with roasted veggies",
+        "Grilled chicken with quinoa and broccoli",
+        "Grilled chicken Greek salad",
+        "Chicken apple walnut salad",
+        "Asian chopped salad with grilled chicken",
+        "Mediterranean chickpea salad with chicken",
+        "Chicken fajita bowl with peppers",
+        "Chicken shawarma bowl with cucumber",
+        "Cilantro lime chicken and tofu bowl",
+        "Herb roasted chicken with sweet potato and greens",
+        "Chicken and vegetable soup",
+        "Chicken lettuce wraps",
+        "Sheet pan chicken with Brussels sprouts",
+        "Chicken and white bean stew",
+        "Southwest chicken salad",
+        "Caprese chicken with a green salad",
+        "Chicken and vegetable kebabs",
+        "Ginger chicken with bok choy and brown rice",
+        "Chicken and lentil soup",
+        "Greek chicken with tzatziki and salad",
+        "White chicken chili",
+        "Chicken and barley vegetable soup",
+        "Stuffed peppers with chicken and quinoa",
+        "Chicken tikka with cauliflower and brown rice",
+        "Green curry chicken with vegetables",
+        "Thai basil chicken with brown rice",
+        "Coconut chicken soup with mushrooms",
+        "Chicken and chickpea stew",
+        "Chicken souvlaki salad",
+        "Grilled chicken and beet salad",
+        "Grilled chicken and farro salad",
+        "Lemon chicken with farro and greens",
+        "Chicken and mushroom skillet with greens",
+        "Ground turkey taco bowl",
+        "Turkey meatballs with marinara and roasted veggies",
+        "Turkey chili with beans",
+        "Turkey and vegetable soup",
+        "Turkey burger lettuce wrap with salad",
+        "Turkey zucchini boats",
+        "Cobb salad with turkey",
+        "Beef and broccoli with brown rice",
+        "Steak with sweet potato and green beans",
+        "Thai steak salad",
+        "Stuffed bell peppers with lean beef",
+        "Beef stir fry with snap peas",
+        "Sirloin with roasted vegetables",
+        "Lean beef chili with beans",
+        "Korean beef bowl with spinach",
+        "Garlic herb steak with green beans",
+        "Steak and roasted broccoli",
+        "Beef and pepper fajita bowl",
+        "Pork tenderloin with apples and greens",
+        "Pork chops with cabbage and apples",
+        "Lentil and spinach soup",
+        "Lentil dal with brown rice",
+        "Tofu and vegetable stir fry",
+        "Mapo tofu with brown rice",
+        "Tofu tikka with roasted cauliflower",
+        "Tofu poke bowl",
+        "Tempeh and broccoli stir fry",
+        "Miso soup with tofu and salmon",
+        "Chana masala with brown rice",
+        "Chickpea and quinoa bowl",
+        "Black bean bowl with salsa and greens",
+        "Black bean and sweet potato bowl",
+        "White bean and kale stew",
+        "Baked falafel salad with tahini",
+        "Edamame and tofu grain bowl",
+        "Vegetable omelette with a side salad",
+        "Shakshuka with a side salad",
+        "Egg and veggie skillet with greens",
+      ];
+
+      const kicker = document.getElementById("kicker");
+      const again = document.getElementById("again");
+      const strip = document.getElementById("strip");
+      const oven = document.getElementById("oven");
+
+      const PLATE = 128;
+      const center = (oven.clientHeight - PLATE) / 2;
+      let spinning = false;
+      let last = -1;
+      let reel;
+
+      function emojiFor(name) {
+        const meal = name.toLowerCase();
+        const rules = [
+          [/sushi|poke/, "🍣"],
+          [/ramen|dumpling/, "🍜"],
+          [/taco|birria|pastor/, "🌮"],
+          [/burrito|fajita|enchilada|quesadilla|chipotle|santa fe/, "🌯"],
+          [/pizza/, "🍕"],
+          [/burger|cheesesteak|sloppy/, "🍔"],
+          [/soup|chili|pozole|tom kha/, "🍲"],
+          [/noodle|lo mein|soba|linguine|spaghetti|pasta|ziti|lasagna|ravioli|gnocchi|orzo|mac and cheese|scampi|tortelini/, "🍝"],
+          [/salad|cobb|niçoise|beet/, "🥗"],
+          [/curry|tikka|masala|chana|katsu|teriyaki|pad thai|thai peanut|basil chicken/, "🍛"],
+          [/wing/, "🍗"],
+          [/rice|risotto|fried rice|bowl/, "🍚"],
+          [/shrimp|salmon|fish|cod|tuna|crab|mussel|clam|lobster|mahi|scallop|trout|sardine/, "🐟"],
+          [/steak|beef|rib|carnitas|meatball|meatloaf/, "🥩"],
+          [/pork|ham|chop|sausage|bacon/, "🥓"],
+          [/sandwich|wrap|banh|club|cuban|blt|melt/, "🥪"],
+          [/omelette|shakshuka|breakfast|egg /, "🍳"],
+          [/tofu|falafel|chickpea|quinoa|halloumi|veggie|vegetable|tempeh|lentil|dal/, "🥙"],
+          [/chicken|turkey|shawarma/, "🍗"],
+          [/order /, "🛵"],
+          [/potato/, "🥔"],
+        ];
+        for (const [pattern, emoji] of rules) {
+          if (pattern.test(meal)) return emoji;
+        }
+        return "🍽️";
+      }
+
+      function plate(meal, idle) {
+        const node = document.createElement("div");
+        node.className = "plate";
+        const emoji = document.createElement("div");
+        emoji.className = "emoji";
+        emoji.textContent = idle ? "🍽️" : emojiFor(meal);
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = meal;
+        node.append(emoji, name);
+        return node;
+      }
+
+      function park(offset) {
+        strip.style.transform = `translateY(${offset}px)`;
+      }
+
+      function showIdle() {
+        const above = meals[Math.floor(Math.random() * meals.length)];
+        const below = meals[Math.floor(Math.random() * meals.length)];
+        strip.replaceChildren(plate(above), plate("click to spin", true), plate(below));
+        park(center - PLATE);
+        oven.classList.remove("landed");
+      }
+
+      function nextIndex() {
+        let index = Math.floor(Math.random() * meals.length);
+        if (index === last) index = (index + 1) % meals.length;
+        return index;
+      }
+
+      function buildRun(winner) {
+        const run = [];
+        const used = new Set([winner]);
+        while (run.length < 22) {
+          const index = Math.floor(Math.random() * meals.length);
+          if (used.has(index)) continue;
+          used.add(index);
+          run.push(meals[index]);
+        }
+        run.push(meals[winner]);
+        let extra = Math.floor(Math.random() * meals.length);
+        if (used.has(extra)) extra = (extra + 1) % meals.length;
+        run.push(meals[extra]);
+        return run;
+      }
+
+      showIdle();
+
+      function spin() {
+        if (spinning) return;
+        spinning = true;
+        oven.disabled = true;
+        oven.classList.remove("landed");
+        const winner = nextIndex();
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const run = reduce ? [meals[winner]] : buildRun(winner);
+        strip.replaceChildren(...run.map((meal) => plate(meal)));
+        const slot = reduce ? 0 : run.length - 2;
+        const end = center - slot * PLATE;
+        park(center);
+        kicker.hidden = false;
+        kicker.textContent = "Spinning";
+        again.hidden = true;
+
+        if (reel) reel.cancel();
+        if (reduce) {
+          park(end);
+          finish(winner);
+          return;
+        }
+
+        reel = strip.animate([{ transform: `translateY(${center}px)` }, { transform: `translateY(${end}px)` }], {
+          duration: 2800,
+          easing: "cubic-bezier(.12, .72, .08, 1)",
+          fill: "forwards",
+        });
+        reel.onfinish = () => {
+          park(end);
+          finish(winner);
+        };
+      }
+
+      oven.onclick = spin;
+      again.onclick = spin;
+
+      function finish(winner) {
+        oven.classList.add("landed");
+        kicker.hidden = true;
+        again.hidden = false;
+        last = winner;
+        oven.disabled = false;
+        oven.setAttribute("aria-label", meals[winner] + ". Click to spin again");
+        spinning = false;
+      }
+    </script>
+  </body>
+</html>
