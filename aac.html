@@ -118,6 +118,29 @@
         font-weight: 500;
       }
 
+      .waiver-link {
+        margin: 20px 0 0;
+      }
+
+      .waiver-link a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 32px;
+        border-radius: 999px;
+        background: linear-gradient(120deg, var(--stars-deep), var(--stars));
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-decoration: none;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      }
+
+      .waiver-link a:hover {
+        filter: brightness(1.08);
+      }
+
       .countdown {
         margin: 18px auto 0;
         display: grid;
@@ -1364,6 +1387,7 @@
           ><span class="wolves">Wolves</span>
         </h1>
         <p class="when">Monday, November 23, 2026 <span>· 3:00 – 4:00 PM</span></p>
+        <p class="waiver-link"><a href="/aac-waiver">Sign the waiver</a></p>
         <p class="countdown" id="countdown">
           <span class="countdown-label">Faceoff in</span>
           <span class="countdown-clock">

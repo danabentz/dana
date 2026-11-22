@@ -13,3 +13,13 @@ Sign-ups are saved by the `netlify/functions/aac.mjs` function in Netlify Blobs 
 
 - Email or phone is optional at sign-up. Anyone on the roster can add or change their name, email, or phone, and can pick or change a Stars game, without re-entering contact info. Contact info is never shown on the public roster. To see it, set an `AAC_ADMIN_KEY` environment variable in Netlify (Site configuration → Environment variables), redeploy, then open `/aac?admin` and enter that key. The organizer view shows contact info, per-game counts, a CSV download, and remove buttons.
 - Local testing: `npx netlify-cli dev --dir .` from the repository root.
+
+## AAC waiver (`/aac-waiver`)
+
+Players read the Dallas Stars release and sign it on the page (draw or type). The signed PDF is saved in Netlify Blobs, separate from the roster. Open `/aac-waiver?admin` and use the same `AAC_ADMIN_KEY` to download them.
+
+Emailing a copy to the player and to `danabentzpdx@gmail.com` needs [Resend](https://resend.com):
+
+- `RESEND_API_KEY` — API key from Resend.
+- `WAIVER_FROM` — `Dana Bentz <d@danabentz.com>` after `danabentz.com` is verified in Resend. Until then, Resend only delivers from `onboarding@resend.dev`, and only to the Resend account email.
+- `WAIVER_TO` — optional. Defaults to `danabentzpdx@gmail.com`.

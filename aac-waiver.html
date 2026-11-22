@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AAC Waiver</title>
+    <meta name="robots" content="noindex" />
+    <meta
+      name="description"
+      content="Sign the Dallas Stars release for plaza and on-ice games at the American Airlines Center."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏒</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Great+Vibes&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07131f;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel-strong: rgba(255, 255, 255, 0.1);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: #f1f5f9;
+        --muted: #9fb0c3;
+        --stars: #00a862;
+        --stars-deep: #006847;
+        --danger: #f87171;
+        --radius: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at 12% 8%, rgba(0, 168, 98, 0.18), transparent 36%),
+          radial-gradient(circle at 90% 0%, rgba(255, 255, 255, 0.08), transparent 32%),
+          var(--bg);
+        line-height: 1.5;
+        padding: 0 16px 64px;
+      }
+
+      .wrap {
+        max-width: 760px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 48px 0 22px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      h1 {
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.4rem, 6vw, 4.2rem);
+        line-height: 0.95;
+        margin: 16px 0 8px;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+
+      .lede {
+        margin: 0 auto;
+        max-width: 36rem;
+        color: var(--muted);
+      }
+
+      .esign {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        z-index: 20;
+        transform: translateX(-50%);
+        border: none;
+        border-radius: 999px;
+        padding: 14px 26px;
+        font: inherit;
+        font-weight: 800;
+        font-size: 0.95rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: white;
+        background: linear-gradient(120deg, var(--stars-deep), var(--stars));
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+        cursor: pointer;
+      }
+
+      .sheet {
+        margin: 22px 0 0;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      }
+
+      .sheet img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .sheet a {
+        display: block;
+      }
+
+      .sheet figcaption {
+        margin: 0;
+        padding: 8px 12px 10px;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #334155;
+        background: #f8fafc;
+      }
+
+      .sheet figcaption a {
+        color: #065f46;
+        font-weight: 600;
+      }
+
+      form,
+      .done,
+      .admin {
+        margin-top: 18px;
+        padding: 18px;
+        border-radius: var(--radius);
+        background: var(--panel);
+        border: 1px solid var(--border);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-family: "Barlow Condensed", "Inter", sans-serif;
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .form-note,
+      .hint,
+      .guardian p {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .fields {
+        display: grid;
+        gap: 12px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 560px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      label {
+        display: grid;
+        gap: 5px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      input[type="date"],
+      input[type="password"] {
+        width: 100%;
+        font: inherit;
+        font-size: 1rem;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 11px 12px;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: var(--stars);
+        box-shadow: 0 0 0 3px rgba(0, 168, 98, 0.28);
+      }
+
+      input[readonly] {
+        color: var(--muted);
+      }
+
+      .sig-block {
+        display: grid;
+        gap: 8px;
+        scroll-margin-top: 24px;
+        scroll-margin-bottom: 96px;
+      }
+
+      .sig-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .modes {
+        display: flex;
+        padding: 3px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--border);
+      }
+
+      .modes button,
+      .ghost,
+      .admin-btn {
+        font: inherit;
+        cursor: pointer;
+        border: none;
+        color: var(--muted);
+        background: transparent;
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .modes button[aria-pressed="true"] {
+        color: #042016;
+        background: #fff;
+      }
+
+      .pad {
+        position: relative;
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        overflow: hidden;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 160px;
+        touch-action: none;
+        cursor: crosshair;
+      }
+
+      .typed {
+        width: 100%;
+        height: 160px;
+        border: none;
+        background: #fff;
+        color: #1a1a1a;
+        font-family: "Great Vibes", cursive;
+        font-size: 3.2rem;
+        padding: 12px 16px 0;
+        outline: none;
+      }
+
+      .pad .ghost {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        color: #64748b;
+        background: rgba(255, 255, 255, 0.88);
+      }
+
+      .check {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .check input {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+        flex: none;
+      }
+
+      .submit,
+      .primary {
+        font: inherit;
+        cursor: pointer;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-weight: 700;
+        font-size: 1rem;
+        color: white;
+        background: linear-gradient(120deg, var(--stars-deep), var(--stars));
+      }
+
+      .submit:disabled,
+      .primary:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .msg {
+        min-height: 1.2em;
+        margin: 0;
+        font-size: 0.9rem;
+      }
+
+      .msg.error {
+        color: var(--danger);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 14px 0 8px;
+      }
+
+      .primary.alt,
+      .admin-btn {
+        color: var(--text);
+        background: var(--panel-strong);
+        border-radius: 10px;
+        padding: 12px 14px;
+      }
+
+      .guardian {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border);
+      }
+
+      .hp {
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      .admin ul {
+        list-style: none;
+        margin: 12px 0 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      .admin li {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .admin li p {
+        margin: 0;
+      }
+
+      .admin li .who {
+        font-weight: 700;
+      }
+
+      .admin li .meta {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .flag {
+        color: #fbbf24;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <span class="eyebrow">🏒 American Airlines Center</span>
+        <h1>Sign the waiver</h1>
+        <p class="lede">
+          Read the Dallas Stars release, then sign it here. A copy goes to you and to Dana. Printing
+          is optional.
+        </p>
+      </header>
+
+      <figure class="sheet">
+        <a href="/aac-waiver-page.jpg" target="_blank" rel="noopener noreferrer">
+          <img
+            src="/aac-waiver-page.jpg"
+            width="1200"
+            height="1697"
+            alt="Dallas Stars release of liability, waiver of claims, indemnification, and arbitration agreement for programs at a StarCenter, Dr Pepper Arena, or the American Airlines Center."
+          />
+        </a>
+        <figcaption>
+          <a href="/aac-waiver-page.jpg" target="_blank" rel="noopener noreferrer">Open the waiver larger</a>
+        </figcaption>
+      </figure>
+
+      <form id="waiver" novalidate>
+        <h2>Your signature</h2>
+        <p class="form-note">Fill out your details and then draw or type your signature below.</p>
+
+        <div class="fields">
+          <label>
+            Email
+            <input name="email" type="email" autocomplete="email" maxlength="120" required />
+          </label>
+          <label>
+            Participant name
+            <input name="name" type="text" autocomplete="name" maxlength="80" required />
+          </label>
+          <div class="row">
+            <label>
+              Birthdate
+              <input name="birthdate" type="date" required />
+            </label>
+            <label>
+              Age
+              <input name="age" type="text" readonly tabindex="-1" placeholder="From your birthdate" />
+            </label>
+          </div>
+          <label>
+            Phone number
+            <input name="phone" type="tel" autocomplete="tel" maxlength="30" required />
+          </label>
+
+          <div class="sig-block" id="sign" data-signature="participant">
+            <div class="sig-head">
+              <span>Participant's signature</span>
+              <div class="modes" role="group" aria-label="How to sign">
+                <button type="button" data-mode="draw" aria-pressed="true">Draw</button>
+                <button type="button" data-mode="type" aria-pressed="false">Type</button>
+              </div>
+            </div>
+            <div class="pad" data-draw>
+              <canvas aria-label="Draw your signature"></canvas>
+              <button class="ghost" type="button" data-clear>Clear</button>
+            </div>
+            <div class="pad" data-type hidden>
+              <input class="typed" type="text" maxlength="80" placeholder="Type your name" autocomplete="off" />
+              <button class="ghost" type="button" data-clear>Clear</button>
+            </div>
+          </div>
+
+          <label class="check">
+            <input name="ack" type="checkbox" />
+            <span>
+              I have read and understand this agreement, and I know that signing it may waive legal
+              rights, including the right to sue.
+            </span>
+          </label>
+
+          <label class="hp">
+            Company
+            <input name="company" type="text" tabindex="-1" autocomplete="off" />
+          </label>
+
+          <button class="submit" type="submit">Submit signed waiver</button>
+          <p class="msg" id="form-msg" role="status"></p>
+        </div>
+      </form>
+
+      <section class="done" id="done" hidden>
+        <h2>You're signed</h2>
+        <p id="done-msg"></p>
+        <div class="actions">
+          <button class="primary" id="print" type="button">Print a copy</button>
+          <button class="primary alt" id="download" type="button">Download PDF</button>
+        </div>
+        <p class="hint">You don't have to print it. Dana will.</p>
+      </section>
+
+      <section class="admin" id="admin" hidden>
+        <h2>Signed waivers</h2>
+        <div class="actions" id="admin-login">
+          <input id="admin-key" type="password" placeholder="Admin key" autocomplete="current-password" />
+          <button class="admin-btn" id="admin-unlock" type="button">Unlock</button>
+        </div>
+        <p class="msg" id="admin-msg" role="status"></p>
+        <ul id="admin-list"></ul>
+      </section>
+    </div>
+
+    <button class="esign" id="esign" type="button">E-sign now</button>
+
+    <script>
+      const API = "/api/aac-waiver";
+      const ADMIN_STORAGE = "aac-admin-key";
+
+      const birthdateInput = document.querySelector('[name="birthdate"]');
+      const ageInput = document.querySelector('[name="age"]');
+      birthdateInput.max = new Date().toISOString().slice(0, 10);
+
+      function ageFrom(iso) {
+        if (!iso) return null;
+        const [year, month, day] = iso.split("-").map(Number);
+        if (!year || !month || !day) return null;
+        const today = new Date();
+        let age = today.getFullYear() - year;
+        const md = (today.getMonth() + 1) * 100 + today.getDate();
+        if (md < month * 100 + day) age -= 1;
+        return age;
+      }
+
+      function refreshAge() {
+        const age = ageFrom(birthdateInput.value);
+        ageInput.value = age == null || age < 0 ? "" : String(age);
+      }
+
+      birthdateInput.addEventListener("input", refreshAge);
+
+      function mountSignature(root) {
+        const canvas = root.querySelector("[data-draw] canvas");
+        const typed = root.querySelector("[data-type] input");
+        const ctx = canvas.getContext("2d");
+        let mode = "draw";
+        let drawing = false;
+        const ink = [];
+
+        canvas.width = 900;
+        canvas.height = 280;
+
+        function point(event) {
+          const rect = canvas.getBoundingClientRect();
+          return {
+            x: (event.clientX - rect.left) * (canvas.width / rect.width),
+            y: (event.clientY - rect.top) * (canvas.height / rect.height),
+          };
+        }
+
+        function paint() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.strokeStyle = "#1a1a1a";
+          ctx.lineWidth = 3.4;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          for (const stroke of ink) {
+            if (!stroke.length) continue;
+            ctx.beginPath();
+            ctx.moveTo(stroke[0].x, stroke[0].y);
+            for (let i = 1; i < stroke.length; i += 1) ctx.lineTo(stroke[i].x, stroke[i].y);
+            ctx.stroke();
+          }
+        }
+
+        canvas.addEventListener("pointerdown", (event) => {
+          if (mode !== "draw") return;
+          canvas.setPointerCapture(event.pointerId);
+          drawing = true;
+          ink.push([point(event)]);
+          paint();
+        });
+        canvas.addEventListener("pointermove", (event) => {
+          if (!drawing) return;
+          ink[ink.length - 1].push(point(event));
+          paint();
+        });
+        const stop = () => {
+          drawing = false;
+        };
+        canvas.addEventListener("pointerup", stop);
+        canvas.addEventListener("pointercancel", stop);
+
+        root.querySelectorAll("[data-mode]").forEach((button) => {
+          button.addEventListener("click", () => {
+            mode = button.dataset.mode;
+            root.querySelectorAll("[data-mode]").forEach((other) => {
+              other.setAttribute("aria-pressed", String(other === button));
+            });
+            root.querySelector("[data-draw]").hidden = mode !== "draw";
+            root.querySelector("[data-type]").hidden = mode !== "type";
+          });
+        });
+
+        root.querySelectorAll("[data-clear]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const pad = button.closest(".pad");
+            if (pad.hasAttribute("data-draw")) {
+              ink.length = 0;
+              paint();
+            } else {
+              typed.value = "";
+            }
+          });
+        });
+
+        function hasInk() {
+          const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+          let marks = 0;
+          for (let i = 3; i < data.length; i += 16) {
+            if (data[i] > 20) marks += 1;
+            if (marks > 12) return true;
+          }
+          return false;
+        }
+
+        function trimCanvas(source) {
+          const pixels = source.getContext("2d").getImageData(0, 0, source.width, source.height).data;
+          let minX = source.width;
+          let minY = source.height;
+          let maxX = 0;
+          let maxY = 0;
+          let found = false;
+          for (let y = 0; y < source.height; y += 1) {
+            for (let x = 0; x < source.width; x += 1) {
+              if (pixels[(y * source.width + x) * 4 + 3] > 20) {
+                found = true;
+                if (x < minX) minX = x;
+                if (y < minY) minY = y;
+                if (x > maxX) maxX = x;
+                if (y > maxY) maxY = y;
+              }
+            }
+          }
+          if (!found) return null;
+          const pad = 16;
+          minX = Math.max(0, minX - pad);
+          minY = Math.max(0, minY - pad);
+          maxX = Math.min(source.width - 1, maxX + pad);
+          maxY = Math.min(source.height - 1, maxY + pad);
+          const out = document.createElement("canvas");
+          out.width = maxX - minX + 1;
+          out.height = maxY - minY + 1;
+          out.getContext("2d").drawImage(source, minX, minY, out.width, out.height, 0, 0, out.width, out.height);
+          return out.toDataURL("image/png");
+        }
+
+        async function typedPng() {
+          await document.fonts.load('150px "Great Vibes"');
+          const name = typed.value.trim();
+          if (name.length < 2) return null;
+          const out = document.createElement("canvas");
+          out.width = 900;
+          out.height = 280;
+          const draw = out.getContext("2d");
+          draw.fillStyle = "#1a1a1a";
+          draw.textBaseline = "middle";
+          let size = 150;
+          draw.font = `${size}px "Great Vibes", cursive`;
+          while (size > 48 && draw.measureText(name).width > 840) {
+            size -= 4;
+            draw.font = `${size}px "Great Vibes", cursive`;
+          }
+          draw.fillText(name, 24, 150);
+          return trimCanvas(out);
+        }
+
+        return {
+          async png() {
+            if (mode === "type") return typedPng();
+            if (!hasInk()) return null;
+            return trimCanvas(canvas);
+          },
+        };
+      }
+
+      const participantSign = mountSignature(document.querySelector('[data-signature="participant"]'));
+      const esign = document.getElementById("esign");
+      const signHere = document.getElementById("sign");
+
+      esign.addEventListener("click", () => {
+        const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        signHere.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "center" });
+      });
+
+      const signWatcher = new IntersectionObserver(
+        ([entry]) => {
+          esign.hidden = entry.isIntersecting;
+        },
+        { threshold: 0.12 }
+      );
+      signWatcher.observe(document.getElementById("waiver"));
+
+      const form = document.getElementById("waiver");
+      const formMsg = document.getElementById("form-msg");
+      let signedPdf = null;
+
+      function pdfBlob() {
+        const binary = atob(signedPdf.base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+        return new Blob([bytes], { type: "application/pdf" });
+      }
+
+      document.getElementById("download").addEventListener("click", () => {
+        if (!signedPdf) return;
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(pdfBlob());
+        link.download = signedPdf.filename;
+        link.click();
+      });
+
+      document.getElementById("print").addEventListener("click", () => {
+        if (!signedPdf) return;
+        const frame = document.createElement("iframe");
+        frame.style.position = "fixed";
+        frame.style.width = "0";
+        frame.style.height = "0";
+        frame.style.border = "0";
+        frame.src = URL.createObjectURL(pdfBlob());
+        frame.onload = () => {
+          frame.contentWindow.focus();
+          frame.contentWindow.print();
+        };
+        document.body.appendChild(frame);
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        formMsg.textContent = "";
+        formMsg.className = "msg";
+
+        const data = Object.fromEntries(new FormData(form));
+        const age = ageFrom(data.birthdate);
+        const participantSignature = await participantSign.png();
+
+        if (!data.email.trim()) return fail("Please enter your email.");
+        if (!data.name.trim()) return fail("Please enter your name.");
+        if (age == null || age < 1 || age > 100) return fail("Please enter your birthdate.");
+        if (data.phone.replace(/\D/g, "").length < 10) return fail("Please enter a phone number.");
+        if (!participantSignature) return fail("Please sign your name.");
+        if (!data.ack) return fail("Please confirm that you have read the agreement.");
+
+        const button = form.querySelector(".submit");
+        button.disabled = true;
+        button.textContent = "Sending…";
+        try {
+          const response = await fetch(API, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              email: data.email.trim(),
+              name: data.name.trim(),
+              birthdate: data.birthdate,
+              phone: data.phone.trim(),
+              participantSignature,
+              ack: true,
+              company: data.company || "",
+            }),
+          });
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok || !payload.pdf) {
+            fail(payload.error || "Something went wrong. Try again.");
+            return;
+          }
+          signedPdf = { base64: payload.pdf, filename: payload.filename || "AAC-waiver.pdf" };
+          form.hidden = true;
+          esign.hidden = true;
+          signWatcher.disconnect();
+          document.getElementById("done").hidden = false;
+          document.getElementById("done-msg").textContent = payload.emailed
+            ? `A copy was emailed to ${data.email.trim()} and to Dana.`
+            : "You're signed, and Dana has your waiver. Download or print a copy if you want one.";
+        } catch {
+          fail("Something went wrong. Try again.");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Submit signed waiver";
+        }
+      });
+
+      function fail(message) {
+        formMsg.textContent = message;
+        formMsg.className = "msg error";
+      }
+
+      const admin = document.getElementById("admin");
+      const adminMsg = document.getElementById("admin-msg");
+      const adminList = document.getElementById("admin-list");
+      let adminKey = sessionStorage.getItem(ADMIN_STORAGE) || "";
+
+      async function loadWaivers() {
+        adminMsg.textContent = "";
+        adminMsg.className = "msg";
+        const response = await fetch(`${API}?admin=1`, { headers: { "x-admin-key": adminKey } });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          adminMsg.textContent = payload.error || "Wrong admin key.";
+          adminMsg.className = "msg error";
+          sessionStorage.removeItem(ADMIN_STORAGE);
+          adminKey = "";
+          return;
+        }
+        sessionStorage.setItem(ADMIN_STORAGE, adminKey);
+        document.getElementById("admin-login").hidden = true;
+        adminList.innerHTML = "";
+        if (!payload.waivers?.length) {
+          adminMsg.textContent = "No signed waivers yet.";
+          return;
+        }
+        for (const waiver of payload.waivers) {
+          const item = document.createElement("li");
+          const copy = document.createElement("div");
+          const who = document.createElement("p");
+          who.className = "who";
+          who.textContent = waiver.name;
+          const meta = document.createElement("p");
+          meta.className = "meta";
+          const when = waiver.signedLabel || waiver.signedAt;
+          const emailNote = waiver.emailed ? "emailed" : "email not sent";
+          meta.textContent = `${waiver.email} · ${when} · ${emailNote}`;
+          if (!waiver.emailed) meta.classList.add("flag");
+          copy.append(who, meta);
+          const button = document.createElement("button");
+          button.className = "admin-btn";
+          button.type = "button";
+          button.textContent = "PDF";
+          button.addEventListener("click", () => downloadWaiver(waiver));
+          item.append(copy, button);
+          adminList.append(item);
+        }
+      }
+
+      async function downloadWaiver(waiver) {
+        const response = await fetch(`${API}?id=${encodeURIComponent(waiver.id)}`, {
+          headers: { "x-admin-key": adminKey },
+        });
+        if (!response.ok) {
+          adminMsg.textContent = "Couldn't download that waiver.";
+          adminMsg.className = "msg error";
+          return;
+        }
+        const blob = await response.blob();
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `AAC-waiver-${waiver.name}.pdf`;
+        link.click();
+      }
+
+      if (new URLSearchParams(location.search).has("admin")) {
+        admin.hidden = false;
+        if (adminKey) loadWaivers();
+        document.getElementById("admin-unlock").addEventListener("click", () => {
+          adminKey = document.getElementById("admin-key").value.trim();
+          if (adminKey) loadWaivers();
+        });
+        document.getElementById("admin-key").addEventListener("keydown", (event) => {
+          if (event.key === "Enter") document.getElementById("admin-unlock").click();
+        });
+      }
+    </script>
+  </body>
+</html>
