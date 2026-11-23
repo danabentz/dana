@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AAC Game Sign-Up · Banditos vs Wolves</title>
+    <title>AAC Game Sign-Up · Wolvitos vs Zeros</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏒</text></svg>"
     />
     <meta
       name="description"
-      content="Sign up to play in the AAC game on November 23, 2026 — Banditos vs Wolves."
+      content="Sign up to play in the AAC game on November 23, 2026 — Wolvitos vs Zeros."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1383,8 +1383,8 @@
       <header>
         <span class="eyebrow">🏒 AAC Game Sign-Up</span>
         <h1>
-          <span class="banditos">Banditos</span><span class="vs">vs</span
-          ><span class="wolves">Wolves</span>
+          <span class="banditos">Wolvitos</span><span class="vs">vs</span
+          ><span class="wolves">Zeros</span>
         </h1>
         <p class="when">Monday, November 23, 2026 <span>· 3:00 – 4:00 PM</span></p>
         <p class="waiver-link"><a href="/aac-waiver">Sign the waiver</a></p>
@@ -1442,7 +1442,7 @@
       <main class="teams">
         <section class="team banditos" data-team="banditos" aria-labelledby="banditos-title">
           <div class="team-head">
-            <h2 id="banditos-title">Banditos</h2>
+            <h2 id="banditos-title">Wolvitos</h2>
             <span class="team-count" data-count>0 players</span>
           </div>
           <ul class="players" data-list></ul>
@@ -1456,7 +1456,7 @@
 
         <section class="team wolves" data-team="wolves" aria-labelledby="wolves-title">
           <div class="team-head">
-            <h2 id="wolves-title">Wolves</h2>
+            <h2 id="wolves-title">Zeros</h2>
             <span class="team-count" data-count>0 players</span>
           </div>
           <ul class="players" data-list></ul>
@@ -1597,7 +1597,7 @@
     <script>
       const API = "/api/aac";
       const ADMIN_STORAGE = "aac-admin-key";
-      const TEAM_NAMES = { banditos: "Banditos", wolves: "Wolves" };
+      const TEAM_NAMES = { banditos: "Wolvitos", wolves: "Zeros" };
       const TICKETS_PER_PLAYER = 4;
       const GAMES = [
         { id: "flyers", date: "Thu, Feb 18", opponent: "Flyers", short: "Feb 18 · Flyers", cap: 40 },
@@ -2424,7 +2424,7 @@
       setInterval(renderCountdown, 1000);
 
       const CALENDAR = {
-        title: "Banditos vs Wolves",
+        title: "Wolvitos vs Zeros",
         location: "American Airlines Center, 2500 Victory Ave, Dallas, TX",
         details:
           "AAC game, 3:00–4:00 PM.\nFree parking on the 1st floor of the Lexus Garage, 2620 North Houston Street. Enter through the Employee Entrance on the west side of the arena.\nhttps://danabentz.com/aac",
@@ -2507,7 +2507,7 @@
         const link = document.createElement("a");
         const url = URL.createObjectURL(new Blob([calendarFile()], { type: "text/calendar" }));
         link.href = url;
-        link.download = "banditos-vs-wolves.ics";
+        link.download = "wolvitos-vs-zeros.ics";
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 1500);
         closeCalendar();
