@@ -437,6 +437,11 @@
     </style>
   </head>
   <body data-waiver="archived">
+    <script>
+      if (location.pathname.replace(/\/+$/, "") === "/aac-waiver-code") {
+        document.body.dataset.waiver = "open";
+      }
+    </script>
     <div class="wrap">
       <section class="archived">
         <span class="eyebrow">🏒 American Airlines Center</span>
@@ -563,6 +568,8 @@
     <script>
       const API = "/api/aac-waiver";
       const ADMIN_STORAGE = "aac-admin-key";
+      const codePage = location.pathname.replace(/\/+$/, "") === "/aac-waiver-code";
+      if (codePage) document.body.dataset.waiver = "open";
 
       const birthdateInput = document.querySelector('[name="birthdate"]');
       const ageInput = document.querySelector('[name="age"]');
@@ -814,6 +821,7 @@
               participantSignature,
               ack: true,
               company: data.company || "",
+              gate: codePage ? "aac-waiver-code" : "",
             }),
           });
           const payload = await response.json().catch(() => ({}));
