@@ -5,537 +5,515 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Dana's Portfolio</title>
     <link rel="icon" type="image/jpeg" href="dana.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
-        --pink-primary: #ff6b9d;
-        --pink-secondary: #ff8fab;
-        --pink-light: #ffb3d1;
-        --purple-primary: #a855f7;
-        --purple-secondary: #c084fc;
-        --purple-light: #e9d5ff;
-        --blue-primary: #3b82f6;
-        --blue-secondary: #60a5fa;
-        --blue-light: #93c5fd;
-        --text: #ffffff;
-        --text-muted: rgba(255, 255, 255, 0.7);
-        --text-subtle: rgba(255, 255, 255, 0.5);
+        --bg: #f3efe8;
+        --ink: #1c1917;
+        --muted: #5f584f;
+        --line: rgba(28, 25, 23, 0.12);
+        --rose: #9d3f45;
+        --card: #fffcf8;
+        --shadow: 0 16px 40px rgba(28, 25, 23, 0.08);
       }
-      
+
       * {
         box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-        background: linear-gradient(135deg, 
-          #0f0c29 0%, 
-          #1a0d3e 25%, 
-          #2d1b4e 50%, 
-          #3d2a5e 75%, 
-          #4a3a6e 100%);
-        background-attachment: fixed;
-        min-height: 100vh;
-        color: var(--text);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-        overflow-x: hidden;
-      }
-      
-      /* Animated gradient overlay */
-      body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: 
-          radial-gradient(circle at 20% 50%, rgba(255, 107, 157, 0.15) 0%, transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
-          radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
-        pointer-events: none;
-        z-index: 0;
-        animation: gradientShift 15s ease infinite;
-      }
-      
-      @keyframes gradientShift {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
-      }
-      
-      header {
-        padding: 80px 20px 60px;
-        text-align: center;
-        position: relative;
-        z-index: 1;
-      }
-      
-      header a {
-        display: inline-block;
-        text-decoration: none;
-        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        position: relative;
-      }
-      
-      header a:hover {
-        transform: scale(1.08) rotate(2deg);
-      }
-      
-      .avatar-wrapper {
-        position: relative;
-        display: inline-block;
-        margin-bottom: 30px;
-        border-radius: 50%;
-        padding: 4px;
-        background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary), var(--blue-primary));
-      }
-      
-      .avatar {
-        width: 140px;
-        height: 140px;
-        border-radius: 50%;
-        object-fit: cover;
-        display: block;
-        border: 3px solid rgba(15, 12, 41, 0.8);
-        box-shadow: 
-          0 0 40px rgba(255, 107, 157, 0.4),
-          0 0 80px rgba(168, 85, 247, 0.3),
-          0 20px 60px rgba(0, 0, 0, 0.4);
-        transition: box-shadow 0.4s ease;
-      }
-      
-      header a:hover .avatar {
-        box-shadow: 
-          0 0 60px rgba(255, 107, 157, 0.6),
-          0 0 100px rgba(168, 85, 247, 0.5),
-          0 25px 80px rgba(0, 0, 0, 0.5);
-      }
-      
-      h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        margin: 0 0 15px;
-        background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary), var(--blue-primary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        letter-spacing: -0.02em;
-      }
-      
-      p.subtitle {
-        margin: 0;
-        color: var(--text-muted);
-        font-size: 1.3rem;
-        font-weight: 300;
-        letter-spacing: 0.05em;
-        text-transform: lowercase;
-      }
-      
-      section {
-        width: 100%;
-        max-width: 1200px;
-        padding: 60px 20px;
-        position: relative;
-        z-index: 1;
       }
 
-      header + section {
-        padding-top: 20px;
-      }
-      
-      h2 {
-        font-size: 2.5rem;
-        font-weight: 600;
-        text-align: center;
-        margin: 0 0 50px;
-        background: linear-gradient(135deg, var(--pink-light), var(--purple-light), var(--blue-light));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        letter-spacing: -0.01em;
-        text-transform: lowercase;
-      }
-      
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-      }
-
-      .career-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        max-width: 920px;
-        margin: 0 auto;
-      }
-      
-      .card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 24px;
-        padding: 35px 25px;
-        text-align: center;
-        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        position: relative;
-        overflow: hidden;
-      }
-      
-      .card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, 
-          rgba(255, 107, 157, 0.1), 
-          rgba(168, 85, 247, 0.1), 
-          rgba(59, 130, 246, 0.1));
-        opacity: 0;
-        transition: opacity 0.4s ease;
-      }
-      
-      .card:hover::before {
-        opacity: 1;
-      }
-      
-      .card h3 {
-        font-size: 1.4rem;
-        font-weight: 600;
-        margin-bottom: 12px;
-        position: relative;
-        z-index: 1;
-        color: var(--text);
-      }
-      
-      .card p {
-        font-size: 1rem;
-        color: var(--text-muted);
-        line-height: 1.6;
-        position: relative;
-        z-index: 1;
-      }
-
-      .current-tag {
-        display: inline-block;
-        margin-left: 10px;
-        padding: 3px 9px;
-        border-radius: 999px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: #fff;
-        background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary));
-        border: 1px solid rgba(255, 255, 255, 0.28);
-        vertical-align: middle;
-      }
-
-      .past-tag {
-        display: inline-block;
-        margin-left: 10px;
-        padding: 3px 9px;
-        border-radius: 999px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.9);
-        background: rgba(255, 255, 255, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        vertical-align: middle;
-      }
-      
-      .clickable {
-        cursor: pointer;
-      }
-      
-      .clickable:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 
-          0 25px 50px rgba(0, 0, 0, 0.4),
-          0 0 30px rgba(255, 107, 157, 0.3),
-          0 0 60px rgba(168, 85, 247, 0.2);
-        border-color: rgba(255, 255, 255, 0.3);
-        background: rgba(255, 255, 255, 0.08);
-      }
-      
-      a {
-        color: var(--blue-secondary);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-      }
-      
-      .card a {
-        background: linear-gradient(135deg, var(--pink-primary), var(--purple-primary), var(--blue-primary));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-weight: 600;
-      }
-      
-      .card a:hover {
-        background: linear-gradient(135deg, var(--pink-light), var(--purple-light), var(--blue-light));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      
-      .contact span {
-        display: block;
-        margin-top: 12px;
-        color: var(--text-muted);
-        font-size: 1.05rem;
-      }
-      
-      .contact a {
-        color: var(--blue-secondary);
-        transition: color 0.3s ease;
-      }
-      
-      .contact a:hover {
-        color: var(--blue-light);
-      }
-      
-      .icon {
-        width: 40px;
-        height: 40px;
-        fill: var(--blue-secondary);
-      }
-      
-      /* Smooth scroll */
       html {
         scroll-behavior: smooth;
       }
-      
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
-        h1 {
-          font-size: 2.5rem;
-        }
-        
-        h2 {
-          font-size: 2rem;
-        }
-        
-        .grid {
-          grid-template-columns: 1fr;
-          gap: 25px;
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        font-family: Outfit, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(900px 420px at 100% -10%, rgba(157, 63, 69, 0.09), transparent 55%),
+          var(--bg);
+      }
+
+      ::selection {
+        background: rgba(157, 63, 69, 0.18);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        width: min(980px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 72px 0 88px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 132px 1fr;
+        gap: 36px;
+        align-items: end;
+        padding-bottom: 48px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .portrait-link {
+        display: block;
+        width: 132px;
+        border-radius: 22px;
+        line-height: 0;
+      }
+
+      .portrait-link:focus-visible {
+        outline: 2px solid var(--rose);
+        outline-offset: 4px;
+      }
+
+      .portrait {
+        width: 132px;
+        height: 164px;
+        object-fit: cover;
+        object-position: center 15%;
+        border-radius: 22px;
+        display: block;
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Instrument Serif", Georgia, serif;
+        font-size: clamp(3.4rem, 8vw, 5.6rem);
+        font-weight: 400;
+        letter-spacing: -0.035em;
+        line-height: 0.9;
+      }
+
+      .hello {
+        margin: 16px 0 0;
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-size: 1.55rem;
+        color: var(--rose);
+      }
+
+      section {
+        padding-top: 64px;
+      }
+
+      .kicker {
+        margin: 0 0 18px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .rows {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px 28px;
+        align-items: center;
+        padding: 20px 2px;
+        border-top: 1px solid var(--line);
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .row:last-child {
+        border-bottom: 1px solid var(--line);
+      }
+
+      a.row:hover h3,
+      a.row:focus-visible h3 {
+        color: var(--rose);
+      }
+
+      a.row:focus-visible {
+        outline: 2px solid var(--rose);
+        outline-offset: 4px;
+        border-radius: 8px;
+      }
+
+      .row h3 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+      }
+
+      .mark {
+        width: 26px;
+        height: 26px;
+        flex: none;
+        border-radius: 7px;
+        object-fit: cover;
+      }
+
+      .row:has(.mark) p {
+        margin-left: 36px;
+      }
+
+      .row p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.98rem;
+        line-height: 1.45;
+      }
+
+      .tag {
+        justify-self: end;
+        padding: 4px 9px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .tag.now {
+        border-color: transparent;
+        background: var(--ink);
+        color: var(--bg);
+      }
+
+      .featured {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .featured a {
+        display: flex;
+        min-height: 148px;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 22px;
+        border: 1px solid rgba(28, 25, 23, 0.08);
+        border-radius: 18px;
+        background: var(--card);
+        box-shadow: 0 1px 0 rgba(28, 25, 23, 0.04);
+        color: inherit;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .featured a:hover,
+      .featured a:focus-visible {
+        transform: translateY(-3px);
+        border-color: rgba(157, 63, 69, 0.35);
+        box-shadow: var(--shadow);
+      }
+
+      .featured a:focus-visible {
+        outline: 2px solid var(--rose);
+        outline-offset: 3px;
+      }
+
+      .featured h3 {
+        margin: 0;
+        font-family: "Instrument Serif", Georgia, serif;
+        font-size: 1.85rem;
+        font-weight: 400;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+
+      .featured p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .archive {
+        margin-top: 28px;
+      }
+
+      .archive .row {
+        padding: 16px 2px;
+      }
+
+      .archive .row p {
+        color: var(--muted);
+      }
+
+      a.archive-row:hover h3,
+      a.archive-row:focus-visible h3 {
+        color: var(--ink);
+      }
+
+      .display {
+        width: fit-content;
+        margin: 0 0 22px;
+        font-family: "Instrument Serif", Georgia, serif;
+        font-size: clamp(2.6rem, 6vw, 4rem);
+        font-weight: 400;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        cursor: default;
+      }
+
+      .contact-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 28px;
+        align-items: baseline;
+        padding-top: 4px;
+        font-size: 1.15rem;
+      }
+
+      .contact-line a {
+        color: var(--ink);
+        text-underline-offset: 4px;
+      }
+
+      .contact-line a:hover,
+      .contact-line a:focus-visible {
+        color: var(--rose);
+      }
+
+      .where {
+        color: var(--muted);
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          width: min(100% - 32px, 980px);
+          padding-top: 36px;
         }
 
-        .career-grid {
-          max-width: 100%;
+        header {
+          grid-template-columns: 1fr;
+          gap: 22px;
         }
-        
-        .avatar {
-          width: 120px;
-          height: 120px;
+
+        .portrait,
+        .portrait-link {
+          width: 104px;
+        }
+
+        .portrait {
+          height: 128px;
+        }
+
+        .featured {
+          grid-template-columns: 1fr;
+        }
+
+        .featured a {
+          min-height: 0;
+        }
+
+        .row {
+          align-items: start;
+        }
+
+        .tag {
+          margin-top: 4px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .featured a {
+          transition: none;
+        }
+
+        .featured a:hover,
+        .featured a:focus-visible {
+          transform: none;
         }
       }
     </style>
   </head>
   <body>
-    <header>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.linkedin.com/in/danabentz/"
-      >
-        <div class="avatar-wrapper">
-          <img src="dana.jpg" alt="Dana Bentz" class="avatar" />
+    <div class="page">
+      <header>
+        <a
+          class="portrait-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.linkedin.com/in/danabentz/"
+          aria-label="Dana Bentz on LinkedIn"
+        >
+          <img src="dana.jpg" alt="" class="portrait" />
+        </a>
+        <div>
+          <h1>Dana Bentz</h1>
+          <p class="hello">nice to see you</p>
         </div>
-      </a>
-      <h1>Dana Bentz</h1>
-      <p class="subtitle">nice to see you</p>
-    </header>
+      </header>
 
-    <section class="work">
-      <h2>career</h2>
-      <div class="grid career-grid">
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://airstudio.com/"
-              >AirStudio</a
-            >
-            <span class="current-tag">Current</span>
-          </h3>
-          <p>Head of Operations</p>
-        </div>
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://vestie.com/"
-              >Vestie</a
-            >
-            <span class="current-tag">Current</span>
-          </h3>
-          <p>Founder</p>
-        </div>
-        <div class="card">
-          <h3>
-            StreamYard
-            <span class="past-tag">2020-2024</span>
-          </h3>
-          <p>Head of Customer Success, Product Manager</p>
-        </div>
-        <div class="card">
-          <h3>
-            Licensed Real Estate Agent
-            <span class="past-tag">2016-2020</span>
-          </h3>
-          <p>Keller Williams International Realty</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="projects">
-      <h2>coding projects</h2>
-      <div class="grid career-grid">
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://vestie.com"
-              >Vestie</a
-            >
-          </h3>
-          <p>Investing tool for women</p>
-        </div>
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://danabentz.com/aac"
-              >Scrimmage Signup</a>
-          </h3>
-          <p>Roster signup page with location details and an e-signature form</p>
-        </div>
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://danabentz.com/eat"
-              >Dinner picker</a
-            >
-          </h3>
-          <p>Spin to pick a healthy dinner</p>
-        </div>
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://actuallycosts.com"
-              >Actually Costs</a
-            >
-          </h3>
-          <p>Compound interest calculator</p>
-        </div>
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://danabentz.com/klevi"
-              >Cruise ship tracker</a
-            >
-            <span class="past-tag">Archived</span>
-          </h3>
-          <p>Follow Klevi's adventures at sea in real time</p>
-        </div>
-
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://weightfoodtracker.netlify.app"
-              >NutriSync</a
-            >
-            <span class="past-tag">Archived</span>
-          </h3>
-          <p>Sleep, nutrition, weight, and activity tracker</p>
-        </div>
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://chirpchat.onrender.com/"
-              >ChirpChat</a
-            >
-            <span class="past-tag">Archived</span>
-          </h3>
-          <p>Hockey schedule and real-time chat site</p>
-        </div>
-        <div class="card">
-          <h3>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://clickmonial.com"
-              >Clickmonial</a
-            >
-            <span class="past-tag">Archived</span>
-          </h3>
-          <p>Easily collect video testimonials</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="contact">
-      <h2>say hi 👋</h2>
-      <div class="grid career-grid">
-        <div class="card">
-          <h3>Contact</h3>
-          <span
-            ><a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="mailto:d@danabentz.com"
-              >d@danabentz.com</a
-            ></span
+      <section class="work">
+        <h2 class="kicker">Career</h2>
+        <div class="rows">
+          <a
+            class="row"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://airstudio.com/"
           >
+            <div>
+              <h3>
+                <img class="mark" src="logos/airstudio.png" alt="" width="26" height="26" />
+                AirStudio
+              </h3>
+              <p>Head of Operations</p>
+            </div>
+            <span class="tag now">Current</span>
+          </a>
+          <a
+            class="row"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://vestie.com/"
+          >
+            <div>
+              <h3>
+                <img class="mark" src="logos/vestie.png" alt="" width="26" height="26" />
+                Vestie
+              </h3>
+              <p>Founder</p>
+            </div>
+            <span class="tag now">Current</span>
+          </a>
+          <div class="row">
+            <div>
+              <h3>StreamYard</h3>
+              <p>Head of Customer Success, Product Manager</p>
+            </div>
+            <span class="tag">2020–2024</span>
+          </div>
+          <div class="row">
+            <div>
+              <h3>Licensed Real Estate Agent</h3>
+              <p>Keller Williams International Realty</p>
+            </div>
+            <span class="tag">2016–2020</span>
+          </div>
         </div>
-        <div class="card">
-          <h3>Location</h3>
-          <span>Dallas, TX</span>
+      </section>
+
+      <section class="projects">
+        <h2 class="kicker">Coding projects</h2>
+        <div class="featured">
+          <a target="_blank" rel="noopener noreferrer" href="https://vestie.com">
+            <div>
+              <h3>Vestie</h3>
+              <p>Investing tool for women</p>
+            </div>
+          </a>
+          <a target="_blank" rel="noopener noreferrer" href="https://danabentz.com/eat">
+            <div>
+              <h3>Dinner picker</h3>
+              <p>Spin to pick a healthy dinner</p>
+            </div>
+          </a>
+          <a target="_blank" rel="noopener noreferrer" href="https://actuallycosts.com">
+            <div>
+              <h3>Actually Costs</h3>
+              <p>Compound interest calculator</p>
+            </div>
+          </a>
         </div>
-       
-    </section>
+
+        <div class="rows archive">
+          <a
+            class="row archive-row"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://danabentz.com/klevi"
+          >
+            <div>
+              <h3>Cruise ship tracker</h3>
+              <p>Follow Klevi's adventures at sea in real time</p>
+            </div>
+            <span class="tag">Archived</span>
+          </a>
+          <a
+            class="row archive-row"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://weightfoodtracker.netlify.app"
+          >
+            <div>
+              <h3>NutriSync</h3>
+              <p>Sleep, nutrition, weight, and activity tracker</p>
+            </div>
+            <span class="tag">Archived</span>
+          </a>
+          <a
+            class="row archive-row"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://chirpchat.onrender.com/"
+          >
+            <div>
+              <h3>ChirpChat</h3>
+              <p>Hockey schedule and real-time chat site</p>
+            </div>
+            <span class="tag">Archived</span>
+          </a>
+          <a
+            class="row archive-row"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://clickmonial.com"
+          >
+            <div>
+              <h3>Clickmonial</h3>
+              <p>Easily collect video testimonials</p>
+            </div>
+            <span class="tag">Archived</span>
+          </a>
+          <a
+            class="row archive-row"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://danabentz.com/aac"
+          >
+            <div>
+              <h3>Scrimmage Signup</h3>
+              <p>Roster signup page with location details</p>
+            </div>
+            <span class="tag">Archived</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="contact">
+        <h2 class="display">Say hi 👋</h2>
+        <div class="contact-line">
+          <a href="mailto:d@danabentz.com">d@danabentz.com</a>
+          <span class="where">Dallas, TX</span>
+        </div>
+      </section>
+    </div>
 
     <script>
-      document.querySelectorAll(".card").forEach((card) => {
-        const link = card.querySelector("a[href]");
-        if (link) {
-          card.classList.add("clickable");
-          card.addEventListener("click", (e) => {
-            if (e.target.tagName.toLowerCase() !== "a") {
-              window.open(link.href, link.target || "_self");
-            }
-          });
-        }
-      });
-
-      // Easter egg: Konami code (↑↑↓↓←→←→BA) 🎉
       const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
       let konamiIndex = 0;
-      
+
       function createSparkle(x, y) {
         const sparkle = document.createElement('div');
         sparkle.style.position = 'fixed';
@@ -546,49 +524,48 @@
         sparkle.style.borderRadius = '50%';
         sparkle.style.pointerEvents = 'none';
         sparkle.style.zIndex = '9999';
-        
+
         const colors = ['#ff6b9d', '#a855f7', '#3b82f6', '#ff8fab', '#c084fc', '#60a5fa'];
         sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         sparkle.style.boxShadow = `0 0 10px ${sparkle.style.backgroundColor}`;
-        
+
         document.body.appendChild(sparkle);
-        
+
         const angle = Math.random() * Math.PI * 2;
         const velocity = 50 + Math.random() * 50;
         const vx = Math.cos(angle) * velocity;
         const vy = Math.sin(angle) * velocity;
-        
+
         let opacity = 1;
         let yPos = y;
         let xPos = x;
-        
+
         function animate() {
           opacity -= 0.02;
           yPos += vy * 0.1;
           xPos += vx * 0.1;
-          
+
           sparkle.style.opacity = opacity;
           sparkle.style.transform = `translate(${xPos - x}px, ${yPos - y}px) scale(${1 - (1 - opacity)})`;
-          
+
           if (opacity > 0) {
             requestAnimationFrame(animate);
           } else {
             sparkle.remove();
           }
         }
-        
+
         animate();
       }
-      
+
       function triggerEasterEgg() {
-        // Create sparkles from multiple points
         const sparklePoints = [
           { x: window.innerWidth / 2, y: window.innerHeight / 2 },
           { x: window.innerWidth / 4, y: window.innerHeight / 4 },
           { x: window.innerWidth * 3 / 4, y: window.innerHeight / 4 },
           { x: window.innerWidth / 2, y: window.innerHeight / 3 }
         ];
-        
+
         sparklePoints.forEach((point, i) => {
           setTimeout(() => {
             for (let j = 0; j < 25; j++) {
@@ -598,8 +575,7 @@
             }
           }, i * 100);
         });
-        
-        // Add a fun message
+
         const message = document.createElement('div');
         message.textContent = '✨ You found the secret! ✨';
         message.style.position = 'fixed';
@@ -608,18 +584,18 @@
         message.style.transform = 'translate(-50%, -50%)';
         message.style.fontSize = '2rem';
         message.style.fontWeight = 'bold';
-        message.style.color = '#ff6b9d';
+        message.style.color = '#9d3f45';
         message.style.zIndex = '10000';
         message.style.pointerEvents = 'none';
-        message.style.textShadow = '0 0 20px rgba(255, 107, 157, 0.8)';
+        message.style.textShadow = '0 0 20px rgba(157, 63, 69, 0.35)';
         message.style.animation = 'fadeInOut 2s ease-in-out';
         document.body.appendChild(message);
-        
+
         setTimeout(() => {
           message.remove();
         }, 2000);
       }
-      
+
       document.addEventListener('keydown', (e) => {
         if (e.code === konamiCode[konamiIndex]) {
           konamiIndex++;
@@ -631,122 +607,83 @@
           konamiIndex = 0;
         }
       });
-      
-      // Full-screen confetti animation for "say hi" hover
+
       function createConfettiPiece() {
         const confetti = document.createElement('div');
         confetti.style.position = 'fixed';
         confetti.style.pointerEvents = 'none';
         confetti.style.zIndex = '9999';
-        
-        // Random size for paper-like pieces
+
         const width = 8 + Math.random() * 12;
         const height = 8 + Math.random() * 12;
         confetti.style.width = width + 'px';
         confetti.style.height = height + 'px';
-        
-        // Random shape - rectangles or squares
+
         const isRect = Math.random() > 0.3;
-        if (isRect) {
-          confetti.style.borderRadius = '2px';
-        } else {
-          confetti.style.borderRadius = '50%';
-        }
-        
-        // Random colors from brand palette
+        confetti.style.borderRadius = isRect ? '2px' : '50%';
+
         const colors = ['#ff6b9d', '#a855f7', '#3b82f6', '#ff8fab', '#c084fc', '#60a5fa', '#ffb3d1', '#e9d5ff', '#93c5fd'];
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         confetti.style.boxShadow = `0 0 4px ${confetti.style.backgroundColor}`;
-        
-        // Start from random position at top of screen
+
         const startX = Math.random() * window.innerWidth;
         const startY = -20;
         confetti.style.left = startX + 'px';
         confetti.style.top = startY + 'px';
-        
+
         document.body.appendChild(confetti);
-        
-        // Random physics - slower
-        const angle = (Math.random() - 0.5) * Math.PI * 0.6; // -54 to 54 degrees
+
+        const angle = (Math.random() - 0.5) * Math.PI * 0.6;
         const velocity = 20 + Math.random() * 40;
         let vx = Math.sin(angle) * velocity;
         let vy = Math.cos(angle) * velocity * 0.5 + 15;
         const rotation = Math.random() * 360;
         const rotationSpeed = (Math.random() - 0.5) * 8;
-        
+
         let opacity = 0.9 + Math.random() * 0.1;
         let yPos = startY;
         let xPos = startX;
         let currentRotation = rotation;
-        let frame = 0;
-        
+
         function animate() {
-          frame++;
           opacity -= 0.002;
           yPos += vy * 0.1;
           xPos += vx * 0.1;
           currentRotation += rotationSpeed;
-          vy += 0.4; // gravity - slower
-          vx *= 0.995; // air resistance
-          
+          vy += 0.4;
+          vx *= 0.995;
+
           confetti.style.opacity = opacity;
           confetti.style.transform = `translate(${xPos - startX}px, ${yPos - startY}px) rotate(${currentRotation}deg)`;
-          
+
           if (opacity > 0 && yPos < window.innerHeight + 100) {
             requestAnimationFrame(animate);
           } else {
             confetti.remove();
           }
         }
-        
+
         animate();
       }
-      
+
       const sayHiHeading = document.querySelector('.contact h2');
       let confettiInterval;
-      let isHovering = false;
-      
-      sayHiHeading.addEventListener('mousemove', (e) => {
-        const rect = sayHiHeading.getBoundingClientRect();
-        const textWidth = sayHiHeading.scrollWidth;
-        const textLeft = rect.left + (rect.width - textWidth) / 2;
-        const textRight = textLeft + textWidth;
-        
-        // Only trigger if mouse is over the actual text content area
-        if (e.clientX >= textLeft && e.clientX <= textRight) {
-          if (!isHovering) {
-            isHovering = true;
-            
-            // Create initial burst of confetti
-            for (let i = 0; i < 50; i++) {
-              setTimeout(() => createConfettiPiece(), i * 20);
-            }
-            
-            // Continue creating confetti while hovering
-            confettiInterval = setInterval(() => {
-              for (let i = 0; i < 2; i++) {
-                createConfettiPiece();
-              }
-            }, 250);
-          }
-        } else {
-          if (isHovering) {
-            isHovering = false;
-            if (confettiInterval) {
-              clearInterval(confettiInterval);
-            }
-          }
+      const motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      sayHiHeading.addEventListener('mouseenter', () => {
+        if (!motionOk) return;
+        for (let i = 0; i < 50; i++) {
+          setTimeout(() => createConfettiPiece(), i * 20);
         }
+        confettiInterval = setInterval(() => {
+          for (let i = 0; i < 2; i++) createConfettiPiece();
+        }, 250);
       });
-      
+
       sayHiHeading.addEventListener('mouseleave', () => {
-        isHovering = false;
-        if (confettiInterval) {
-          clearInterval(confettiInterval);
-        }
+        if (confettiInterval) clearInterval(confettiInterval);
       });
-      
-      // Add animations
+
       const style = document.createElement('style');
       style.textContent = `
         @keyframes fadeInOut {

@@ -413,10 +413,42 @@
       [hidden] {
         display: none !important;
       }
+
+      .archived {
+        display: none;
+        margin: 48px auto 0;
+        max-width: 36rem;
+        text-align: center;
+      }
+
+      .archived a {
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      /* 2026 game is over. Set data-waiver="open" on body next year to collect signatures again. */
+      body[data-waiver="archived"] .live {
+        display: none !important;
+      }
+
+      body[data-waiver="archived"] .archived {
+        display: block;
+      }
     </style>
   </head>
-  <body>
+  <body data-waiver="archived">
     <div class="wrap">
+      <section class="archived">
+        <span class="eyebrow">🏒 American Airlines Center</span>
+        <h1>Waiver closed</h1>
+        <p class="lede">
+          The November 23 game is over. Wolvitos and the Zeros tied, and this waiver isn't taking
+          new signatures. Dana still has the copies that were signed.
+        </p>
+        <p class="lede"><a href="/aac">Back to the roster</a></p>
+      </section>
+
+      <div class="live">
       <header>
         <span class="eyebrow">🏒 American Airlines Center</span>
         <h1>Sign the waiver</h1>
@@ -513,6 +545,7 @@
         </div>
         <p class="hint">You don't have to print it. Dana will.</p>
       </section>
+      </div>
 
       <section class="admin" id="admin" hidden>
         <h2>Signed waivers</h2>
@@ -525,7 +558,7 @@
       </section>
     </div>
 
-    <button class="esign" id="esign" type="button">E-sign now</button>
+    <button class="esign live" id="esign" type="button">E-sign now</button>
 
     <script>
       const API = "/api/aac-waiver";
@@ -751,6 +784,7 @@
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
+        if (document.body.dataset.waiver !== "open") return;
         formMsg.textContent = "";
         formMsg.className = "msg";
 
