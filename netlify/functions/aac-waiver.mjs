@@ -2,6 +2,9 @@ import { getStore } from "@netlify/blobs";
 import { buildWaiverPdf } from "./aac-waiver-pdf.mjs";
 
 const ORGANIZER_EMAIL = "danabentzpdx@gmail.com";
+// 2026 game is over (tie). Set this to true next year to accept signatures again.
+// Already-signed PDFs stay downloadable from /aac-waiver?admin either way.
+const ACCEPTING_SIGNATURES = false;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -171,6 +174,9 @@ export default async (req, context) => {
   }
 
   if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
+  if (!ACCEPTING_SIGNATURES) {
+    return json({ error: "The waiver for this game is closed." }, 403);
+  }
 
   let body;
   try {
